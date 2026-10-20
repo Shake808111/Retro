@@ -1,0 +1,132 @@
+# Lokale Entwicklungsumgebung (nicht für den Produktivbetrieb).
+# PostgreSQL + Valkey + Velocity + Paper-Lobby + ein BedWars-Spielserver,
+# Minecraft-Container über die itzg-Images (Notiz 07, Abschnitt 6).
+#
+# Start (siehe README.md, Abschnitt "Entwicklungsumgebung starten"):
+#   cp docker/.env.example docker/.env      # Werte setzen
+#   ./gradlew devPlugins                    # Plugin-Jars nach docker/dev-plugins/
+#   docker compose -f docker/docker-compose.dev.yml up
+#
+# Image-Tags am 2026-10-20 auf Docker Hub geprüft (docs/VERSIONEN.md).
+# Technische Namen (Datenbank "network", Dienste) sind bewusst markenneutral.
+
+name: network-dev
+
+services:
+  postgres:
+    image: postgres:18.6-alpine
+    environment:
+      POSTGRES_DB: network
+      POSTGRES_USER: network
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD in docker/.env setzen}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      # Ab PostgreSQL 18 liegt PGDATA versionsabhängig unterhalb von /var/lib/postgresql.
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U network -d network"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # Einmaliger Lauf: wendet db/migrations/*.sql mit Flyway an und beendet sich.
+  migrate:
+    image: flyway/flyway:13.10.3-alpine
+    command: ["migrate"]
+    environment:
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/network
+      FLYWAY_USER: network
+      FLYWAY_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD in docker/.env setzen}
+      FLYWAY_LOCATIONS: filesystem:/flyway/sql
+    volumes:
+      - ../db/migrations:/flyway/sql:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  valkey:
+    image: valkey/valkey:8.1.10-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  velocity:
+    image: itzg/mc-proxy:2026.10.1-java25
+    environment:
+      TYPE: VELOCITY
+      VELOCITY_VERSION: "4.3.0"
+      # Velocity liest das Forwarding-Geheimnis aus dieser Variable (VelocityConfiguration, Velocity 4.3).
+      VELOCITY_FORWARDING_SECRET: ${VELOCITY_SECRET:?VELOCITY_SECRET in docker/.env setzen}
+      NETWORK_SERVER_NAME: proxy-1
+      NETWORK_DB_URL: jdbc:postgresql://postgres:5432/network
+      NETWORK_DB_USER: network
+      NETWORK_DB_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD in docker/.env setzen}
+      NETWORK_VALKEY_URL: redis://valkey:6379
+    ports:
+      - "25565:25565"
+    volumes:
+      - ./velocity/velocity.toml:/config/velocity.toml:ro
+      - ./dev-plugins/proxy:/plugins:ro
+      - velocity-data:/server
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+
+  lobby:
+    image: itzg/minecraft-server:2026.10.0-java25
+    environment: &paper-env
+      # TRUE nur setzen, wenn die Minecraft-EULA akzeptiert wird (siehe docker/.env.example).
+      EULA: ${MINECRAFT_EULA:?MINECRAFT_EULA in docker/.env setzen}
+      TYPE: PAPER
+      VERSION: "26.3"
+      PAPER_BUILD: "206"
+      # Hinter Velocity: Authentifizierung übernimmt der Proxy (modern forwarding).
+      ONLINE_MODE: "FALSE"
+      MEMORY: "2G"
+      # docker/paper/config/paper-global.yml bei jedem Start übernehmen und ${CFG_...} ersetzen.
+      SYNC_SKIP_NEWER_IN_DESTINATION: "false"
+      REPLACE_ENV_DURING_SYNC: "true"
+      CFG_VELOCITY_SECRET: ${VELOCITY_SECRET:?VELOCITY_SECRET in docker/.env setzen}
+      NETWORK_SERVER_NAME: lobby
+      NETWORK_DB_URL: jdbc:postgresql://postgres:5432/network
+      NETWORK_DB_USER: network
+      NETWORK_DB_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD in docker/.env setzen}
+      NETWORK_VALKEY_URL: redis://valkey:6379
+    volumes:
+      - ./paper/config:/config:ro
+      - ./dev-plugins/lobby:/plugins:ro
+      - lobby-data:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+
+  game-bedwars-1:
+    image: itzg/minecraft-server:2026.10.0-java25
+    environment:
+      <<: *paper-env
+      NETWORK_SERVER_NAME: bedwars-1
+    volumes:
+      - ./paper/config:/config:ro
+      - ./dev-plugins/game-bedwars:/plugins:ro
+      - game-bedwars-1-data:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+  velocity-data:
+  lobby-data:
+  game-bedwars-1-data:

@@ -1,0 +1,12 @@
+# Platzhalter werden beim Build aus gradle.properties ersetzt (siehe build.gradle.kts im Wurzelverzeichnis).
+name: ${brandName}Lobby
+version: '${version}'
+main: dev.netzwerk.lobby.LobbyPlugin
+description: 'Lobby (Navigator, NPC-Joinsystem, Hologramme)'
+api-version: '${paperApiVersion}'
+dependencies:
+  server:
+    ${brandName}Core:
+      load: BEFORE
+      required: true
+      join-classpath: true

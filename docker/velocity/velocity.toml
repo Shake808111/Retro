@@ -1,0 +1,72 @@
+# Velocity 4.3 - Konfiguration der lokalen Entwicklungsumgebung.
+# Grundlage: default-velocity.toml aus PaperMC/Velocity, Zweig dev/4.0.0
+# (zuletzt geändert 2026-09-01, also vor dem Release 4.3.0 am 2026-10-18; abgerufen 2026-10-20).
+# Abweichungen von den Standardwerten: motd, player-info-forwarding-mode, [servers], [forced-hosts].
+config-version = "2.9"
+
+bind = "0.0.0.0:25565"
+# MOTD wird später von velocity-core aus der Marke gesetzt; hier nur ein neutraler Platzhalter.
+motd = "<gray>Lokale Entwicklungsumgebung"
+show-max-players = 500
+online-mode = true
+force-key-authentication = true
+prevent-client-proxy-connections = false
+# Paper-Server erhalten UUID und IP über Velocitys eigenes Verfahren.
+player-info-forwarding-mode = "modern"
+# Wird ignoriert, solange VELOCITY_FORWARDING_SECRET gesetzt ist (docker-compose.dev.yml).
+forwarding-secret-file = "forwarding.secret"
+announce-forge = false
+kick-existing-players = false
+sample-players-in-ping = false
+enable-player-address-logging = true
+
+[ping-passthrough]
+version = false
+players = false
+description = false
+favicon = false
+modinfo = false
+
+[packet-limiter]
+interval = 7
+packets-per-second = -1
+bytes-per-second = -1
+decompressed-bytes-per-second = 5242880
+
+[servers]
+# Statische Einträge für die Entwicklung; später registriert der Controller Spielserver dynamisch.
+lobby = "lobby:25565"
+bedwars-1 = "game-bedwars-1:25565"
+try = [
+    "lobby"
+]
+
+[forced-hosts]
+
+[advanced]
+compression-threshold = 256
+compression-level = -1
+login-ratelimit = 3000
+connection-timeout = 5000
+read-timeout = 30000
+haproxy-protocol = false
+tcp-fast-open = false
+bungee-plugin-message-channel = true
+show-ping-requests = false
+failover-on-unexpected-server-disconnect = true
+announce-proxy-commands = true
+log-command-executions = false
+log-player-connections = true
+accepts-transfers = false
+enable-reuse-port = false
+command-rate-limit = 50
+forward-commands-if-rate-limited = true
+kick-after-rate-limited-commands = 0
+tab-complete-rate-limit = 10
+kick-after-rate-limited-tab-completes = 0
+
+[query]
+enabled = false
+port = 25565
+map = "Velocity"
+show-plugins = false

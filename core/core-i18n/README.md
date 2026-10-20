@@ -1,0 +1,17 @@
+# core/core-i18n – Texte und Sprachen
+
+**Gradle-Pfad:** `:core:core-i18n` · **Paket:** `dev.netzwerk.core.i18n` · **Einstieg:** `Messages` · **Status:** Gerüst
+
+## Verantwortung
+
+Alle Spielertexte im MiniMessage-Format, **Deutsch zuerst** (`messages.properties` = de_DE, Rückfallsprache),
+Englisch in `messages_en.properties` (Notiz 07, Abschnitt 5 „Text and i18n“).
+Der Platzhalter `<brand>` wird durch den Markennamen aus `gradle.properties` ersetzt. Das Rendern zu
+Adventure-Komponenten übernehmen `paper-core` und `velocity-core` (MiniMessage ist dort eingebaut).
+
+## Welches GommeHD-Feature wird nachgebaut?
+
+Die Sprachwahl Deutsch/Englisch, bei GommeHD über `/language` (Notiz 05, Abschnitt 7).
+Alle Texte sind eigene Formulierungen; GommeHD-Texte werden nicht übernommen (Notiz 07, Abschnitt 9 B).
+
+Quellen: `research_notes/GommeHD Analyse und Nachbau/`.

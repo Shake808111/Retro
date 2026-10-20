@@ -1,0 +1,12 @@
+# Platzhalter werden beim Build aus gradle.properties ersetzt (siehe build.gradle.kts im Wurzelverzeichnis).
+name: ${brandName}BedWars
+version: '${version}'
+main: dev.netzwerk.bedwars.BedWarsPlugin
+description: 'BedWars: Teams, Betten, Ressourcen-Spawner, Shop, Upgrades'
+api-version: '${paperApiVersion}'
+dependencies:
+  server:
+    ${brandName}Core:
+      load: BEFORE
+      required: true
+      join-classpath: true

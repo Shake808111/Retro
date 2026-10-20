@@ -1,0 +1,59 @@
+# Versionskatalog. Jede Version wurde am 2026-10-20 im jeweiligen Repository
+# geprüft (maven-metadata.xml); Quellen und Datum stehen in docs/VERSIONEN.md.
+
+[versions]
+# Plattform-APIs (repo.papermc.io/repository/maven-public)
+paper-api = "26.3.build.206-stable"
+velocity-api = "4.3.0"
+
+# Daten & Messaging (Maven Central)
+hikaricp = "7.1.0"
+postgresql = "42.7.14"
+flyway = "13.10.3"
+lettuce = "7.9.0.RELEASE"
+slf4j = "2.0.20"
+
+# Tests (Maven Central)
+junit = "6.1.3"
+
+# Geplant, noch von keinem Modul genutzt (ebenfalls geprüft, Maven Central)
+caffeine = "3.3.1"
+luckperms-api = "5.5"
+cloud-core = "2.1.0"
+cloud-minecraft = "2.0.1"
+fastboard = "2.2.2"
+inventoryframework = "0.12.2"
+jda = "6.7.0"
+
+# Gradle-Plugins (Gradle Plugin Portal)
+shadow = "9.6.1"
+run-task = "3.1.0"
+
+[libraries]
+paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper-api" }
+velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity-api" }
+
+hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
+lettuce = { module = "io.lettuce:lettuce-core", version.ref = "lettuce" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+luckperms-api = { module = "net.luckperms:api", version.ref = "luckperms-api" }
+cloud-core = { module = "org.incendo:cloud-core", version.ref = "cloud-core" }
+cloud-paper = { module = "org.incendo:cloud-paper", version.ref = "cloud-minecraft" }
+cloud-velocity = { module = "org.incendo:cloud-velocity", version.ref = "cloud-minecraft" }
+fastboard = { module = "fr.mrmicky:fastboard", version.ref = "fastboard" }
+inventoryframework = { module = "com.github.stefvanschie.inventoryframework:IF", version.ref = "inventoryframework" }
+jda = { module = "net.dv8tion:JDA", version.ref = "jda" }
+
+[plugins]
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
+run-paper = { id = "xyz.jpenilla.run-paper", version.ref = "run-task" }
+run-velocity = { id = "xyz.jpenilla.run-velocity", version.ref = "run-task" }

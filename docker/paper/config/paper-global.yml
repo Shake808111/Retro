@@ -1,0 +1,9 @@
+# Teil-Konfiguration für Paper (wird von den itzg-Containern nach /data/config/ synchronisiert).
+# Paper ergänzt fehlende Einstellungen beim Start selbst; fehlt "_version", nimmt Paper die
+# aktuelle Version an (Paper-Quelltext, Configurations.verifyGlobalConfigVersion).
+# ${CFG_VELOCITY_SECRET} ersetzt der Container aus der Umgebung (REPLACE_ENV_DURING_SYNC).
+proxies:
+  velocity:
+    enabled: true
+    online-mode: true
+    secret: '${CFG_VELOCITY_SECRET}'

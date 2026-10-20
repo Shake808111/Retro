@@ -1,0 +1,6 @@
+# Platzhalter werden beim Build aus gradle.properties ersetzt (siehe build.gradle.kts im Wurzelverzeichnis).
+name: ${brandName}Core
+version: '${version}'
+main: dev.netzwerk.paper.core.PaperCorePlugin
+description: 'Netzwerk-Kern für Paper-Server (Profile, Scoreboard, GUIs, Kampfprofile)'
+api-version: '${paperApiVersion}'

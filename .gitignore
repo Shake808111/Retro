@@ -1,0 +1,25 @@
+# Gradle
+.gradle/
+build/
+.kotlin/
+
+# Lokale Testserver von run-paper / run-velocity
+run/
+
+# Docker-Entwicklungsumgebung
+docker/.env
+docker/dev-plugins/
+
+# IDEs und Betriebssystem
+.idea/
+*.iml
+out/
+.vscode/
+.DS_Store
+
+# Logs
+*.log
+
+# Web (Next.js, eigener pnpm-Workspace)
+web/node_modules/
+web/.next/

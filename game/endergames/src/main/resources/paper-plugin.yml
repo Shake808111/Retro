@@ -1,0 +1,12 @@
+# Platzhalter werden beim Build aus gradle.properties ersetzt (siehe build.gradle.kts im Wurzelverzeichnis).
+name: ${brandName}EnderGames
+version: '${version}'
+main: dev.netzwerk.endergames.EnderGamesPlugin
+description: 'EnderGames: SG-artiges FFA mit Zufalls-Kit'
+api-version: '${paperApiVersion}'
+dependencies:
+  server:
+    ${brandName}Core:
+      load: BEFORE
+      required: true
+      join-classpath: true

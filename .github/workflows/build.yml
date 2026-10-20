@@ -1,0 +1,42 @@
+# Baut und testet alle Module bei jedem Push auf main und bei Pull Requests.
+# Action-Versionen (Major-Tags) am 2026-10-20 per git ls-remote geprüft (docs/VERSIONEN.md).
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Quelltext auschecken
+        uses: actions/checkout@v7
+
+      - name: JDK 25 (Temurin) einrichten
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - name: Gradle einrichten (prüft auch das Wrapper-Jar)
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Bauen und testen
+        run: ./gradlew build --stacktrace
+
+      - name: Plugin-Jars hochladen
+        uses: actions/upload-artifact@v7
+        with:
+          name: plugin-jars
+          path: |
+            platform/*/build/libs/*.jar
+            lobby/build/libs/*.jar
+            citybuild/build/libs/*.jar
+            game/*/build/libs/*.jar
+            !**/*-plain.jar
+          if-no-files-found: error

@@ -1,0 +1,12 @@
+# Platzhalter werden beim Build aus gradle.properties ersetzt (siehe build.gradle.kts im Wurzelverzeichnis).
+name: ${brandName}TTT
+version: '${version}'
+main: dev.netzwerk.ttt.TttPlugin
+description: 'TTT: Innocent, Detective, Traitor'
+api-version: '${paperApiVersion}'
+dependencies:
+  server:
+    ${brandName}Core:
+      load: BEFORE
+      required: true
+      join-classpath: true

@@ -11,12 +11,12 @@ Schreibweise: Formate stehen in §-Notation. Umsetzung in `core-i18n` mit MiniMe
 
 | Gradle-Modul | Status | Paket | Inhalt in dieser Spec |
 |---|---|---|---|
-| `:core:core-api` | vorhanden | `dev.netzwerk.core.api` | DTOs/Events: `ModeKey`, `StatPeriod`, `StatLine`, `MatchResult`, `PlayerMatchStats`, `CoinPayout`, `RankDisplay`, Events aus §8 |
-| `:core:core-data` | vorhanden | `dev.netzwerk.core.data` | Repositories `StatsRepository`, `WalletRepository`, `DisplayAnchorRepository`, `ProfileRepository`; `ValkeyKeys` erweitern (§2.2); Migration `V2__core_ui_stats.sql` |
-| `:core:core-messaging` | vorhanden | `dev.netzwerk.core.messaging` | Kanäle `net:profile` und `net:stats` (**NEU** in `NetworkChannel`), Nachrichtentypen §8.3 |
-| `:core:core-i18n` | vorhanden | `dev.netzwerk.core.i18n` | Nachrichtenkatalog §7, `Formats` (Zahlen, Datum, Dauer), Locale-Auflösung |
-| `:core:core-stats` | **NEU** (in `settings.gradle.kts` ergänzen) | `dev.netzwerk.core.stats` | Reines Java: Punkteformeln, K/D, Siegesquote, Fenster-Logik, Ranking-Score, Tie-Break, Ausgabe-Builder für `/stats` (ohne Paper). Nutzbar auch für `:services:api` |
-| `:platform:paper-core` | vorhanden | `dev.netzwerk.paper.core` (Unterpakete `chat`, `tab`, `board`, `bar`, `title`, `gui`, `item`, `hotbar`, `coins`, `stats`, `holo`, `lang`) | Plugin **`${brandName}Core`** (`paper-plugin.yml`, `main: dev.netzwerk.paper.core.PaperCorePlugin`) |
+| `:core:core-api` | vorhanden | `net.retromc.core.api` | DTOs/Events: `ModeKey`, `StatPeriod`, `StatLine`, `MatchResult`, `PlayerMatchStats`, `CoinPayout`, `RankDisplay`, Events aus §8 |
+| `:core:core-data` | vorhanden | `net.retromc.core.data` | Repositories `StatsRepository`, `WalletRepository`, `DisplayAnchorRepository`, `ProfileRepository`; `ValkeyKeys` erweitern (§2.2); Migration `V2_1__core_ui_stats.sql` |
+| `:core:core-messaging` | vorhanden | `net.retromc.core.messaging` | Kanäle `net:profile` und `net:stats` (**NEU** in `NetworkChannel`), Nachrichtentypen §8.3 |
+| `:core:core-i18n` | vorhanden | `net.retromc.core.i18n` | Nachrichtenkatalog §7, `Formats` (Zahlen, Datum, Dauer), Locale-Auflösung |
+| `:core:core-stats` | **NEU** (in `settings.gradle.kts` ergänzen) | `net.retromc.core.stats` | Reines Java: Punkteformeln, K/D, Siegesquote, Fenster-Logik, Ranking-Score, Tie-Break, Ausgabe-Builder für `/stats` (ohne Paper). Nutzbar auch für `:services:api` |
+| `:platform:paper-core` | vorhanden | `net.retromc.paper.core` (Unterpakete `chat`, `tab`, `board`, `bar`, `title`, `gui`, `item`, `hotbar`, `coins`, `stats`, `holo`, `lang`) | Plugin **`${brandName}Core`** (`paper-plugin.yml`, `main: net.retromc.paper.core.PaperCorePlugin`) |
 
 Abhängigkeiten aus `libs.versions.toml`, alle vorhanden:
 
@@ -38,7 +38,7 @@ Spielmodule hängen per `paper-plugin.yml` an `${brandName}Core` (`join-classpat
 
 ## 2. Datenmodell
 
-### 2.1 PostgreSQL – Migration `db/migrations/V2__core_ui_stats.sql` (NEU)
+### 2.1 PostgreSQL – Migration `db/migrations/V2_1__core_ui_stats.sql` (NEU)
 
 Spieler-ID ist überall `UUID`, wie in V1. Die V1-Tabellen `stats.total` und `stats.monthly` sind beim Release leer und werden **gelöscht**. Sie werden durch die Tagesbuckets ersetzt (N16 §10.2). Begründung: `/statsd N` und das rollierende 30-Tage-Fenster brauchen Tageswerte.
 
@@ -51,6 +51,7 @@ Spieler-ID ist überall `UUID`, wie in V1. Die V1-Tabellen `stats.total` und `st
 | `stats.match` | wie V1, zusätzlich `mode_id SMALLINT`, `applied_at TIMESTAMPTZ` | PK `id` | Idempotenz für die Runde |
 | `stats.match_player` | wie V1, zusätzlich `wins SMALLINT NOT NULL DEFAULT 0`, `points INT NOT NULL DEFAULT 0`, `xp INT NOT NULL DEFAULT 0` | PK `(match_id, uuid)` | Audit, Rundenblock |
 | `stats.player_settings` | `uuid UUID`, `hidden BOOLEAN NOT NULL DEFAULT false`, `hidden_since TIMESTAMPTZ` | PK `uuid` | `/togglestats` |
+| `stats.network_level` (**NEU, Integration**) | `uuid UUID`, `xp BIGINT NOT NULL DEFAULT 0`, `level INT NOT NULL DEFAULT 0`, `updated_at TIMESTAMPTZ NOT NULL DEFAULT now()` | PK `uuid`; IDX `(level DESC, xp DESC)` | Globales Level (Chat-Level Spec 01, Kill-XP Spec 03, Bingo/PartyGames-XP Spec 06), Dienst `NetworkLevelService` §8.1 |
 | `stats.reset_log` | `id BIGSERIAL`, `uuid UUID NOT NULL`, `mode_id SMALLINT NOT NULL`, `scope VARCHAR(8) NOT NULL CHECK (scope IN ('player','staff','clan'))`, `ledger_id BIGINT`, `actor UUID`, `snapshot JSONB NOT NULL`, `created_at TIMESTAMPTZ NOT NULL DEFAULT now()` | PK `id`; IDX `(uuid, created_at DESC)` | Snapshot vor dem Löschen |
 | `economy.wallet` (ALTER) | zusätzlich `gold BIGINT NOT NULL DEFAULT 0 CHECK (gold >= 0)`, `reset_tokens INT NOT NULL DEFAULT 0 CHECK (reset_tokens >= 0)` | – | Gold (Scoreboard), ResetTokens |
 | `economy.ledger` (ALTER) | zusätzlich `currency VARCHAR(12) NOT NULL DEFAULT 'COINS' CHECK (currency IN ('COINS','GOLD','RESET_TOKEN'))` | IDX `(uuid, created_at DESC)` | Buchungsjournal, nur Anhängen; `idem_key` UNIQUE (V1) |
@@ -73,11 +74,11 @@ Partitionswartung: Ein Job legt am 25. jedes Monats die Partition für Monat +1 
 | `lock:stats:rollover:{yyyy-mm-dd}` | STRING `SET NX PX 600000` | 10 min | ein Rollover pro Tag im ganzen Netzwerk |
 | `lock:stats:reconcile:{yyyy-mm-dd}` | STRING `SET NX PX 3600000` | 60 min | nächtlicher Neuaufbau |
 | `reset:confirm:{uuid}` | STRING (`mode`) | 30 s | offener Reset-Dialog |
-| `profile:{uuid}` | HASH (`name`, `rank`, `locale`, `clan_tag`, `clan_id`, `coins`, `gold`, `playtime_s`, `stats_hidden`) | 300 s, wird bei Zugriff verlängert | Profil-Cache für Chat, Tab und Scoreboard |
+| `profile:{uuid}` | HASH | → **Spec 01 §2.3** (einzige Definition; diese Spec schreibt die Felder `coins`, `gold`, `playtimeS`, `statsHidden`) | Profil-Cache für Chat, Tab und Scoreboard |
 | `ui:news` | LIST (JSON `{color,title,url}`) | keine | Lobby-Newsticker (Actionbar), wird vom Lobby-Modul gepflegt |
 | Kanal `net:profile` (**NEU**) | Pub/Sub | – | `ProfileChanged{uuid, fields[]}`: Coins, Gold, Rang, Locale, Clan |
 | Kanal `net:stats` (**NEU**) | Pub/Sub | – | `StatsUpdated{mode, uuids[]}`, `LeaderboardChanged{mode, period}` |
-| Kanal `net:social` (vorhanden) | Pub/Sub | – | wird gelesen: `ClanTagChanged`, `FriendCountChanged`, `ClanMemberOnline` |
+| Kanal `net:social` (vorhanden) | Pub/Sub | – | wird gelesen (Typen aus Spec 01 §2.4): `CLAN_UPDATE`, `CLAN_ONLINE`/`CLAN_OFFLINE`, `FRIEND_ONLINE`/`FRIEND_OFFLINE`/`FRIEND_ADDED`/`FRIEND_REMOVED`, `PROFILE_INVALIDATE` |
 
 ---
 
@@ -92,17 +93,17 @@ Recht = Permission-Knoten (LuckPerms). Ohne Angabe darf jeder Spieler den Befehl
 | `/statsd <Tage> [Spieler]` | – | – | Fenster der letzten N Tage, N 1–30 (belegt sind 1/3/5/10/15/20, Grenze 30 ist eine Annahme). Zeile „Position im Ranking“ zeigt `-` (Annahme) | Fehler `stats.days-invalid` |
 | `/togglestats` | – | mind. 100 h Spielzeit (`playtime_s ≥ 360000`) | schaltet `stats.player_settings.hidden` um | `togglestats.hidden` / `togglestats.visible` / `togglestats.requirement` |
 | `/top [statsall]` | `/top 30d` | – | Top 10 des Server-Modus; ohne Argument 30 Tage, `statsall` = gesamt. Funktioniert in der Wartelobby während der ganzen Runde | `top.header`, `top.line` ×10, `top.self`, `stats.footer`; Fehler `stats.need-mode` |
-| `/resetstats` | – | Besitz ≥ 1 ResetToken; nur auf einem Lobby-Server des Modus (`server.role=MODE_LOBBY`) | öffnet einen Chat-Dialog (§6.9) | `reset.warn`, `reset.ask` mit Klick-Buttons; Fehler `reset.no-token`, `reset.wrong-place`, `reset.not-resettable` |
+| `/resetstats` | – | Besitz ≥ 1 ResetToken; nur auf einer Modus-Lobby (Kategorie `LOBBY` mit `mode` = Modus, Spec 08 §6.5) | öffnet einen Chat-Dialog (§6.9) | `reset.warn`, `reset.ask` mit Klick-Buttons; Fehler `reset.no-token`, `reset.wrong-place`, `reset.not-resettable` |
 | `/resetstats confirm` / `/ja` | Chat-Eingabe „Ja“ (case-insensitive) | wie oben, nur bei offenem Dialog | führt den Reset aus | `reset.done`; `reset.expired` |
 | `/resetstats cancel` | Chat-Eingabe „Nein“ | – | bricht ab | `reset.cancel` |
 | `/tokens` | – | – | zeigt die Anzahl ResetTokens | `tokens.show` |
 | `/coins` | – | – | zeigt den Coin-Stand (Annahme; 1.8 nur in SW/EG belegt) | `coins.balance` |
-| `/coins <add\|remove\|set> <Spieler> <Betrag>` | – | `netzwerk.coins.admin` | Ledger-Buchung, Grund `ADMIN` | `coins.admin-done`; `coins.insufficient`, `stats.notfound` |
-| `/language [de\|en]` | `/sprache`, `/lang` | – | ohne Argument: klickbare Auswahl im Chat; mit Argument: setzt die Sprache sofort | `language.choose`, `language.option` ×2, `language.changed` |
-| `/statsadmin reset <Spieler> <Modus>` | – | `netzwerk.stats.admin` | Team-Reset ohne Token (`scope='staff'`) | `statsadmin.reset-done` |
-| `/statsadmin rebuild <Modus\|all>` | – | `netzwerk.stats.admin` | baut die ZSETs sofort neu auf (§6.5 Schritt 3) | `statsadmin.rebuild-done` |
-| `/statswall <sign\|holo\|personal> <Modus> <30d\|all> [Größe]` | – | `netzwerk.stats.wall` | legt einen `core.display_anchor` an der Blickposition an (Schilderwand: 10 Schilder nach rechts) | `statswall.created`; `stats.unknown-mode` |
-| `/statswall remove` | – | `netzwerk.stats.wall` | entfernt den Anker, auf den der Spieler blickt (≤ 5 Blöcke) | `statswall.removed` |
+| `/coins <add\|remove\|set> <Spieler> <Betrag>` | – | `retromc.coins.admin` | Ledger-Buchung, Grund `ADMIN` | `coins.admin-done`; `coins.insufficient`, `stats.notfound` |
+| `/language` | – | – | **Spec 01 #67** (Velocity, alle Sprachen aus Spec 01 §6.14, Keys `lang.*`). Diese Spec rendert nach `LocaleChangedEvent` neu | – |
+| `/statsadmin reset <Spieler> <Modus>` | – | `retromc.stats.admin` | Team-Reset ohne Token (`scope='staff'`) | `statsadmin.reset-done` |
+| `/statsadmin rebuild <Modus\|all>` | – | `retromc.stats.admin` | baut die ZSETs sofort neu auf (§6.5 Schritt 3) | `statsadmin.rebuild-done` |
+| `/statswall <sign\|holo\|personal> <Modus> <30d\|all> [Größe]` | – | `retromc.stats.wall` | legt einen `core.display_anchor` an der Blickposition an (Schilderwand: 10 Schilder nach rechts) | `statswall.created`; `stats.unknown-mode` |
+| `/statswall remove` | – | `retromc.stats.wall` | entfernt den Anker, auf den der Spieler blickt (≤ 5 Blöcke) | `statswall.removed` |
 
 Kein Befehl braucht einen Rang für fremde Stats (abgeleitet aus Addon-Verhalten, N16 §4). Genickte Spieler sind nur über den Echtnamen abfragbar. Ein Nickname liefert `stats.notfound`.
 
@@ -113,7 +114,7 @@ Kein Befehl braucht einen Rang für fremde Stats (abgeleitet aus Addon-Verhalten
 ### 4.1 Scoreboard (Sidebar) – allgemeine Regeln
 | Regel | Wert | Beleg |
 |---|---|---|
-| Titel | `§f§l{BRAND_TITLE}`; Standard `BRAND_TITLE = brandName.toUpperCase()` (Original zeigt Domain in Großbuchstaben) | belegt (Struktur), 1.8 und 2026 |
+| Titel | `§f§l{BRAND_UPPER}.NET` (→ `RETROMC.NET`; Original zeigt die Domain in Großbuchstaben) | belegt (Struktur), 1.8 und 2026 |
 | Zeilenfarbe | Label `§f`, Wert in der Zeile darunter, farbig; Blöcke durch Leerzeilen getrennt | belegt (VS Lobby 2024–26) |
 | Score-Zahlen | `MODERN` Lobby: sichtbar, `§c`, absteigend n−1…0. Duels-Match: ausgeblendet. Legacy-Clients: immer sichtbar. Pro Board `showScores` (true/false) | belegt (VS) |
 | Max. Zeilen | 15 | Vanilla |
@@ -148,8 +149,8 @@ Belegte Muster für die Spiel-Specs: Label `§f` und Wert `§e`, oder Label-Wert
 ### 4.4 Tablist
 | Teil | Inhalt | Farben | Beleg |
 |---|---|---|---|
-| Header Zeile 0 (optional) | Bild-Banner per Resourcepack-Glyphe (`<font:netzwerk:banner>`). Fehlt das Pack, entfällt die Zeile | – | belegt 2025 (Original-Banner), eigenes Motiv |
-| Header Zeile 1 | `§e{brand} {modeColor}{modeName}` (z. B. BedWars `§c`, SkyWars `§b`, TTT `§c`, Duels `§9`, SMP `§d`, Silent Lobby `§c`, CityBuild `§e`) | Modusfarbe aus `stats.mode.color` bzw. Server-Konfiguration | belegt |
+| Header Zeile 0 (optional) | Bild-Banner per Resourcepack-Glyphe (`<font:retromc:banner>`). Fehlt das Pack, entfällt die Zeile | – | belegt 2025 (Original-Banner), eigenes Motiv |
+| Header Zeile 1 | `§e{brand}.net {modeColor}{serverDisplay}` (z. B. BedWars `§c`, SkyWars `§b`, TTT `§c`, Duels `§9`, SMP `§d`, Silent Lobby `§c`, CityBuild `§6`, Lobby `§a`; Farben = `modeColor`-Registry Spec 01 §4.2; `serverDisplay` aus Spec 08 §4). **paper-core ist einziger Renderer von Header/Footer** (kein Proxy-Header, kein `TABLIST_OVERRIDE`) | Modusfarbe aus `stats.mode.color` bzw. Server-Konfiguration | belegt |
 | Header Zeile 2 | `§7Regelverstoß gesehen? §c/report §7<Spieler>` | Text `§7`, Befehl `§c`, Platzhalter `§7` | Struktur belegt, Text eigen |
 | Footer (Standard) | `§7Lade Freunde ein, starte Partys oder gründe` / `§7deinen eigenen Clan: §a/friend§7, §d/party §7und §e/clan` | `/friend §a`, `/party §d`, `/clan §e` | Struktur und Farben belegt, Text eigen |
 | Footer (Override pro Server) | `§7Du bist auf Server §e{server}` + optionale Zusatzzeilen vom Modul | – | belegt (CityBuild, SMP) |
@@ -218,7 +219,7 @@ Rundenblock: `§7-= §eStatistiken dieser Runde §7=-`, Zeilen `§7 {label}: §e
 
 ## 5. GUIs
 
-### 5.1 Konventionen (GUI-Framework `dev.netzwerk.paper.core.gui`)
+### 5.1 Konventionen (GUI-Framework `net.retromc.paper.core.gui`)
 | Punkt | Regel | Beleg |
 |---|---|---|
 | Titel | Vanilla-Titelfarbe (kein §-Code), kurzer deutscher Satz, z. B. „Wähle eine Kategorie“, „Wähle einen Spieler“, „Einstellungen für: {rankColor}{name}“ | belegt |
@@ -257,7 +258,7 @@ Wird aus Profil-Menü der Lobby (Lobby-Spec) und per API geöffnet. Titel `Stati
 Versteckte Fremd-Stats: Modus-Items zeigen nur `§cNicht öffentlich`.
 
 ### 5.5 Item-Builder (`ItemBuilder`)
-Fluent API: `of(Material)`, `name(Component)`, `lore(List)`, `loreKey(i18nKey, args)`, `amount`, `glow()` (Enchant-Glint-Override), `skull(UUID|textures)`, `color(DyeColor)`, `hideAll()` (Attribute, Verzauberungen, Trims, Tooltip-Zusätze), `flag(String, value)` (PDC `netzwerk:action`), `build()`. Kursiv in Namen und Lore standardmäßig aus.
+Fluent API: `of(Material)`, `name(Component)`, `lore(List)`, `loreKey(i18nKey, args)`, `amount`, `glow()` (Enchant-Glint-Override), `skull(UUID|textures)`, `color(DyeColor)`, `hideAll()` (Attribute, Verzauberungen, Trims, Tooltip-Zusätze), `flag(String, value)` (PDC `retromc:action`), `build()`. Kursiv in Namen und Lore standardmäßig aus.
 
 ---
 
@@ -273,13 +274,13 @@ Fluent API: `of(Material)`, `name(Component)`, `lore(List)`, `loreKey(i18nKey, a
    - Name: Rangfarbe, im Spiel Teamfarbe (belegt); Supremium+-Äquivalent als Hex-Verlauf (`MODERN`), Legacy-Fallback auf Hauptfarbe.
    - Rang-Präfix: **nicht** im Chat (belegt 2017/2024), nur in Tab und Nametag.
 3. Trenner `§7: `, Nachricht `§f` (belegt).
-4. Farbiges GG/GL (Elite-Rang, §6.12): Ganze Nachricht ∈ {`gg`, `gege`, `ggwp`, `wp`, `nd`, `gl`} (Groß- und Kleinschreibung egal), bei `gl` nur in der Wartezeit. Dann wird sie zu `§7§k--§r {farbe}{TEXT} §7§k--`. Farbe = Spieler-Einstellung, Standard `§6`.
+4. Farbiges GG/GL (ab `supremium`: Supremium, Supremium+, VIP, Team – Spec 01 §6.2): Ganze Nachricht ∈ {`gg`, `gege`, `ggwp`, `wp`, `nd`, `gl`} (Groß- und Kleinschreibung egal), bei `gl` nur in der Wartezeit. Dann wird sie zu `§7§k--§r {farbe}{TEXT} §7§k--`. Farbe = Spieler-Einstellung, Standard `§6`.
 5. Empfängerfilter: „Spieler verstecken“ mit Chat-Sync (Lobby-Spec) über `ChatAudienceFilter`.
 6. Systempräfixe: Modus `§f[{modeColor/gradient}{Modus}§f] ` (MODERN mit Hex-Verlauf aus `stats.mode.gradient`, sonst einfarbig). Systeme `§7[{farbe}{Name}§7] `. Systemtext `§7`, Zahlen `§e`, positiv `§a`, Fehler `§c`.
 7. Join/Quit in Runden-Lobbys: `§7» {rankColor}{name} §7hat die Runde betreten` / `§7« … verlassen` (belegt; funktionale Standardphrase).
 
 ### 6.2 Tablist-Sortierung
-`Player#setPlayerListOrder(order)` (Paper ≥ 1.21.2). Dabei gilt `order = 10_000 − rankWeight*10 − teamIndex`; bei gleichem Wert alphabetisch (Client). Legacy-Clients: Scoreboard-Team `"%04d%s"` mit `(9999−weight)` und dem Namen. Gewichte siehe §6.12. Im Spiel sortiert das Modul nach Team (Override).
+`Player#setPlayerListOrder(order)` (Paper ≥ 1.21.2, höherer Wert steht oben). Dabei gilt `order = rankWeight` (Gewicht aus Spec 01 §6.1, 0–1000); bei gleichem Wert alphabetisch (Client). Legacy-Clients: Scoreboard-Team `"%04d%s"` mit `(9999−weight)` und dem Namen. Im Spiel sortiert das Modul nach Team (Override über `TabEntryProvider`).
 
 ### 6.3 Scoreboard-Takt
 - Ereignisgetrieben: `ProfileChanged` (Coins, Gold, Rang, Clan, Freunde) ändert nur die betroffene Zeile.
@@ -350,7 +351,7 @@ Ein Reset gilt immer für 30 Tage **und** gesamt (belegt). Resetfähige Modi lau
 ### 6.10 /togglestats
 Voraussetzung: 100 Spielstunden (Forenangabe, kein Rang nötig). Wirkung:
 - Fremde sehen `stats.hidden` (in `/stats`, `/statsall`, `/statsd`, `/stats #N` und im Profil-GUI).
-- Team mit `netzwerk.stats.bypass` sieht die Stats trotzdem.
+- Team mit `retromc.stats.bypass` sieht die Stats trotzdem.
 - Wände und Hologramme zeigen den Spieler weiter.
 - Kein Cooldown (Annahme: 3 s Anti-Spam).
 
@@ -359,32 +360,32 @@ Voraussetzung: 100 Spielstunden (Forenangabe, kein Rang nötig). Wirkung:
 |---|---|---|
 | Speicher | `economy.wallet.coins` + Ledger, write-through, idempotent über `idem_key` | N07 |
 | Rundenauszahlung | Basisbetrag pro Spieler vom Modul (Sieg, Kills, Spielzeit). GunGame und FFA zahlen 0 | Quellen belegt, Beträge pro Modus in den Spiel-Specs |
-| Boost | Jeder Spieler der Runde mit Boost-Rang (Elite, Elite+) ist ein Booster. Bonus = `floor(base × min(0,10 × n, 0,40))`, n = Booster in der Runde | abgeleitet: 13 von 20 Datenpaaren passen exakt (z. B. 475→142 bei n=3, 239→95 bei n=5, 314→31 bei n=1, 134→26 bei n=2); Shop: „bis zu 10 %“ |
+| Boost | Jeder Spieler der Runde mit Boost-Rang (Supremium, Supremium+; Spec 01 §6.1) ist ein Booster. Bonus = `floor(base × min(0,10 × n, 0,40))`, n = Booster in der Runde | abgeleitet: 13 von 20 Datenpaaren passen exakt (z. B. 475→142 bei n=3, 239→95 bei n=5, 314→31 bei n=1, 134→26 bei n=2); Shop: „bis zu 10 %“ |
 | Anzeige | Zeile 1 `coins.round` (`+{base} Coins`), Zeile 2 `coins.boost`. Namensliste: 1 → `A`; 2 → `A, B`; ≥ 3 → `A, B und {n−2} weiteren` | belegt |
 | Einzelgutschrift | außerhalb von Rundenenden: `coins.received` | belegt |
-| Ledger-Gründe | `ROUND`, `ROUND_BOOST`, `DAILY`, `LOTTERY`, `VOTE`, `ADMIN`, `PURCHASE`, `REFUND` | Annahme |
+| Ledger-Gründe | `ROUND`, `ROUND_BOOST`, `DAILY`, `LOTTERY`, `VOTE`, `ADMIN`, `PURCHASE`, `REFUND`, `STATS_RESET`, `CB_EXCHANGE`, `CB_GOLDSHOP` (Spec 07), `KIT_PURCHASE` (Spec 04/05) | Annahme |
 | Kein Handel | Coins sind nicht übertragbar und nicht gegen Echtgeld verkäuflich | belegt |
 
-### 6.12 Ränge (Anzeige-Defaults; Verwaltung über LuckPerms-Meta, Proxy-Spec)
-| Key | Anzeigename (eigen) | Tab-Präfix | Farbe MODERN | Farbe LEGACY | Gewicht | Boost/GG |
+### 6.12 Ränge (Anzeige-Defaults) – Quelle **Spec 01 §6.1** (einzige Rangtabelle, LuckPerms-Meta)
+| Gruppe | Anzeigename | Tab-Präfix | Farbe MODERN | Farbe LEGACY | Gewicht | Boost/GG |
 |---|---|---|---|---|---|---|
-| `admin` | Administrator | `Admin` | `§4` | `§4` | 100 | – |
-| `srdev` / `dev` | Senior-Developer / Developer | `SrDev` / `Dev` | `§c` | `§c` | 95/90 | – |
-| `srmod` / `mod` / `sup` | Senior-Moderator / Moderator / Supporter | `SrMod` / `Mod` / `Sup` | `§c` | `§c` | 85/80/75 | – |
-| `srcontent` / `content` | Senior-Content / Content | `SrContent` / `Content` | `§c` | `§c` | 72/70 | – |
-| `builder` | Builder | `Builder` | `§2` (Annahme) | `§2` | 65 | – |
-| `vip` | VIP | `VIP` | `§d` | – | 60 | – |
-| `elite_plus` | Elite+ | `Elite+` | Verlauf `#FF55FF:#5555FF` (Annahme), Fallback `§d` | `§d` | 55 | Boost, GG |
-| `elite` | Elite | `Elite` | `§b` | `§b` | 50 | Boost, GG |
-| `creator` (Premium+, YouTuber, Streamer) | Creator | `Creator` | `§e` | `§5` | 45 | – |
-| `premium` | Premium | – | `§6` | `§6` | 40 | – |
-| `player` | Spieler | – | `§a` | `§8` | 0 | – |
-Präfix und Name haben dieselbe Farbe. Trenner `§7|` (MODERN) bzw. `§8┃` (LEGACY).
+| `admin` | Administrator | `Admin` | `§4` | `§4` | 900 | GG |
+| `srdev` / `dev` | Senior-Developer / Developer | `SrDev` / `Dev` | `§c` | `§c` | 850/800 | GG |
+| `srcontent` / `content` | Senior-Content / Content | `SrContent` / `Content` | `§c` | `§c` | 750/700 | GG |
+| `srmod` / `mod` / `sup` | Senior-Moderator / Moderator / Supporter | `SrMod` / `Mod` / `Sup` | `§c` | `§c` | 650/600/550 | GG |
+| `builder` | Builder | `Builder` | `§2` | `§2` | 500 | GG |
+| `vip` | VIP | `VIP` | `§d` | `§5` (Option `YouTuber`) | 450 | GG |
+| `supremiumplus` | Supremium+ | `Suprem+` | Verlauf `#FF55FF→#55FFFF`, Fallback `§d` | `§d` | 400 | Boost, GG |
+| `supremium` | Supremium | `Suprem` | `§b` | `§b` | 350 | Boost, GG |
+| `premiumplus` | Premium Plus | `Premium+` | `§e` | `§e` | 300 | – |
+| `premium` | Premium | – | `§6` | `§6` | 200 | – |
+| `default` | Spieler | – | `§a` | `§8` | 0 | – |
+Präfix und Name haben dieselbe Farbe. Trenner `§7|` (MODERN) bzw. `§8┃` (LEGACY). `spec` (1000, §7) siehe Spec 01 O6. „X+“ in Specs = Gewicht ≥ X.
 
 ### 6.13 i18n
-1. Sprachen: `de_DE` (Standard und Rückfall), `en_US`. Erweiterbar über weitere `messages_xx.properties` (das Original hatte zeitweise Bairisch, Schweizerdeutsch, TR und RU).
+1. Sprachen: Liste und Fallback-Kette aus **Spec 01 §6.14** (`de_DE` Standard und Rückfall, `en_US` Pflicht, `bar`/`gsw` Dialekte).
 2. Erster Join: Client-Locale `de*` → de_DE, `en*` → en_US, sonst de_DE (Annahme). Danach gilt `core.player.locale`.
-3. `/language` setzt die Sprache. Ablauf: Datenbank → `profile:{uuid}.locale` → Publish `net:profile` → Proxy und alle Server rendern neu (Tab, Scoreboard).
+3. `/language` (Spec 01 #67, Velocity) setzt die Sprache. Ablauf: Datenbank → `profile:{uuid}.locale` → Publish `net:profile` → alle Server rendern neu (Tab, Scoreboard).
 4. Rendering: `I18n.render(player, key, TagResolver...)`. Platzhalter sind typisiert: `Placeholder.unparsed` für Namen und Texte von Spielern, `Placeholder.component` für Farb-Bausteine. Fehlender Key → `<red>[fehlender Text: key]` (vorhanden).
 5. Zahlen, Datum und Dauer formatiert `core-i18n` mit `Formats` je Locale. Die /stats-Dezimalregel (Punkt) gilt in allen Sprachen (Kompatibilität mit Addons).
 
@@ -411,22 +412,15 @@ Spalte „Orig.“ = Original-Wortlaut als Referenz (nicht übernehmen, wo eigen
 |---|---|---|---|---|
 | `prefix.mode` | `§f[{modeColor}{mode}§f] ` | – | `[BedWars] ` | b |
 | `prefix.coins` | `§7[§e{name}§7] ` | name = `Coins` | `[CoinSystem]` | b (Struktur) |
-| `prefix.friends` | `§7[§c{name}§7] ` (LEGACY `§4`) | `Freunde` | `[Freunde]` | b |
-| `prefix.clans` | `§7[§c{name}§7] ` | `Clans` | `[Clans]` | b |
-| `prefix.party` | `§7[§d{name}§7] ` (LEGACY `§5`) | `Party` | `[Party]` | b |
-| `prefix.lobby` | `§7[§6{name}§7] ` | `Lobby` | `[Lobby]` | b |
+| `prefix.friends` / `prefix.clan` / `prefix.party` / `prefix.lobby` | → **Spec 01 §7** (MODERN `§7[§cFreunde§7] `, `§7[§cClans§7] `, `§7[§dParty§7] `, `§6[Lobby] `; LEGACY §4/§5) | – | – | b |
 | `chat.player` | `{channel}{icon}{ctx}{clan}{nameColor}{name}§7: §f{message}` | – | `[TAG] Name: Text` | b |
 | `chat.clan-tag` | `§7[§e{tag}§7] ` | – | dito | b |
 | `chat.no-clan` | `§7[-] ` | – | `[-]` | b |
 | `chat.channel.all` | `§7[@all] ` | – | `[@all]` | b |
 | `chat.channel.spectator` | `§7[OFF] ` | – | `[OFF]` | b |
 | `chat.gg` | `§7§k--§r {color}{text} §7§k--` | – | dito | b |
-| `chat.join` | `§7» {nameColor}{name} §7hat die Runde betreten` | funktional | gleich | b |
-| `chat.quit` | `§7« {nameColor}{name} §7hat die Runde verlassen` | funktional | gleich | b |
-| `game.countdown` | `{prefix}§7Die Runde beginnt in §e{n} §7Sekunden` | funktional | gleich | b |
-| `game.countdown.one` | `{prefix}§7Die Runde beginnt in §e1 §7Sekunde` | funktional | gleich | b |
-| `game.restart` | `{prefix}§cDer Server startet in §e{n} §cSekunden neu` | funktional | gleich | b |
-| `tab.header.mode` | `§e{brand} {modeColor}{mode}` | – | `GommeHD.net BedWars` | b |
+| `chat.join` / `chat.quit` / `game.countdown` / `game.countdown.one` / `game.restart` | → **Spec 03 §7.2** (`common.join`, `common.quit`, `common.countdown`, `common.countdown.one`, `common.restart`) – hier nicht mehr definiert | – | – | b |
+| `tab.header.mode` | `§e{brand}.net {modeColor}{serverDisplay}` | – | `GommeHD.net BedWars` | b |
 | `tab.header.report` | `§7Regelverstoß gesehen? §c/report §7<Spieler>` | eigen | `Du möchtest einen Spieler melden? /report <Spieler>` | b |
 | `tab.footer.1` | `§7Lade Freunde ein, starte Partys oder gründe` | eigen | `Füge deine Freunde hinzu, erstelle Partys oder gründe` | b |
 | `tab.footer.2` | `§7deinen eigenen Clan: §a/friend§7, §d/party §7und §e/clan` | eigen | `deinen eigenen Clan mit: /friend, /party und /clan` | b |
@@ -434,7 +428,7 @@ Spalte „Orig.“ = Original-Wortlaut als Referenz (nicht übernehmen, wo eigen
 | `tab.entry.rank` | `{color}{prefix} §7| ` | – | `Suprem \| ` | b |
 | `tab.entry.clan` | ` §7[§e{tag}§7]` | – | `[GOMME]` | b |
 | `tab.entry.team` | `{teamColor}{team} §7| §f{name}` | – | `Grün \| Name` | b |
-| `sb.title` | `§f§l{brandTitle}` | `NETZWERK` | `GOMMEHD.NET` | b |
+| `sb.title` | `§f§l{BRAND_UPPER}.NET` | `RETROMC.NET` | `GOMMEHD.NET` | b |
 | `sb.label.rank` / `.playtime` / `.coins` / `.gold` / `.clan` / `.friends` | `§f{label}` | `Rang`/`Spielzeit`/`Coins`/`Gold`/`Clan`/`Freunde` | gleich | b |
 | `sb.value.rank` | `{rankColor}{rankName}` | – | `Administrator` | b |
 | `sb.value.playtime` | `§6{n} Stunden` / `§6{n} Stunde` | – | `455 Stunden` | b |
@@ -484,9 +478,7 @@ Spalte „Orig.“ = Original-Wortlaut als Referenz (nicht übernehmen, wo eigen
 | `coins.balance` | `{prefix}§7Du hast §e{n} §7Coins` | funktional | `[SkyWars] Du hast x Coins` | b |
 | `coins.insufficient` | `{prefix}§cDu hast nicht genug Coins.` | eigen | – | A |
 | `coins.admin-done` | `{prefix}§7Neuer Stand von §e{name}§7: §e{n} §7Coins` | eigen | – | A |
-| `language.choose` | `§7Wähle deine Sprache:` | eigen | – | A |
-| `language.option` | `§e[{language}]` (klickbar → `/language {code}`) | – | Klick-Auswahl | b (Mechanik) |
-| `language.changed` | `§7Deine Sprache ist jetzt §e{language}§7.` | eigen | – | A |
+| `language.*` | → Spec 01 §7 (`lang.list.*`, `lang.set`) | – | – | – |
 | `gui.confirm.yes` / `.yes.lore` | `§aBestätigen` / `§7Klicke hier, um deine Auswahl zu bestätigen.` | eigen | `Bestätigung` / `Klicke hier, um deine Auswahl zu bestätigen.` | b |
 | `gui.confirm.no` / `.no.lore` | `§cAbbrechen` / `§7Klicke hier, um abzubrechen.` | eigen | – | A |
 | `gui.page.prev` / `.next` / `.indicator` | `§eVorherige Seite` / `§eNächste Seite` / `§7Seite §e{p}§7/§e{n}` | eigen | – | A |
@@ -514,7 +506,7 @@ Englisch (`messages_en.properties`): jeder Key ist Pflicht. Die Stats-Labels sin
 
 ## 8. Schnittstellen
 
-### 8.1 Services (Paper, `Bukkit ServicesManager` + statischer Zugang `NetzwerkCore.services()`)
+### 8.1 Services (Paper, `Bukkit ServicesManager` + statischer Zugang `PaperCorePlugin.services()`)
 | Service | Methoden (Kern) | Nutzer |
 |---|---|---|
 | `I18n` | `Component render(Player/Locale, String key, TagResolver...)`, `Locale locale(UUID)`, `Formats formats(Locale)` | alle |
@@ -530,8 +522,11 @@ Englisch (`messages_en.properties`): jeder Key ist Pflicht. Die Stats-Labels sin
 | `StatsService` | `submit(MatchResult)`, `CompletableFuture<StatSnapshot> query(UUID, ModeKey, StatWindow)`, `byRank(ModeKey, period, int)`, `top(ModeKey, period, n)`, `sendStats(CommandSender, …)`, `roundSummary(Player, RoundSummary)` | Spiel-Rahmen, Lobby, Profil |
 | `RankDisplayService` | `RankDisplay of(UUID)` (Farbe, Präfix, Gewicht, Gradient, Boost/GG) aus LuckPerms-Meta | Proxy-Spec liefert Daten |
 | `HologramService` | `personal(Player, Location, lines)`, `global(Location, Supplier<List<Component>>)` | Lobby, Spiel-Rahmen |
+| `NpcService` (**NEU**, angefordert von Spec 03 §8.3) | `spawn(NpcSpec{location, skin, name, lookAtPlayers, onRightClick, onLeftClick}) → Npc` (Paket-Entitäten, keine Fremd-Plugins) | Lobby, BedWars-Händler, CityBuild |
+| `NametagService` (**NEU**, genutzt von Spec 04/05/06) | `prefix(Player, Component)`, `suffix(Player, Component)` (Scoreboard-Teams) | Spiel-Rahmen, Modi |
+| `NetworkLevelService` (**NEU**, Integration) | `level(UUID)`, `addXp(UUID, String source, long xp) → LevelUp?`; Tabelle `stats.network_level`; Kurve `xpFür(n) = 250·n·(n+1)` (Annahme, wie Clan-Level Spec 01) | Spec 01 (Chat-Level), Spec 03 (Kill-XP), Spec 06 (Bingo/PartyGames/GunGame) |
 
-### 8.2 Bukkit-Events (`dev.netzwerk.paper.core.event`)
+### 8.2 Bukkit-Events (`net.retromc.paper.core.event`)
 | Event | Felder | Auslöser |
 |---|---|---|
 | `ProfileLoadedEvent` | Player, Profile | Profil beim Join geladen (vor dem ersten Board) |
@@ -546,11 +541,11 @@ Englisch (`messages_en.properties`): jeder Key ist Pflicht. Die Stats-Labels sin
 | `net:profile` | `ProfileChanged` | `{uuid, fields:["coins","gold","rank","locale","clan"]}` | alle Server/Proxy → alle |
 | `net:stats` | `StatsUpdated` | `{mode, uuids[]}` | Spielserver → Lobbys (Wände, Hologramme) |
 | `net:stats` | `LeaderboardChanged` | `{mode, period}` | Rollover-Job → alle |
-| `net:social` | `ClanTagChanged`, `FriendCountChanged`, `ClanOnlineChanged` | `{uuid/clanId, …}` | Proxy (Social) → Paper (Tab, Chat, Scoreboard) |
+| `net:social` | Typen aus Spec 01 §2.4 (`CLAN_UPDATE`, `CLAN_ONLINE`/`OFFLINE`, `FRIEND_*`, `PROFILE_INVALIDATE`) | Payload Spec 01 §8.2 | Proxy (Social) → Paper (Tab, Chat, Scoreboard) |
 Proxy-Seite (velocity-core): Sie liefert den Rang über LuckPerms-Messaging, Clan- und Freundesdaten über `net:social` und `presence:{uuid}`. Diese Spec setzt voraus, dass `social`-Daten über `SocialQuery` (core-data, read-only SQL + Valkey) lesbar sind.
 
 ### 8.4 Pflichten anderer Bereiche
-- **Spiel-Rahmen:** liefert `MatchResult` (Final-Kills bei BedWars), Basis-Coins, `ChatContextProvider` (Team, Zuschauer, Level), `TabEntryProvider` (Team), Rundenblock-Zeilen und die Server-Rolle (`MODE_LOBBY` / `GAME`).
+- **Spiel-Rahmen:** liefert `MatchResult` (Final-Kills bei BedWars), Basis-Coins, `ChatContextProvider` (Team, Zuschauer, Level), `TabEntryProvider` (Team), Rundenblock-Zeilen und setzt den Server-Zustand über `ServerLifecycle` (Spec 08 §8.1). Modus-Lobby = Kategorie `LOBBY` mit `mode` ≠ `lobby` (Spec 08 §6.5).
 - **Lobby:** füllt `ui:news`, platziert Anker, öffnet `StatsProfileGui`, verwaltet die Hotbar.
 - **Shop/Store:** bucht `RESET_TOKEN` und `GOLD` über den Ledger (`reason='PURCHASE'`, idempotent per `tx_id`).
 
@@ -570,12 +565,12 @@ Proxy-Seite (velocity-core): Sie liefert den Rang über LuckPerms-Messaging, Cla
 | 8 | `submit()` zweimal mit derselben `matchId` → Werte nur einmal gezählt | Integration |
 | 9 | Reset: Token −1, `daily`/`alltime` leer, ZREM aus beiden ZSETs, Snapshot im `reset_log`. Bei Abbruch oder Ablauf (30 s): kein Token-Verbrauch | Integration |
 | 10 | Ranking: gleiche Punkte, mehr Siege → besserer Platz; `/stats #1` = Spieler mit höchstem Score; nicht gelisteter Spieler → `Position im Ranking: -` | Unit + Integration |
-| 11 | Versteckter Spieler: Fremde bekommen `stats.hidden`, er selbst und `netzwerk.stats.bypass` sehen die Stats, die Wand zeigt ihn | Integration (MockBukkit) |
+| 11 | Versteckter Spieler: Fremde bekommen `stats.hidden`, er selbst und `retromc.stats.bypass` sehen die Stats, die Wand zeigt ihn | Integration (MockBukkit) |
 | 12 | `/togglestats` bei 99 h → `togglestats.requirement` | Unit |
 | 13 | Lobby-Scoreboard: 15 Zeilen in §4.2-Reihenfolge, Scores 14…0, Rang ⇄ Spielzeit alle 100 Ticks; Coin-Änderung auf anderem Server erscheint ≤ 1 s nach `ProfileChanged` | Manuell + MockBukkit |
 | 14 | Kein Flackern: Bei einer Wertänderung wird nur 1 Team-Update-Paket gesendet (FastBoard-Diff) | Paket-Mitschnitt |
-| 15 | Tab-Sortierung: Admin vor Dev vor Mod vor Elite vor Premium vor Spieler; innerhalb gleicher Stufe alphabetisch | Manuell |
-| 16 | Chat: Spieler mit Clan `ABC`, Rang Premium → `§7[§eABC§7] §6Name§7: §fhi`; in der Lobby ohne Clan-Tag; `gg` von Elite → verschleiertes GG | Unit (Formatter ohne Server) |
+| 15 | Tab-Sortierung: Admin vor Dev vor Mod vor Supremium vor Premium vor Spieler; innerhalb gleicher Stufe alphabetisch | Manuell |
+| 16 | Chat: Spieler mit Clan `ABC`, Rang Premium → `§7[§eABC§7] §6Name§7: §fhi`; in der Lobby ohne Clan-Tag; `gg` von Supremium → verschleiertes GG | Unit (Formatter ohne Server) |
 | 17 | 1.8-Client (ViaVersion): Verläufe fallen auf die Fallback-Farbe zurück, Scores bleiben sichtbar, keine Zeile > 40 Zeichen | Manuell |
 | 18 | `/language en` → Tab, Scoreboard und Stats-Labels englisch, ohne Neuverbindung | Manuell |
 | 19 | Jede Taste in `messages.properties` existiert in `messages_en.properties` und umgekehrt; keine verwaisten Keys im Code | Unit |
@@ -606,11 +601,31 @@ Proxy-Seite (velocity-core): Sie liefert den Rang über LuckPerms-Messaging, Cla
 | 15 | Tie-Break im Ranking unbelegt | mehr Siege, dann UUID |
 | 16 | K/D bei 0 Deaths unbelegt | = Kills |
 | 17 | Cooldowns `/stats`/`/togglestats` unbelegt | 1 s / 3 s |
-| 18 | Hex-Werte der Verläufe 2026 nur aus Twitch-Messung | JumpLeague `#D95D51:#ECE12A`, sonst einfarbig; Elite+ `#FF55FF:#5555FF` |
-| 19 | Rangnamen des Originals (Premium/Supremium/Suprem) sind markant | eigene Anzeigenamen §6.12 (`Elite`), alles per LuckPerms-Meta änderbar |
+| 18 | Hex-Werte der Verläufe 2026 nur aus Twitch-Messung | JumpLeague `#D95D51:#ECE12A`, sonst einfarbig; Supremium+ `#FF55FF→#55FFFF` (Spec 01 §6.1) |
+| 19 | Rangnamen des Originals (Premium/Supremium/Suprem) | Rangnamen und -farben aus Spec 01 §6.1 (Premium, Premium Plus, Supremium, Supremium+, VIP); alles per LuckPerms-Meta änderbar. Frühere Eigennamen `Elite`/`Elite+`/`Creator` verworfen |
 | 20 | Spielerfarbe §8 (1.8) gegen §a (2024+) | MODERN `§a`, LEGACY `§8` |
 | 21 | Lobby-Scoreboard-Zeile 14 (leer oben) nur aus 15 Scores geschlossen | leere Zeile oben |
 | 22 | Taktung Newsticker (Actionbar) und Rang/Spielzeit-Wechsel unbelegt | 8 s / 5 s |
 | 23 | Retention `stats.match_player` | 180 Tage, danach löschen (Datenschutz, Notiz 07 §9) |
 | 24 | Anzeige gesperrter Spieler auf Bestenlisten | bleiben bis zum Team-Reset (`ranking.excludeBanned=false`) |
 | 25 | Englische Stats-Labels großteils unbelegt | Liste in §7 |
+
+### 10.1 Integrationskorrekturen (Prüfung 2026-10-21, siehe `00_bauplan_uebersicht.md`)
+
+| # | Widerspruch | Korrektur |
+|---|---|---|
+| K1 | Pakete `dev.netzwerk.*`, statischer Zugang `NetzwerkCore.services()`, PDC `netzwerk:*`, Titel-Standard `NETZWERK` | `net.retromc.*`, `PaperCorePlugin.services()`, PDC/Font `retromc:*`, Titel `RETROMC.NET` |
+| K2 | Migration `V2__core_ui_stats` kollidierte mit Spec 01 | `V2_1__core_ui_stats.sql` (Spec 08 W2) |
+| K3 | Eigene Rangtabelle (`elite`, `elite_plus`, `creator`, `player`, Gewichte 0–100) widersprach Spec 01 §6.1 | §6.12 übernimmt Spec 01 §6.1 (Gruppen, Farben, Gewichte 0–1000); Boost/GG = Supremium/Supremium+ (+VIP/Team für GG) |
+| K4 | Scoreboard-Titel `{BRAND_TITLE}` ohne `.NET` (Spec 01/03 mit `.NET`) | überall `§f§l{BRAND_UPPER}.NET` |
+| K5 | Tab-Header `§e{brand} …` ohne `.net`, CityBuild `§e` (Spec 01 `§6`) | `§e{brand}.net {modeColor}{serverDisplay}`, CityBuild `§6`; paper-core einziger Renderer |
+| K6 | Tab-Sortierformel `10_000 − weight*10` (Paper zeigt höhere Werte oben) | `order = rankWeight` |
+| K7 | `/language` und `language.*`-Keys doppelt zu Spec 01 | Befehl/Keys in Spec 01; hier nur Neu-Rendern |
+| K8 | `prefix.friends/clans/party/lobby` doppelt und abweichend (`prefix.clans`, Lobby `§7[§6Lobby§7]`) | Definition nur in Spec 01 §7 (`prefix.clan`, `§6[Lobby] `) |
+| K9 | `chat.join/quit`, `game.countdown*`, `game.restart` doppelt zu Spec 03 `common.*` | Spec 03 §7.2 verbindlich |
+| K10 | `profile:{uuid}` mit anderen Feldern/TTL als Spec 01 | eine Definition (Spec 01 §2.3) |
+| K11 | `net:social`-Typen `ClanTagChanged`… existieren beim Erzeuger (Spec 01) nicht | Typen aus Spec 01 §2.4 |
+| K12 | Server-Rolle `MODE_LOBBY` unbekannt in der Registry (Spec 08) | Modus-Lobby = Kategorie `LOBBY` + `mode` |
+| K13 | Globales Level (Chat, Kill-XP, Bingo-XP) ohne Eigentümer | `NetworkLevelService` + `stats.network_level` hier |
+| K14 | `NpcService`/`NametagService` von Spec 03–06 genutzt, hier nicht angeboten | in §8.1 ergänzt |
+| K15 | MockBukkit-Tests (#11, #13, #20) vs. Spec 08 O6 „kein MockBukkit“ | Logik plattformfrei testen; MockBukkit-Tests nur mit Tag `mockbukkit`, sobald eine Version für Paper 26.3 geprüft ist (Spec 00 Konventionen) |

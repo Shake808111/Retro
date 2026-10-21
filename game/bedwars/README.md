@@ -1,6 +1,6 @@
 # game/bedwars – BedWars
 
-**Gradle-Pfad:** `:game:bedwars` · **Paket:** `dev.netzwerk.bedwars` · **Einstieg:** `BedWarsPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
+**Gradle-Pfad:** `:game:bedwars` · **Paket:** `net.retromc.bedwars` · **Einstieg:** `BedWarsPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
 
 ## Verantwortung
 

@@ -10,5 +10,5 @@ dependencies {
 }
 
 application {
-    mainClass = "dev.netzwerk.api.ApiApplication"
+    mainClass = "net.retromc.api.ApiApplication"
 }

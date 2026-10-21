@@ -1,6 +1,6 @@
 # core/core-i18n – Texte und Sprachen
 
-**Gradle-Pfad:** `:core:core-i18n` · **Paket:** `dev.netzwerk.core.i18n` · **Einstieg:** `Messages` · **Status:** Gerüst
+**Gradle-Pfad:** `:core:core-i18n` · **Paket:** `net.retromc.core.i18n` · **Einstieg:** `Messages` · **Status:** Gerüst
 
 ## Verantwortung
 

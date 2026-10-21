@@ -15,7 +15,7 @@ dependencies {
 }
 
 application {
-    mainClass = "dev.netzwerk.controller.ControllerApplication"
+    mainClass = "net.retromc.controller.ControllerApplication"
 }
 
 // Flyway-Migrationen aus db/migrations als Klassenpfad-Ressourcen "migrations/..." mitliefern.

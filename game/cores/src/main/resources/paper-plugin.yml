@@ -1,7 +1,7 @@
 # Platzhalter werden beim Build aus gradle.properties ersetzt (siehe build.gradle.kts im Wurzelverzeichnis).
 name: ${brandName}Cores
 version: '${version}'
-main: dev.netzwerk.cores.CoresPlugin
+main: net.retromc.cores.CoresPlugin
 description: 'Cores: zwei Teams verteidigen Beacon-Cores'
 api-version: '${paperApiVersion}'
 dependencies:

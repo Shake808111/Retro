@@ -1,6 +1,6 @@
 # game/gungame – GunGame
 
-**Gradle-Pfad:** `:game:gungame` · **Paket:** `dev.netzwerk.gungame` · **Einstieg:** `GunGamePlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
+**Gradle-Pfad:** `:game:gungame` · **Paket:** `net.retromc.gungame` · **Einstieg:** `GunGamePlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
 
 ## Verantwortung
 

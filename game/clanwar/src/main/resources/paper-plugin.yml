@@ -1,7 +1,7 @@
 # Platzhalter werden beim Build aus gradle.properties ersetzt (siehe build.gradle.kts im Wurzelverzeichnis).
 name: ${brandName}ClanWar
 version: '${version}'
-main: dev.netzwerk.clanwar.ClanWarPlugin
+main: net.retromc.clanwar.ClanWarPlugin
 description: 'ClanWar: Clan gegen Clan'
 api-version: '${paperApiVersion}'
 dependencies:

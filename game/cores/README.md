@@ -1,6 +1,6 @@
 # game/cores – Cores
 
-**Gradle-Pfad:** `:game:cores` · **Paket:** `dev.netzwerk.cores` · **Einstieg:** `CoresPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
+**Gradle-Pfad:** `:game:cores` · **Paket:** `net.retromc.cores` · **Einstieg:** `CoresPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
 
 ## Verantwortung
 

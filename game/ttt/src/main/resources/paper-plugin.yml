@@ -1,7 +1,7 @@
 # Platzhalter werden beim Build aus gradle.properties ersetzt (siehe build.gradle.kts im Wurzelverzeichnis).
 name: ${brandName}TTT
 version: '${version}'
-main: dev.netzwerk.ttt.TttPlugin
+main: net.retromc.ttt.TttPlugin
 description: 'TTT: Innocent, Detective, Traitor'
 api-version: '${paperApiVersion}'
 dependencies:

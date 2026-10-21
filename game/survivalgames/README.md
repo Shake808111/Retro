@@ -1,6 +1,6 @@
 # game/survivalgames – SurvivalGames
 
-**Gradle-Pfad:** `:game:survivalgames` · **Paket:** `dev.netzwerk.survivalgames` · **Einstieg:** `SurvivalGamesPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
+**Gradle-Pfad:** `:game:survivalgames` · **Paket:** `net.retromc.survivalgames` · **Einstieg:** `SurvivalGamesPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
 
 ## Verantwortung
 

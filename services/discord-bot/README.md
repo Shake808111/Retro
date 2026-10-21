@@ -1,6 +1,6 @@
 # services/discord-bot – Discord-Bot (Platzhalter)
 
-**Gradle-Pfad:** `:services:discord-bot` · **Paket:** `dev.netzwerk.discord.bot` · **Einstieg:** `DiscordBotApplication` (Java-Anwendung) · **Status:** Gerüst (Stub)
+**Gradle-Pfad:** `:services:discord-bot` · **Paket:** `net.retromc.discord.bot` · **Einstieg:** `DiscordBotApplication` (Java-Anwendung) · **Status:** Gerüst (Stub)
 
 ## Verantwortung
 

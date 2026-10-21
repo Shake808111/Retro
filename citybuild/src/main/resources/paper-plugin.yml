@@ -1,7 +1,7 @@
 # Platzhalter werden beim Build aus gradle.properties ersetzt (siehe build.gradle.kts im Wurzelverzeichnis).
 name: ${brandName}CityBuild
 version: '${version}'
-main: dev.netzwerk.citybuild.CityBuildPlugin
+main: net.retromc.citybuild.CityBuildPlugin
 description: 'CityBuild (Plots, Wirtschaft, Shops)'
 api-version: '${paperApiVersion}'
 dependencies:

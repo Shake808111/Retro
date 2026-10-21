@@ -1,7 +1,7 @@
 # Platzhalter werden beim Build aus gradle.properties ersetzt (siehe build.gradle.kts im Wurzelverzeichnis).
 name: ${brandName}Lobby
 version: '${version}'
-main: dev.netzwerk.lobby.LobbyPlugin
+main: net.retromc.lobby.LobbyPlugin
 description: 'Lobby (Navigator, NPC-Joinsystem, Hologramme)'
 api-version: '${paperApiVersion}'
 dependencies:

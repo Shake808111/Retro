@@ -1,6 +1,6 @@
 # services/api – Web-API (Platzhalter)
 
-**Gradle-Pfad:** `:services:api` · **Paket:** `dev.netzwerk.api` · **Einstieg:** `ApiApplication` (Java-Anwendung, `GET /health`) · **Status:** Gerüst (Stub)
+**Gradle-Pfad:** `:services:api` · **Paket:** `net.retromc.api` · **Einstieg:** `ApiApplication` (Java-Anwendung, `GET /health`) · **Status:** Gerüst (Stub)
 
 ## Verantwortung
 

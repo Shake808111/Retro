@@ -1,6 +1,6 @@
 # citybuild – CityBuild
 
-**Gradle-Pfad:** `:citybuild` · **Paket:** `dev.netzwerk.citybuild` · **Einstieg:** `CityBuildPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
+**Gradle-Pfad:** `:citybuild` · **Paket:** `net.retromc.citybuild` · **Einstieg:** `CityBuildPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
 
 ## Verantwortung
 

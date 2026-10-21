@@ -1,6 +1,6 @@
 # platform/velocity-core – Kern-Plugin für den Proxy
 
-**Gradle-Pfad:** `:platform:velocity-core` · **Paket:** `dev.netzwerk.velocity.core` · **Einstieg:** `VelocityCorePlugin` (`@Plugin`, Velocity 4.3) · **Status:** Gerüst
+**Gradle-Pfad:** `:platform:velocity-core` · **Paket:** `net.retromc.velocity.core` · **Einstieg:** `VelocityCorePlugin` (`@Plugin`, Velocity 4.3) · **Status:** Gerüst
 
 ## Verantwortung
 

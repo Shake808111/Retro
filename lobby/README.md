@@ -1,6 +1,6 @@
 # lobby – Lobby/Hub
 
-**Gradle-Pfad:** `:lobby` · **Paket:** `dev.netzwerk.lobby` · **Einstieg:** `LobbyPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
+**Gradle-Pfad:** `:lobby` · **Paket:** `net.retromc.lobby` · **Einstieg:** `LobbyPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
 
 ## Verantwortung
 

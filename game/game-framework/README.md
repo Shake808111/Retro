@@ -1,6 +1,6 @@
 # game/game-framework – Grundlage aller Spielmodi
 
-**Gradle-Pfad:** `:game:game-framework` · **Paket:** `dev.netzwerk.game.framework` · **Einstieg:** `MiniGamePlugin` (Basisklasse), `GameState`, `GameLifecycle`, `GameDefinition`, `CombatProfile` · **Status:** Gerüst
+**Gradle-Pfad:** `:game:game-framework` · **Paket:** `net.retromc.game.framework` · **Einstieg:** `MiniGamePlugin` (Basisklasse), `GameState`, `GameLifecycle`, `GameDefinition`, `CombatProfile` · **Status:** Gerüst
 
 ## Verantwortung
 

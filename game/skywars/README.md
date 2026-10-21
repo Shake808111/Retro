@@ -1,6 +1,6 @@
 # game/skywars – SkyWars
 
-**Gradle-Pfad:** `:game:skywars` · **Paket:** `dev.netzwerk.skywars` · **Einstieg:** `SkyWarsPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
+**Gradle-Pfad:** `:game:skywars` · **Paket:** `net.retromc.skywars` · **Einstieg:** `SkyWarsPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
 
 ## Verantwortung
 

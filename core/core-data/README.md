@@ -1,6 +1,6 @@
 # core/core-data – Datenzugriff
 
-**Gradle-Pfad:** `:core:core-data` · **Paket:** `dev.netzwerk.core.data` · **Einstieg:** `Database`, `DatabaseConfig`, `ValkeyConnector`, `ValkeyKeys` · **Status:** Gerüst
+**Gradle-Pfad:** `:core:core-data` · **Paket:** `net.retromc.core.data` · **Einstieg:** `Database`, `DatabaseConfig`, `ValkeyConnector`, `ValkeyKeys` · **Status:** Gerüst
 
 ## Verantwortung
 

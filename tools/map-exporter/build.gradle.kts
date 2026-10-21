@@ -6,5 +6,5 @@ plugins {
 description = "Prüft Kartenordner und packt sie für den Objektspeicher"
 
 application {
-    mainClass = "dev.netzwerk.map.exporter.MapExporterApplication"
+    mainClass = "net.retromc.map.exporter.MapExporterApplication"
 }

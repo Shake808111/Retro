@@ -1,7 +1,7 @@
-# Netzwerk – Projektgerüst
+# RetroMC – Projektgerüst
 
 Eigenes Minecraft-Netzwerk (Lobby, Minispiele, CityBuild) nach dem Vorbild der Spielmodi und Systeme von GommeHD.net,
-**unter eigener Marke** und mit eigenem Code. „Netzwerk“ ist der vorläufige Markenname (siehe [Marke umbenennen](#marke-umbenennen)).
+**unter eigener Marke** und mit eigenem Code. Die Marke heißt „RetroMC“ (siehe [Marke umbenennen](#marke-umbenennen)).
 
 Grundlage sind die Recherche-Notizen in `/home/user/research_notes/GommeHD Analyse und Nachbau/` (01–07).
 Architektur: [`docs/ARCHITEKTUR.md`](docs/ARCHITEKTUR.md) · Geprüfte Versionen und Build-Protokoll: [`docs/VERSIONEN.md`](docs/VERSIONEN.md).
@@ -105,7 +105,7 @@ Ohne Docker lässt sich ein einzelner Server starten:
 3. Nicht betroffen (bewusst markenneutral): Datenbankname, Docker-Dienste, Umgebungsvariablen `NETWORK_*`.
 
 Optional, nur falls auch die Java-Pakete umbenannt werden sollen: `group` in `gradle.properties` ändern, die Pakete
-`dev.netzwerk.*` per IDE-Refactoring umbenennen und danach die Einträge `main:` in allen `paper-plugin.yml` sowie
+`net.retromc.*` per IDE-Refactoring umbenennen und danach die Einträge `main:` in allen `paper-plugin.yml` sowie
 `mainClass` in den `services/*`- und `tools/*`-Builddateien anpassen.
 
 Vor dem Start prüfen (Notiz 07 §9): Marke in DPMAregister und EUIPO eSearch suchen; keine Namen, Texte, Karten oder

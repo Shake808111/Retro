@@ -1,6 +1,6 @@
 # services/controller – Netzwerk-Controller
 
-**Gradle-Pfad:** `:services:controller` · **Paket:** `dev.netzwerk.controller` · **Einstieg:** `ControllerApplication` (Java-Anwendung) · **Status:** Gerüst (Stub)
+**Gradle-Pfad:** `:services:controller` · **Paket:** `net.retromc.controller` · **Einstieg:** `ControllerApplication` (Java-Anwendung) · **Status:** Gerüst (Stub)
 
 ## Verantwortung
 

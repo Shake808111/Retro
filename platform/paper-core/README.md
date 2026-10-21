@@ -1,6 +1,6 @@
 # platform/paper-core – Kern-Plugin für Paper
 
-**Gradle-Pfad:** `:platform:paper-core` · **Paket:** `dev.netzwerk.paper.core` · **Einstieg:** `PaperCorePlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst
+**Gradle-Pfad:** `:platform:paper-core` · **Paket:** `net.retromc.paper.core` · **Einstieg:** `PaperCorePlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst
 
 ## Verantwortung
 

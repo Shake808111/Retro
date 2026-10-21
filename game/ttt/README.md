@@ -1,6 +1,6 @@
 # game/ttt – TTT
 
-**Gradle-Pfad:** `:game:ttt` · **Paket:** `dev.netzwerk.ttt` · **Einstieg:** `TttPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
+**Gradle-Pfad:** `:game:ttt` · **Paket:** `net.retromc.ttt` · **Einstieg:** `TttPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
 
 ## Verantwortung
 

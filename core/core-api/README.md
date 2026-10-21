@@ -1,6 +1,6 @@
 # core/core-api – gemeinsame Typen
 
-**Gradle-Pfad:** `:core:core-api` · **Paket:** `dev.netzwerk.core.api` · **Einstieg:** `BuildInfo` (generiert), `server.ServerState`, `server.ServerInfo`, `social.FriendPair` · **Status:** Gerüst
+**Gradle-Pfad:** `:core:core-api` · **Paket:** `net.retromc.core.api` · **Einstieg:** `BuildInfo` (generiert), `server.ServerState`, `server.ServerInfo`, `social.FriendPair` · **Status:** Gerüst
 
 ## Verantwortung
 

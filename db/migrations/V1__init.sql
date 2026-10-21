@@ -58,7 +58,7 @@ CREATE TABLE core.player_ip (
 -- ---------------------------------------------------------------------
 -- social
 -- ---------------------------------------------------------------------
--- a < b in PostgreSQL-Reihenfolge (byteweise); in Java: dev.netzwerk.core.api.social.FriendPair
+-- a < b in PostgreSQL-Reihenfolge (byteweise); in Java: net.retromc.core.api.social.FriendPair
 CREATE TABLE social.friendship (
     a      UUID,
     b      UUID,
@@ -102,7 +102,7 @@ CREATE TABLE social.clan_member (
 );
 
 -- Partys liegen nur in Valkey: party:{id} HASH, party:{id}:members SET,
--- player:{uuid}:party STRING, TTL bei Inaktivität (siehe dev.netzwerk.core.data.ValkeyKeys).
+-- player:{uuid}:party STRING, TTL bei Inaktivität (siehe net.retromc.core.data.ValkeyKeys).
 
 -- ---------------------------------------------------------------------
 -- stats

@@ -1,6 +1,6 @@
 # game/endergames – EnderGames
 
-**Gradle-Pfad:** `:game:endergames` · **Paket:** `dev.netzwerk.endergames` · **Einstieg:** `EnderGamesPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
+**Gradle-Pfad:** `:game:endergames` · **Paket:** `net.retromc.endergames` · **Einstieg:** `EnderGamesPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
 
 ## Verantwortung
 

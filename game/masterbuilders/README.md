@@ -1,6 +1,6 @@
 # game/masterbuilders – MasterBuilders
 
-**Gradle-Pfad:** `:game:masterbuilders` · **Paket:** `dev.netzwerk.masterbuilders` · **Einstieg:** `MasterBuildersPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
+**Gradle-Pfad:** `:game:masterbuilders` · **Paket:** `net.retromc.masterbuilders` · **Einstieg:** `MasterBuildersPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
 
 ## Verantwortung
 

@@ -81,11 +81,11 @@ deklarieren in `paper-plugin.yml` eine Abhängigkeit auf `<Marke>Core` mit `load
 ## 4. Konventionen
 
 - **Marke:** einzig `brandName` in `gradle.properties`. Daraus entstehen `brandId` (Kleinbuchstaben/Ziffern),
-  die Klasse `dev.netzwerk.core.api.BuildInfo`, Plugin-Namen (`${brandName}Core`, `${brandName}Lobby`,
+  die Klasse `net.retromc.core.api.BuildInfo`, Plugin-Namen (`${brandName}Core`, `${brandName}Lobby`,
   `${brandName}BedWars` …), die Velocity-ID (`<brandId>-core`) und der Platzhalter `<brand>` in Texten.
   Der Build prüft die Zeichen (Paper-Plugin-Namen, Velocity-IDs).
-- **Pakete:** `dev.netzwerk.<modul>`, Bindestriche werden zu Punkten: `core-api` → `dev.netzwerk.core.api`,
-  `paper-core` → `dev.netzwerk.paper.core`, `bedwars` → `dev.netzwerk.bedwars`, `discord-bot` → `dev.netzwerk.discord.bot`.
+- **Pakete:** `net.retromc.<modul>`, Bindestriche werden zu Punkten: `core-api` → `net.retromc.core.api`,
+  `paper-core` → `net.retromc.paper.core`, `bedwars` → `net.retromc.bedwars`, `discord-bot` → `net.retromc.discord.bot`.
 - **Technische Namen** (Datenbank `network`, Docker-Dienste, Umgebungsvariablen `NETWORK_*`) sind markenneutral,
   damit ein Markenwechsel keine Daten- oder Infrastruktur-Änderung braucht.
 - **Konfiguration** der Plugins und Dienste über Umgebungsvariablen: `NETWORK_SERVER_NAME`, `NETWORK_DB_URL`,

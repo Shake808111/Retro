@@ -1,7 +1,7 @@
 # Platzhalter werden beim Build aus gradle.properties ersetzt (siehe build.gradle.kts im Wurzelverzeichnis).
 name: ${brandName}MasterBuilders
 version: '${version}'
-main: dev.netzwerk.masterbuilders.MasterBuildersPlugin
+main: net.retromc.masterbuilders.MasterBuildersPlugin
 description: 'MasterBuilders: Thema wählen, bauen, bewerten'
 api-version: '${paperApiVersion}'
 dependencies:

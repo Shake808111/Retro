@@ -1,6 +1,6 @@
 # core/core-messaging – netzwerkweite Nachrichten
 
-**Gradle-Pfad:** `:core:core-messaging` · **Paket:** `dev.netzwerk.core.messaging` · **Einstieg:** `MessageBus`, `ValkeyMessageBus`, `NetworkChannel` · **Status:** Gerüst
+**Gradle-Pfad:** `:core:core-messaging` · **Paket:** `net.retromc.core.messaging` · **Einstieg:** `MessageBus`, `ValkeyMessageBus`, `NetworkChannel` · **Status:** Gerüst
 
 ## Verantwortung
 

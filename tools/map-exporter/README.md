@@ -1,6 +1,6 @@
 # tools/map-exporter – Karten-Export
 
-**Gradle-Pfad:** `:tools:map-exporter` · **Paket:** `dev.netzwerk.map.exporter` · **Einstieg:** `MapExporterApplication` (Java-Anwendung) · **Status:** Gerüst (Stub)
+**Gradle-Pfad:** `:tools:map-exporter` · **Paket:** `net.retromc.map.exporter` · **Einstieg:** `MapExporterApplication` (Java-Anwendung) · **Status:** Gerüst (Stub)
 
 ## Verantwortung
 

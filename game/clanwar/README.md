@@ -1,6 +1,6 @@
 # game/clanwar – ClanWar
 
-**Gradle-Pfad:** `:game:clanwar` · **Paket:** `dev.netzwerk.clanwar` · **Einstieg:** `ClanWarPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
+**Gradle-Pfad:** `:game:clanwar` · **Paket:** `net.retromc.clanwar` · **Einstieg:** `ClanWarPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
 
 ## Verantwortung
 

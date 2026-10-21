@@ -10,5 +10,5 @@ dependencies {
 }
 
 application {
-    mainClass = "dev.netzwerk.discord.bot.DiscordBotApplication"
+    mainClass = "net.retromc.discord.bot.DiscordBotApplication"
 }

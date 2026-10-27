@@ -4,7 +4,7 @@ Stand 2026-10-21. Quellen: Notiz 02 (komplett, Abk. **N02**), Notiz 16 (BedWars-
 
 **Beleg-Kürzel:** **B** = belegt (Quelle genannt) · **A** = abgeleitet (Schluss aus Belegen) · **AN** = Annahme (frei festgelegt, Konfigwert).
 **Ära-Kürzel:** **E26** = 2025/26 (Standard) · **E24** = 2024 (1.20/1.21 vor Mai-2025-Update) · **E21** = BedWars 2.0 2021–2023 · **E17** = 1.8-Ära (Classic, Option `legacy`).
-**Marke:** Original „GOMMEHD.NET“/„GommeHD.net“ → `{BRAND_UPPER}.NET` (`§f§l`, Scoreboard → `RETROMC.NET`) bzw. `{brand}` (Tab, Map-Zeile). Modusnamen BedWars/SkyWars sind Gattungsnamen und bleiben (i18n-umbenennbar).
+**Marke:** Original „VORBILD.NET“/„Vorbild.net“ → `{BRAND_UPPER}.NET` (`§f§l`, Scoreboard → `RETROMC.NET`) bzw. `{brand}` (Tab, Map-Zeile). Modusnamen BedWars/SkyWars sind Gattungsnamen und bleiben (i18n-umbenennbar).
 **Grundsatz Texte:** Spalte „Standardtext“ in §7 ist **unser** Wortlaut. Rein funktionale Phrasen („Die Runde beginnt in 5 Sekunden“, „X wurde von Y getötet“) sind gleich, markante Texte (Tipps, Lore, Kit-Beschreibungen, Warnungen) sind neu formuliert, Struktur/Farben/Platzhalter identisch.
 
 **Wichtigste Neubefunde dieser Spec (aus Bildern/OCR):**
@@ -693,7 +693,7 @@ Classic (`skywars_classic`): `LEGACY_1_8`, keine Fähigkeiten-Kits (nur Item-Kit
 | `bw.join` | `§7» {rc}{name} §7hat die Runde betreten` | gleich (funktional) | `» X hat die Runde betreten` | b |
 | `bw.quit.lobby` | `§7« {rc}{name} §7hat die Runde verlassen` | gleich | `« X hat die Runde verlassen` | b |
 | `bw.join.online` | `{p}§7Spieler online: §a{cur}/{max}` | gleich | `Spieler online: 8/8` (E24) / ohne „:“ (E25) | b |
-| `bw.join.map` | `{p}§eMap: {map} von {brand}-Buildteam ({builder})` | gleich | `Map: Dragons von GommeHD.net-Buildteam (BitConi)` | b |
+| `bw.join.map` | `{p}§eMap: {map} von {brand}-Buildteam ({builder})` | gleich | `Map: Dragons von Vorbild.net-Buildteam (BitConi)` | b |
 | `bw.tip.armor` | `{p}§7Tipp: Ein Kauf von §eRüstung §7ersetzt nur deinen Brustpanzer` | eigen | „Wenn man die Rüstung verbessert, dann ändert sich nur dein Brustpanzer“ | b |
 | `bw.tip.copper` | `{p}§7Kein Kupfer, aber Eisen übrig? Hol dir §eHolzbretter §7oder §eLeitern§7!` | eigen | „Du hast kein Kupfer, aber 5 Eisen? Dann kauf dir …“ | b (teilw.) |
 | `bw.teaming` | `§cTeaming mit anderen Teams ist hier §4§lVERBOTEN §cund wird gebannt!` | eigen | SkyWars-Text (s. sw.teaming) | a |
@@ -740,7 +740,7 @@ Classic (`skywars_classic`): `LEGACY_1_8`, keine Fähigkeiten-Kits (nur Item-Kit
 | `bw.leaver.transfer` | = `bw.resources.transfer` | – | news #139 | b |
 | `bw.chat.all` | `§7[@all] {clan}{tc}{name}§7: §f{msg}` | gleich | `[@all] [3IX] Dreix31: sicher?` | b |
 | `bw.chat.team` | `{clan}{tc}{name}§7: §f{msg}` | gleich | Teamchat ohne Präfix | a |
-| `bw.chat.dead` | `§7[§c✗§7] {clan}§7{name}§7: §f{msg}` | gleich | `[✗] [GOMME] GommeHD: gg` | b |
+| `bw.chat.dead` | `§7[§c✗§7] {clan}§7{name}§7: §f{msg}` | gleich | `[✗] [CLAN] Vorbild: gg` | b |
 | `bw.forcemap` / `game.start.*` | s. §3 | eigen | – | A |
 | `bw.round.header` … | Rundenblock Spec 02 `round.*` | – | `-= Statistiken dieser Runde =-` | b |
 
@@ -753,11 +753,11 @@ Classic (`skywars_classic`): `LEGACY_1_8`, keine Fähigkeiten-Kits (nur Item-Kit
 | `sw.tip.shield` | `{p}§7Mit einer Axt kannst du gegnerische Schilde zerbrechen` | eigen | `Schilde können mit Äxten zerstört werden` | b |
 | `sw.tip.xp` | `{p}§7Kills, Siege, Spielzeit und Challenges bringen dir Erfahrung für dein Level` | eigen | `Kills, Gewonnene Spiele, Spielzeit und Challenges geben dir Erfahrungspunkte, um im Level aufzusteigen` | b |
 | `sw.join.online` | `{p}§7Spieler online: §b{cur}/{max}` | gleich | `Spieler online: 16/16` | b |
-| `sw.join.map` | `{p}§eMap: {map} von {brand} Buildteam ({builder})` | gleich | `Map: Maya von GommeHD.net Buildteam (DerAutist)` | b |
+| `sw.join.map` | `{p}§eMap: {map} von {brand} Buildteam ({builder})` | gleich | `Map: Maya von Vorbild.net Buildteam (DerAutist)` | b |
 | `sw.countdown` | `{p}§7Die Runde beginnt in §e{n} §7Sekunde(n)` | gleich | dito | b |
 | `sw.team.joined` | `{p}§7Du bist jetzt in §fTeam #{n}§7.` | eigen | `Du wurdest zu Team #<n> hinzugefügt` | b |
 | `sw.teleported` | `{p}§7Alle Spieler wurden zu ihren Inseln teleportiert` | gleich | dito (E17: „auf ihre Insel“) | b |
-| `sw.kit.announce` | `{p}§7{name} nutzt das §e[{kit}]§7-Kit` | gleich | `GommeHD nutzt das [Engel]-Kit` | b |
+| `sw.kit.announce` | `{p}§7{name} nutzt das §e[{kit}]§7-Kit` | gleich | `Vorbild nutzt das [Engel]-Kit` | b |
 | `sw.kit.selected` | `{p}§7Du hast das Kit §a{kit} §7gewählt` | eigen | `Du hast das Kit <Kit> ausgewählt` | b |
 | `sw.kit.bought` | `{p}§aDu hast das Kit §e{kit} §afür §e{price} Coins §agekauft` | eigen | – | A |
 | `sw.kit.nocoins` | `{p}§cDir fehlen §e{n} Coins§c für dieses Kit` | eigen | – | A |
@@ -870,7 +870,7 @@ Messaging: `net:server-state` `SERVER_STATE` (Felder §2.2, Spec 08), `net:game`
 16. Chestrefill-Event füllt alle Container neu und meldet `Globales Event: Chestrefill (Stufe 1)`.
 
 **Allgemein**
-17. Kein String „GommeHD“/„GOMMEHD“ in Code/Ressourcen (grep = 0).
+17. Kein String der Name des Vorbilds in Code/Ressourcen (grep = 0).
 18. Alle Keys aus Abschnitt 7 existieren in `de_DE` und `en_US`.
 
 **Unit-Test-Ideen**

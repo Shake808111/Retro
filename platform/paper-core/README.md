@@ -14,10 +14,10 @@ InventoryFramework (GUIs), Incendo Cloud (Befehle), PacketEvents (Pakete) – Ve
 Lokal testen: `./gradlew :platform:paper-core:runServer` (lädt Paper 26.3; die Minecraft-EULA muss in `run/eula.txt`
 selbst akzeptiert werden).
 
-## Welches GommeHD-Feature wird nachgebaut?
+## Welches Vorbild-Feature wird nachgebaut?
 
 Die netzwerkweite Oberfläche auf allen Servern: Scoreboard, Tablist, Chat-Präfixe, Bossbar, Einstellungen
-(Notiz 05, Abschnitt 6 – exakte GommeHD-Layouts sind dort als nicht verifiziert markiert, LÜCKE),
+(Notiz 05, Abschnitt 6 – exakte Vorbild-Layouts sind dort als nicht verifiziert markiert, LÜCKE),
 Cosmetics (Notiz 05, Abschnitt 5) und 1.8-Kampf über austauschbare Kampfprofile (Notiz 07, Abschnitt 1).
 
-Quellen: `research_notes/GommeHD Analyse und Nachbau/`.
+Quellen: `research_notes/`.

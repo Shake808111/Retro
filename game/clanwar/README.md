@@ -6,7 +6,7 @@
 
 Paper-Plugin für den Modus ClanWar (ClanWar: Clan gegen Clan). Baut auf `game/game-framework` auf (Rundenablauf, Teams, Karten, Zuschauer, Kits, Shops, Statistik-Senke) und läuft zusammen mit `platform/paper-core` auf einem Spielserver; laut Notiz 07 (Abschnitt 3) eine Runde pro Server/Pod.
 
-## Welches GommeHD-Feature wird nachgebaut?
+## Welches Vorbild-Feature wird nachgebaut?
 
 Notiz 03, Abschnitt 13:
 - Start im Spiel mit **`/cw <Spieler> <Spiel>`** zwischen Partys aus Mitgliedern jeweils eines Clans;
@@ -22,5 +22,5 @@ in `db/migrations/V1__init.sql`.
 `LEGACY_1_8` nach Notiz 07, Abschnitt 1.
 
 
-Quellen: `research_notes/GommeHD Analyse und Nachbau/` (Notiz-Nummern wie angegeben). Keine Namen, Texte,
-Karten oder Grafiken von GommeHD übernehmen (Notiz 07, Abschnitt 9 B).
+Quellen: `research_notes/` (Notiz-Nummern wie angegeben). Keine Namen, Texte,
+Karten oder Grafiken vom Vorbild übernehmen (Notiz 07, Abschnitt 9 B).

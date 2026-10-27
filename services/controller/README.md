@@ -10,10 +10,10 @@ Eigenständiger Dienst (Notiz 07, Abschnitt 3):
 - weist Velocity an, Spieler zu verbinden;
 - führt die Datenbank-Migrationen aus: `./gradlew :services:controller:run --args=migrate`.
 
-## Welches GommeHD-Feature wird nachgebaut?
+## Welches Vorbild-Feature wird nachgebaut?
 
-Spielersicht: das NPC-Joinsystem der Lobby („Rechtsklick tritt der nächsten Runde bei“, Notiz 05, Abschnitt 1) braucht im Hintergrund diese Queue. **LÜCKE:** GommeHDs eigene Orchestrierung ist nicht öffentlich dokumentiert (Notiz 07, Abschnitt 3, Gaps); schließen ließe sie sich nur über Aussagen des GommeHD-Teams.
+Spielersicht: das NPC-Joinsystem der Lobby („Rechtsklick tritt der nächsten Runde bei“, Notiz 05, Abschnitt 1) braucht im Hintergrund diese Queue. **LÜCKE:** Vorbild-eigene Orchestrierung ist nicht öffentlich dokumentiert (Notiz 07, Abschnitt 3, Gaps); schließen ließe sie sich nur über Aussagen des Vorbild-Teams.
 
 
-Quellen: `research_notes/GommeHD Analyse und Nachbau/` (Notiz-Nummern wie angegeben). Keine Namen, Texte,
-Karten oder Grafiken von GommeHD übernehmen (Notiz 07, Abschnitt 9 B).
+Quellen: `research_notes/` (Notiz-Nummern wie angegeben). Keine Namen, Texte,
+Karten oder Grafiken vom Vorbild übernehmen (Notiz 07, Abschnitt 9 B).

@@ -1,7 +1,7 @@
 # Architektur
 
 Dieses Dokument beschreibt das Projektgerüst. Grundlage sind die Recherche-Notizen unter
-`/home/user/research_notes/GommeHD Analyse und Nachbau/`, vor allem **Notiz 07** (Technik-Stack, Recht) und
+`research_notes/`, vor allem **Notiz 07** (Technik-Stack, Recht) und
 **Notiz 05** (netzwerkweite Systeme und UI). Verweise wie „Notiz 07 §4“ meinen Abschnitt 4 dieser Notiz.
 Geprüfte Versionen: [`VERSIONEN.md`](VERSIONEN.md).
 
@@ -17,7 +17,7 @@ Geprüfte Versionen: [`VERSIONEN.md`](VERSIONEN.md).
 | Wiederverwenden | LuckPerms, Adventure/MiniMessage, PacketEvents, Cloud, FastBoard, InventoryFramework, Grim, OCM, PlotSquared + FAWE, Geyser/Floodgate | Notiz 07 §5 |
 | Selbst bauen | Spielmodi auf gemeinsamem `game-framework`, Netzwerksysteme (Freunde, Party, Clan, Moderation) | Notiz 07 §5 |
 | Build | Gradle (Kotlin DSL), Versionskatalog, Java-25-Toolchain, run-paper/run-velocity, GitHub Actions, itzg-Images für Dev/Test | Notiz 07 §6 |
-| Recht | eigene Marke, keine GommeHD-Namen/Texte/Karten/Grafiken; nur kosmetische Käufe | Notiz 07 §9 |
+| Recht | eigene Marke, keine Vorbild-Namen/Texte/Karten/Grafiken; nur kosmetische Käufe | Notiz 07 §9 |
 
 ## 2. Laufzeit-Topologie (Entwicklungsumgebung)
 
@@ -125,9 +125,9 @@ deklarieren in `paper-plugin.yml` eine Abhängigkeit auf `<Marke>Core` mit `load
 | Spielmodi `bedwars/ skywars/ survivalgames/ cores/ ttt/ gungame/ endergames/ masterbuilders/ clanwar/` | unverändert übernommen | – |
 
 Hinweise zur Modusliste:
-- **Bei GommeHD am 07.06.2024 abgeschaltet** (nur noch private Runden): SurvivalGames/QuickSG, Cores, EnderGames
+- **Beim Vorbild am 07.06.2024 abgeschaltet** (nur noch private Runden): SurvivalGames/QuickSG, Cores, EnderGames
   (Notiz 02 Q6, Notiz 03 §1). Sie stehen trotzdem im Layout von Notiz 07.
-- **Bei GommeHD aktiv, aber nicht im Layout von Notiz 07** (Notiz 03 §1): Duels/Game1vs1, ItemChaos, PartyGames,
+- **Beim Vorbild aktiv, aber nicht im Layout von Notiz 07** (Notiz 03 §1): Duels/Game1vs1, ItemChaos, PartyGames,
   MoneyMaker, SMP, JumpLeague, BuildFFA, FFA Hardcore, SkillTraining. Bei Bedarf als `game/<modus>` nach dem Muster
   der vorhandenen Modi ergänzen (Eintrag in `settings.gradle.kts`).
 - **Moderation/Strafen** ist kein eigenes Modul: Durchsetzung beim Login in `velocity-core`, Entbannungsanträge in
@@ -143,7 +143,7 @@ Hinweise zur Modusliste:
 | 4 | Velocity-3.x→4.0-API-Änderungen sind nicht dokumentiert (Notiz 07 §1, Gaps); der Stub kompiliert gegen 4.3.0 | PaperMC-Doku bzw. Velocity-Commits ab 4.0.0 lesen, sobald Proxy-Funktionen gebaut werden |
 | 5 | Migration nur gegen PostgreSQL 16.15 getestet, Compose nutzt 18.6 | erster Lauf des Dienstes `migrate` in der Dev-Umgebung |
 | 6 | MockBukkit-Unterstützung für Paper 26.3 unverifiziert (Notiz 07 §6, Gaps) → bisher keine Plugin-Unit-Tests | Maven-Metadaten von MockBukkit prüfen, dann Testabhängigkeit ergänzen |
-| 7 | Kampfprofile der Modi sind vorläufig (`LEGACY_1_8` laut Notiz 07 §1; GommeHD selbst: BedWars 2.0 modern, Classic 1.8 – Notiz 02 Q1/Q8; TTT/MasterBuilders ohne Festlegung) | Entscheidung pro Modusvariante |
+| 7 | Kampfprofile der Modi sind vorläufig (`LEGACY_1_8` laut Notiz 07 §1; Vorbild selbst: BedWars 2.0 modern, Classic 1.8 – Notiz 02 Q1/Q8; TTT/MasterBuilders ohne Festlegung) | Entscheidung pro Modusvariante |
 | 8 | Server-Plugins (LuckPerms, Geyser/Floodgate, Via*, Grim, OCM, PlotSquared/FAWE) sind noch nicht eingebunden; Versionen nicht geprüft | beim jeweiligen Meilenstein über Modrinth/Hangar/GitHub-Releases prüfen |
 | 9 | Kubernetes/Agones, Produktiv-Images (`eclipse-temurin:25-jre`), Renovate fehlen | eigener Meilenstein „Betrieb“ |
-| 10 | Exakte GommeHD-UI (Scoreboard, Tablist, MOTD, Hotbar-Slots) ist laut Notiz 05 §6 nicht verifiziert | nur zur Orientierung nötig; eigenes Design entwerfen |
+| 10 | Exakte Vorbild-UI (Scoreboard, Tablist, MOTD, Hotbar-Slots) ist laut Notiz 05 §6 nicht verifiziert | nur zur Orientierung nötig; eigenes Design entwerfen |

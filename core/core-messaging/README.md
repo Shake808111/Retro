@@ -8,9 +8,9 @@ Nachrichten zwischen Velocity, Paper-Servern und Diensten über Valkey Pub/Sub (
 Kanäle laut Notiz: `net:chat`, `net:social`, `net:moderation`, `net:queue`, `net:server-state`.
 Für Ereignisse, die nicht verloren gehen dürfen, sieht die Notiz Valkey Streams vor; NATS JetStream ist die Alternative.
 
-## Welches GommeHD-Feature wird nachgebaut?
+## Welches Vorbild-Feature wird nachgebaut?
 
-Die serverübergreifenden Funktionen, die bei GommeHD proxyweit arbeiten: Freunde, Party, Clan, private Nachrichten
+Die serverübergreifenden Funktionen, die beim Vorbild proxyweit arbeiten: Freunde, Party, Clan, private Nachrichten
 (Notiz 05, Abschnitte 3 und 7, z. B. `/friend`, `/party`, `/msg`), außerdem Meldungen an das Team (`/report`, Notiz 06, Abschnitt 2).
 
-Quellen: `research_notes/GommeHD Analyse und Nachbau/`.
+Quellen: `research_notes/`.

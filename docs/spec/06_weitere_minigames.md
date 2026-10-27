@@ -172,7 +172,7 @@ Anzahl: **26** Befehlszeilen (32 Befehle inkl. Unterbefehle und Aliase-Varianten
 
 | Element | Format | Ära | Beleg |
 |---|---|---|---|
-| Scoreboard-Titel | `§f§l{BRAND_UPPER}.NET` (fett, weiß; Original `GOMMEHD.NET`) | 20+/26 | B |
+| Scoreboard-Titel | `§f§l{BRAND_UPPER}.NET` (fett, weiß; Original `VORBILD.NET`) | 20+/26 | B |
 | Scoreboard-Muster | Label `§f` in eigener Zeile, Wert `§e`/`§a`/`§6` in nächster Zeile, Leerzeile zwischen Blöcken; rote Zeilennummern rechts (Vanilla-Score `§c`) – AN: Nummern per `numberFormat blank` ausblenden ist **nicht** Original; Original zeigt sie → Default: anzeigen | 20+ | B |
 | Labels mit Doppelpunkt | 26-Ära teils `Level:`, `Map:`, `Feld:`, `Rang:`; 20+ ohne Doppelpunkt | 26 vs 20+ | B (Widerspruch → Default 26 mit Doppelpunkt, Konfig `scoreboard.colon`) |
 | Chat-Präfix | `§f[§<c><Modus>§f] §7<Text>` (Spec 02 `prefix.mode`) | alle | B (Klammerfarbe nach Spec 02 §10 #4) |
@@ -643,7 +643,7 @@ Spalte „Original-Referenz“ = belegter Original-Wortlaut (gekürzt) oder `–
 | common.join | `§8» {name} §7hat die Runde betreten` | wie Format | „» X hat die Runde betreten“ | belegt |
 | common.quit | `§8« {name} §7hat die Runde verlassen` | wie Format | „« X hat die Runde verlassen“ | belegt |
 | common.online | `{p}§7Spieler online §b{n}/{max}` | wie Format | gleich | belegt |
-| common.map | `{p}§7Map: §a{map} §7von §e{brand}-Buildteam §7(§e{builders}§7)` | wie Format | „…von GommeHD.net-Buildteam (…)“ | belegt |
+| common.map | `{p}§7Map: §a{map} §7von §e{brand}-Buildteam §7(§e{builders}§7)` | wie Format | „…von Vorbild.net-Buildteam (…)“ | belegt |
 | common.countdown | `{p}§7Die Runde beginnt in §e{n} §7{Sekunden\|Sekunde}` | funktional gleich | gleich | belegt |
 | common.restart | `{p}§cDer Server startet in §e{n} §cSekunden neu` | wie Format | gleich | belegt |
 | common.spectator | `{p}§7Du bist nun Zuschauer!` | wie Format | gleich | belegt |
@@ -897,7 +897,7 @@ Anzahl: **144** Meldungs-Keys (7.1: 22, 7.2: 51, 7.3: 22, 7.4: 7, 7.5: 42).
 - Unit-Tests: `RoleDistributionTest`, `KarmaTest`, `ModifierTokenTest`, `ItemIntervalTest` (10 s → min 3 s).
 
 ### 9.6 Allgemein
-1. Kein Text enthält „Gomme“ oder „GommeHD“ (Test über alle `messages_*.properties`).
+1. Kein Text enthält den Namen des Vorbilds (Test über alle `messages_*.properties`).
 2. Alle Keys aus Abschnitt 7 existieren in `messages_de.properties`, alle `{platzhalter}` werden ersetzt (Test mit Dummy-Werten, kein `{` im Ergebnis).
 3. Jede GUI aus Abschnitt 5 hat Titel, Reihenzahl und keine klickbaren Rahmenslots (MockBukkit-Test).
 

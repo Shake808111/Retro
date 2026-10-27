@@ -5,7 +5,7 @@ Geplant laut Notiz 07, Abschnitt 7: **Next.js** (App Router, SSR/ISR) als eigene
 Entbannung (`/entbannung`), Impressum, Datenschutz, AGB/Shop-Bedingungen, Statusseite.
 Analytics nur cookielos und selbst gehostet; Schriften selbst hosten (Notiz 07, Abschnitt 9 E).
 
-Vorbild: GommeHD-Website mit News-Feed und XenForo-artigem Forum (Notiz 06, Abschnitt 4) sowie Statusseite
-(Notiz 06, Abschnitt 6). Ob und wie GommeHD Spielerstatistiken auf der Website zeigt, ist in den Notizen nicht
+Vorbild: Vorbild-Website mit News-Feed und XenForo-artigem Forum (Notiz 06, Abschnitt 4) sowie Statusseite
+(Notiz 06, Abschnitt 6). Ob und wie Vorbild Spielerstatistiken auf der Website zeigt, ist in den Notizen nicht
 belegt (LÜCKE; schließbar über Wayback-Machine-Aufnahmen der Website).
 Das Framework wird erst beim Start der Web-Arbeit eingerichtet (Node-Versionen dann neu prüfen).

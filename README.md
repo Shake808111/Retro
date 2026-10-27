@@ -1,9 +1,9 @@
 # RetroMC – Projektgerüst
 
-Eigenes Minecraft-Netzwerk (Lobby, Minispiele, CityBuild) nach dem Vorbild der Spielmodi und Systeme von GommeHD.net,
+Eigenes Minecraft-Netzwerk (Lobby, Minispiele, CityBuild) nach dem Vorbild der Spielmodi und Systeme von Vorbild.net,
 **unter eigener Marke** und mit eigenem Code. Die Marke heißt „RetroMC“ (siehe [Marke umbenennen](#marke-umbenennen)).
 
-Grundlage sind die Recherche-Notizen in `/home/user/research_notes/GommeHD Analyse und Nachbau/` (01–07).
+Grundlage sind die Recherche-Notizen in `research_notes/` (01–07).
 Architektur: [`docs/ARCHITEKTUR.md`](docs/ARCHITEKTUR.md) · Geprüfte Versionen und Build-Protokoll: [`docs/VERSIONEN.md`](docs/VERSIONEN.md).
 
 **Stand:** Gerüst. Alle Module kompilieren, 16 Unit-Tests laufen grün, die Datenbank-Migration wurde gegen PostgreSQL getestet.
@@ -52,7 +52,7 @@ netzwerk/
 └── .github/workflows/build.yml CI
 ```
 
-Jedes Modul hat eine eigene `README.md` mit Verantwortung und dem GommeHD-Feature, das es nachbaut (mit Quellenangabe).
+Jedes Modul hat eine eigene `README.md` mit Verantwortung und dem Vorbild-Feature, das es nachbaut (mit Quellenangabe).
 
 ## Bauen
 
@@ -109,7 +109,7 @@ Optional, nur falls auch die Java-Pakete umbenannt werden sollen: `group` in `gr
 `mainClass` in den `services/*`- und `tools/*`-Builddateien anpassen.
 
 Vor dem Start prüfen (Notiz 07 §9): Marke in DPMAregister und EUIPO eSearch suchen; keine Namen, Texte, Karten oder
-Grafiken von GommeHD übernehmen.
+Grafiken vom Vorbild übernehmen.
 
 ## „Start“-Ablauf
 

@@ -18,6 +18,7 @@ Stand: **2026-10-20**. Jede Version unten wurde an diesem Tag direkt im Reposito
 
 | Artefakt | Version | Datum | Bemerkung |
 |---|---|---|---|
+| `net.kyori:adventure-bom` (+ `adventure-text-minimessage`, `-serializer-legacy`, `-serializer-plain`) | `5.2.0` | 2026-06-27 | geprüft 2026-10-26: `maven-metadata.xml` `<release>5.2.0</release>`. Genau die BOM-Version, die `paper-api 26.3.build.206-stable` und `velocity-api 4.3.0` importieren (POM `dependencyManagement`). In `core-i18n` nur `compileOnly` + Tests; Paper/Velocity liefern Adventure zur Laufzeit |
 | `com.zaxxer:HikariCP` | `7.1.0` | 2026-06-14 | neueste Version |
 | `org.postgresql:postgresql` | `42.7.14` | 2026-10-07 | neueste Version |
 | `org.flywaydb:flyway-core` | `13.10.3` | 2026-10-15 | neueste Version |

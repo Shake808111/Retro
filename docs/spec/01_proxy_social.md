@@ -2,7 +2,7 @@
 
 Stand 2026-10-21 · Bereich: Velocity-Core, Ränge, Freunde, Party, Clan, PN, Global-Chat, Report, Strafen, Nick, Sprache, Einstellungen, AFK, Wartung, Anti-Spam.
 
-**Kürzel Belege:** N05/N15/N16/N17/N08 = Notizen `research_notes/NN_*.md` · V = Video-Sweep (`scratchpad/sweep/batch2_*.md`, `thumbs.md`) · OCR = `sweep/review/*.md` · B1 = Bild Partymenü (tw_dreix31_clip_20250603_3365521103 t26s) · B2 = Bild Nick-Menü (tw_gommehd_clip_20260728_1361148519 t0s).
+**Kürzel Belege:** N05/N15/N16/N17/N08 = Notizen `research_notes/NN_*.md` · V = Video-Sweep (`scratchpad/sweep/batch2_*.md`, `thumbs.md`) · OCR = `sweep/review/*.md` · B1 = Bild Partymenü (tw_dreix31_clip_20250603_3365521103 t26s) · B2 = Bild Nick-Menü (tw_vorbild_clip_20260728_1361148519 t0s).
 **Beleg-Stufen:** *belegt* (Code/Text/lesbarer Frame) · *abgeleitet* (aus Belegen geschlossen) · *Annahme* (festgelegt, unbelegt).
 **Ära:** **26** = Standard (2025/26, 1.21-Lobby) · **20+** = 2023–Anfang 2026 · **18** = 1.8-Ära (Option `legacyStyle`).
 **Textregel:** Formate mit §-Codes; Umsetzung in `core-i18n` als MiniMessage (`§7`→`<gray>` …, `{x}`→`<x>`). Spalte „Standardtext“ = eigene Formulierung; Original nur als Referenz.

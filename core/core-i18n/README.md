@@ -39,15 +39,8 @@ Neu laden (`/netreload`): `Messages.reload(verzeichnis)` legt gleichnamige Datei
 
 ## Welches Vorbild-Feature wird nachgebaut?
 
-<<<<<<< HEAD
 Die Sprachwahl über `/language` mit Deutsch, Englisch und den Dialekten (Notiz 05, Abschnitt 7; Spec 01 §6.14).
 Alle Texte sind eigene Formulierungen nach Spalte „Standardtext“ der Specs; Originaltexte werden nicht ausgeliefert.
 
 Quellen: `docs/spec/01_proxy_social.md` §7, `docs/spec/02_core_ui_stats.md` §6.8/§6.13/§7,
 `docs/spec/08_infrastruktur_dienste.md` §7.
-=======
-Die Sprachwahl Deutsch/Englisch, beim Vorbild über `/language` (Notiz 05, Abschnitt 7).
-Alle Texte sind eigene Formulierungen; Vorbild-Texte werden nicht übernommen (Notiz 07, Abschnitt 9 B).
-
-Quellen: `research_notes/`.
->>>>>>> main

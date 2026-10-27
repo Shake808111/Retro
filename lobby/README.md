@@ -6,7 +6,7 @@
 
 Paper-Plugin für Lobby-Server: Navigator, NPC-Joinsystem, Hologramme, tägliche Belohnung, Jump & Run (Aufteilung nach Notiz 07, Abschnitt 6). Läuft zusammen mit `platform/paper-core`; NPCs/Hologramme laut Notiz 07, Abschnitt 5 über FancyNpcs bzw. eigene `TextDisplay`-Schicht.
 
-## Welches GommeHD-Feature wird nachgebaut?
+## Welches Vorbild-Feature wird nachgebaut?
 
 Notiz 05, Abschnitt 1 (Stand Oktober 2026):
 - komplett neu gebaute 1.21-Lobby mit **NPC-basiertem Joinsystem** statt Join-Schildern:
@@ -18,5 +18,5 @@ Notiz 05, Abschnitt 1 (Stand Oktober 2026):
 Exakte Slot-Belegung, Texte und Layouts sind laut Notiz 05 nicht verifiziert (LÜCKE).
 
 
-Quellen: `research_notes/GommeHD Analyse und Nachbau/` (Notiz-Nummern wie angegeben). Keine Namen, Texte,
-Karten oder Grafiken von GommeHD übernehmen (Notiz 07, Abschnitt 9 B).
+Quellen: `research_notes/` (Notiz-Nummern wie angegeben). Keine Namen, Texte,
+Karten oder Grafiken vom Vorbild übernehmen (Notiz 07, Abschnitt 9 B).

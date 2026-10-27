@@ -12,9 +12,9 @@ Bibliothek, die in jedes Modus-Plugin eingebettet wird (Notiz 07, Abschnitt 5 â€
 - Statistik-Senke (Tabellen `stats.match`, `stats.match_player`, `stats.total`, `stats.monthly`), Anticheat-Hook;
 - Kampfprofil (`CombatProfile`) als austauschbare Schnittstelle (Notiz 07, Abschnitt 1).
 
-## Welches GommeHD-Feature wird nachgebaut?
+## Welches Vorbild-Feature wird nachgebaut?
 
 Kein einzelnes Feature: die gemeinsame Mechanik hinter allen Rundenmodi (Wartelobby, Teamwahl, Map-Voting,
 Zuschauer, Belohnungen; vgl. Notiz 02, Q4 und Q7, sowie Notiz 03, Abschnitte 14 und 15).
 
-Quellen: `research_notes/GommeHD Analyse und Nachbau/`.
+Quellen: `research_notes/`.

@@ -17,10 +17,10 @@ Zugriff auf die beiden Datenspeicher aus Notiz 07, Abschnitt 4:
 Geplant (Notiz 07, Abschnitt 4): jOOQ oder JDBI für Repositories, Caffeine als lokaler Cache,
 Caching-Regel „Profil beim Login laden, Wirtschaft write-through, Statistik write-behind“.
 
-## Welches GommeHD-Feature wird nachgebaut?
+## Welches Vorbild-Feature wird nachgebaut?
 
 Die Persistenz hinter Profilen, Statistiken und Coins (Notiz 05, Abschnitt 4: netzwerkweite Währung „Coins“,
-Level, Statistik-Reset). Wie GommeHD selbst speichert, ist nur teilweise bekannt (Cassandra und MySQL im
+Level, Statistik-Reset). Wie Vorbild selbst speichert, ist nur teilweise bekannt (Cassandra und MySQL im
 Web-Backend laut Notiz 06; Spielserver-Seite: LÜCKE).
 
-Quellen: `research_notes/GommeHD Analyse und Nachbau/`.
+Quellen: `research_notes/`.

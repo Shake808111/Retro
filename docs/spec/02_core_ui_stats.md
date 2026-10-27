@@ -420,20 +420,20 @@ Spalte „Orig.“ = Original-Wortlaut als Referenz (nicht übernehmen, wo eigen
 | `chat.channel.spectator` | `§7[OFF] ` | – | `[OFF]` | b |
 | `chat.gg` | `§7§k--§r {color}{text} §7§k--` | – | dito | b |
 | `chat.join` / `chat.quit` / `game.countdown` / `game.countdown.one` / `game.restart` | → **Spec 03 §7.2** (`common.join`, `common.quit`, `common.countdown`, `common.countdown.one`, `common.restart`) – hier nicht mehr definiert | – | – | b |
-| `tab.header.mode` | `§e{brand}.net {modeColor}{serverDisplay}` | – | `GommeHD.net BedWars` | b |
+| `tab.header.mode` | `§e{brand}.net {modeColor}{serverDisplay}` | – | `Vorbild.net BedWars` | b |
 | `tab.header.report` | `§7Regelverstoß gesehen? §c/report §7<Spieler>` | eigen | `Du möchtest einen Spieler melden? /report <Spieler>` | b |
 | `tab.footer.1` | `§7Lade Freunde ein, starte Partys oder gründe` | eigen | `Füge deine Freunde hinzu, erstelle Partys oder gründe` | b |
 | `tab.footer.2` | `§7deinen eigenen Clan: §a/friend§7, §d/party §7und §e/clan` | eigen | `deinen eigenen Clan mit: /friend, /party und /clan` | b |
 | `tab.footer.server` | `§7Du bist auf Server §e{server}` | funktional | gleich | b |
 | `tab.entry.rank` | `{color}{prefix} §7| ` | – | `Suprem \| ` | b |
-| `tab.entry.clan` | ` §7[§e{tag}§7]` | – | `[GOMME]` | b |
+| `tab.entry.clan` | ` §7[§e{tag}§7]` | – | `[CLAN]` | b |
 | `tab.entry.team` | `{teamColor}{team} §7| §f{name}` | – | `Grün \| Name` | b |
-| `sb.title` | `§f§l{BRAND_UPPER}.NET` | `RETROMC.NET` | `GOMMEHD.NET` | b |
+| `sb.title` | `§f§l{BRAND_UPPER}.NET` | `RETROMC.NET` | `VORBILD.NET` | b |
 | `sb.label.rank` / `.playtime` / `.coins` / `.gold` / `.clan` / `.friends` | `§f{label}` | `Rang`/`Spielzeit`/`Coins`/`Gold`/`Clan`/`Freunde` | gleich | b |
 | `sb.value.rank` | `{rankColor}{rankName}` | – | `Administrator` | b |
 | `sb.value.playtime` | `§6{n} Stunden` / `§6{n} Stunde` | – | `455 Stunden` | b |
 | `sb.value.coins` / `.gold` | `§e{n}` / `§6{n}` | – | dito | b |
-| `sb.value.clan` | `§b{online}§7/{total} §7[§b{tag}§7]` | – | `7/29 [GOMME]` | b |
+| `sb.value.clan` | `§b{online}§7/{total} §7[§b{tag}§7]` | – | `7/29 [CLAN]` | b |
 | `sb.value.no-clan` | `§7-` | – | – | A |
 | `sb.value.friends` | `§a{online}§7/{total}` | – | `2/75` | b |
 | `stats.header` | `§7-= §eStatistiken von §6{name} §7({period}) =-` | funktional | gleich | b |

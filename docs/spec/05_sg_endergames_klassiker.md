@@ -4,7 +4,7 @@ Stand 2026-10-21. Quellen: Notiz 14 (komplett), Notiz 02 Q6–Q9 (SG-Teile), Not
 
 **Beleg-Kürzel:** **B** = belegt (Quelle genannt) · **A** = abgeleitet (Schluss aus Belegen) · **AN** = Annahme (frei festgelegt, Konfigwert).
 **Ära-Kürzel:** **E26** = 2025/26 (Standard) · **E23** = 2023/24 (SG-Testphase, TTT 1.20) · **E19** = 2019–2021 · **E17** = 1.8-Ära 2014–2018 (Option „legacy“).
-**Marke:** Wo das Original „GOMMEHD.NET“ zeigt, steht `{BRAND_UPPER}.NET` (aus `brandName`, Großbuchstaben, `§f§l` → `RETROMC.NET`). Modusnamen (SurvivalGames, EnderGames, TTT, Cores, MasterBuilders, ClanWar) sind Gattungsnamen und bleiben, über i18n umbenennbar.
+**Marke:** Wo das Original „VORBILD.NET“ zeigt, steht `{BRAND_UPPER}.NET` (aus `brandName`, Großbuchstaben, `§f§l` → `RETROMC.NET`). Modusnamen (SurvivalGames, EnderGames, TTT, Cores, MasterBuilders, ClanWar) sind Gattungsnamen und bleiben, über i18n umbenennbar.
 
 **Wichtigster Neubefund dieser Spec:** EnderGames lief **2026 wieder** (Twitch-Clip 2026-07-28, [Bild] t0/t8/t48): 24 Spieler, Schutzzeit, danach „Deathmatch in 30:00“, Schneegolem-„Switcher“-Meldung, Kit-Zeile. SG lief Jan/Feb 2025 (Clips 2025-01-28, 2025-02-24). Für beide Modi ist damit eine E26-Ausprägung belegt.
 
@@ -825,7 +825,7 @@ Präfixe (Key `prefix.<modus>`): Klammern `§f[`…`§f]` (einheitlich nach Spec
 
 **Allgemein**
 1. Jedes Modus-Plugin startet auf Paper 26.3/Java 25 mit `${brandName}Core`, durchläuft WAITING→STARTING→INGAME→ENDING und stoppt den Server nach Restart-Countdown 20 s + 3 s (Spec 03 §6.10).
-2. Alle Texte kommen aus core-i18n; `grep` nach „GommeHD“/„GOMMEHD“ im Quellcode und in Ressourcen = 0 Treffer.
+2. Alle Texte kommen aus core-i18n; `grep` nach der Name des Vorbilds im Quellcode und in Ressourcen = 0 Treffer.
 3. Sidebar entspricht Zeile für Zeile Abschnitt 4 (Screenshot-Vergleich mit Referenzbildern; Farben exakt).
 4. Statistiken landen am Rundenende in `stats.match`, `stats.match_player`, `stats.daily`, `stats.alltime` (Integrationstest mit Testcontainers-PostgreSQL).
 

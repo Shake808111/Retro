@@ -6,9 +6,9 @@
 
 Paper-Plugin für den Modus TTT (TTT: Innocent, Detective, Traitor). Baut auf `game/game-framework` auf (Rundenablauf, Teams, Karten, Zuschauer, Kits, Shops, Statistik-Senke) und läuft zusammen mit `platform/paper-core` auf einem Spielserver; laut Notiz 07 (Abschnitt 3) eine Runde pro Server/Pod.
 
-## Welches GommeHD-Feature wird nachgebaut?
+## Welches Vorbild-Feature wird nachgebaut?
 
-Notiz 03, Abschnitt 2: GommeHDs TTT („Trouble in Minecraft“) ist ein Klon des Garry's-Mod-Modus:
+Notiz 03, Abschnitt 2: Vorbild-TTT („Trouble in Minecraft“) ist ein Klon des Garry's-Mod-Modus:
 - Runden mit 12 Spielern (eine 24er-Variante wird erwähnt); Rollen Innocent, Detective und Traitor
   werden ca. 30 s nach dem Start verteilt;
 - Rundendauer 10 Minuten, bei Zeitablauf gewinnen die Innocents;
@@ -23,5 +23,5 @@ Rechtlicher Hinweis (Notiz 07, Abschnitt 9 B): „TTT“ stammt aus Garry's Mod 
 `MODERN` ist **vorläufig**: Notiz 07 legt für TTT kein Kampfprofil fest.
 
 
-Quellen: `research_notes/GommeHD Analyse und Nachbau/` (Notiz-Nummern wie angegeben). Keine Namen, Texte,
-Karten oder Grafiken von GommeHD übernehmen (Notiz 07, Abschnitt 9 B).
+Quellen: `research_notes/` (Notiz-Nummern wie angegeben). Keine Namen, Texte,
+Karten oder Grafiken vom Vorbild übernehmen (Notiz 07, Abschnitt 9 B).

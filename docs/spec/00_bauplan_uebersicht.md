@@ -136,7 +136,7 @@ Größen sind Schätzungen für Produktivcode + Tests + Ressourcen (Texte, YAML,
 - DTOs als `record`; keine Lombok-Abhängigkeit; `@Nullable` aus JSpecify (Annahme, in VER eintragen); keine `null`-Collections.
 - Bukkit-API nur auf dem Haupt-Thread; DB/Valkey nur asynchron (`CompletableFuture`), Rückkehr per `Bukkit.getScheduler().runTask`.
 - Logik in plattformfreien Klassen (testbar ohne Server), Bukkit-/Velocity-Code als dünner Adapter.
-- Keine Marke im Code: Name nur aus `BuildInfo`/`brandName`; CI-Grep auf `gomme|gommehd` außerhalb `docs/` (Spec 08 §6.19).
+- Keine Marke im Code: Name nur aus `BuildInfo`/`brandName`; CI-Grep auf `g[o]mme|g[o]mmehd` außerhalb `docs/` (Spec 08 §6.19).
 
 ### 4.2 Paketstruktur und Namen
 | Element | Regel | Beispiel |

@@ -1,9 +1,9 @@
 # Spec 08: Infrastruktur, Dienste & Betrieb
 
 Stand 2026-10-21 · Bereich: Gradle-Module, Pakete, Plugin-Lebenszyklus, Server-Controller (Templates, Start/Stopp, Namen, Lobby-Balancing, Zuteilung), Messaging, Flyway, Map-Pipeline, API-Dienst, Discord-Bot, Docker-Compose, Tests, CI, Versionen, Recht.
-Quellen: **N07** = Notiz 07 (Stack/Recht), **N08** = Notiz 08 (GommeHD-Quellcode), **ARCH** = `docs/ARCHITEKTUR.md`, **VER** = `docs/VERSIONEN.md`, **SET** = `settings.gradle.kts`. Zum Abgleich der Schnittstellen: **S01**, **S02**, **S05**, **S06** (Nachbar-Specs). Punktuell per Suche: N15 §1.1 und N17 Z. 83 (Tablist-Header, Servertypen).
+Quellen: **N07** = Notiz 07 (Stack/Recht), **N08** = Notiz 08 (Vorbild-Quellcode), **ARCH** = `docs/ARCHITEKTUR.md`, **VER** = `docs/VERSIONEN.md`, **SET** = `settings.gradle.kts`. Zum Abgleich der Schnittstellen: **S01**, **S02**, **S05**, **S06** (Nachbar-Specs). Punktuell per Suche: N15 §1.1 und N17 Z. 83 (Tablist-Header, Servertypen).
 Beleg-Stufen: **belegt** (steht so in Quelle/Code) · **abgeleitet** (aus Belegen geschlossen) · **Annahme** (festgelegt, ohne Beleg).
-Grundsatz: GommeHDs Cloud, Controller, Messaging und Plugins sind **nicht öffentlich** (N08 §9, §11). Fast alle Abläufe hier sind daher eigene Festlegungen (Annahme) auf Basis der Empfehlungen in N07. Belegt sind nur die Randbedingungen: Proxy/Backend-Kopplung, Versionen, Build-Kette und Servertypen.
+Grundsatz: Vorbild-Cloud, Controller, Messaging und Plugins sind **nicht öffentlich** (N08 §9, §11). Fast alle Abläufe hier sind daher eigene Festlegungen (Annahme) auf Basis der Empfehlungen in N07. Belegt sind nur die Randbedingungen: Proxy/Backend-Kopplung, Versionen, Build-Kette und Servertypen.
 
 ---
 
@@ -220,7 +220,7 @@ Dieser Bereich besitzt **kein** Scoreboard, keine Hologramme, keine NPCs und kei
 | Element | Inhalt | Ära | Beleg |
 |---|---|---|---|
 | Scoreboard | – (S02). Liefert `displayName` des Servers für die Server-Zeile | – | – |
-| Tablist-Header Zeile 1 | `§e{brand}.net {modeColor}{serverDisplay}` (S02 §4.4, Key `tab.header.mode`); Zeile 1 muss mit Marke/Domain + Leerzeichen + Servername beginnen (Client-Addons lesen so den Modus). Rendering nur in paper-core (S02), Wert `serverDisplay` von hier | beide | Struktur belegt N15 §1.1 („GommeHD.net <Servername>“, 1.8 und 2026) |
+| Tablist-Header Zeile 1 | `§e{brand}.net {modeColor}{serverDisplay}` (S02 §4.4, Key `tab.header.mode`); Zeile 1 muss mit Marke/Domain + Leerzeichen + Servername beginnen (Client-Addons lesen so den Modus). Rendering nur in paper-core (S02), Wert `serverDisplay` von hier | beide | Struktur belegt N15 §1.1 („Vorbild.net <Servername>“, 1.8 und 2026) |
 | `serverDisplay` | Lobbys: `{displayName}-{n}` (z. B. `Lobby-3`, `Premium-Lobby-1`, `Silent-Lobby-1`); Spiel- und Dauerserver: `{displayName}` (z. B. `BedWars`, `CityBuild`) | beide | Servertypen `lobby`, `premiumlobby`, `silentlobby` belegt N17 Z. 83; Schreibweise Annahme |
 | Actionbar | Neustart-Countdown letzte 10 s: `server.restart.actionbar` | – | Annahme |
 | Title | bei Neustart 5 s vorher: Titel `server.restart.title`, Untertitel `server.restart.subtitle` (fadeIn 5, stay 40, fadeOut 10 Ticks) | – | Annahme |
@@ -385,7 +385,7 @@ Globale Grenze: höchstens **200** dynamische Server insgesamt (Dev **12**), Ann
 ### 6.10 Stopp, Neustart, Jobs
 1. `SHUTDOWN {server, reason}` → Server: `STOPPING`, `SEND_LOBBY` an alle (`server.stopping.moved`), 2 s warten, `Bukkit.shutdown()`. Der Controller wartet bis zu **30 s** auf `SERVER_DOWN`, danach `docker kill`.
 2. `/cloud restart`: `RESTART_SCHEDULE {server, at, reason}` → Countdown §4. Bei 0 → Schritt 1, danach startet der Controller dasselbe Template (bei PERSISTENT mit demselben Namen und Volume).
-3. Geplanter täglicher Neustart der PERSISTENT-Server um **05:00 Europe/Berlin** mit 300 s Countdown (Annahme; GommeHD-Wartungen liegen laut N06 oft am Wochenendmorgen).
+3. Geplanter täglicher Neustart der PERSISTENT-Server um **05:00 Europe/Berlin** mit 300 s Countdown (Annahme; Vorbild-Wartungen liegen laut N06 oft am Wochenendmorgen).
 4. Jobs (Leader, 04:00 Europe/Berlin):
 
 | Job | Regel | Quelle |
@@ -530,7 +530,7 @@ Beim Controller-Start werden verwaiste Container mit Label `network.server` ohne
 
 | Regel | Umsetzung | Quelle |
 |---|---|---|
-| eigene Marke, keine fremden Namen | Marke nur über `brandName`. CI-Job: `git grep -niE 'gomme\|gommehd\|cheetah\|octopus'` außerhalb `docs/` → Fehler | N07 §9 B, N08 |
+| eigene Marke, keine fremden Namen | Marke nur über `brandName`. CI-Job: `git grep -niE 'g[o]mme\|g[o]mmehd\|cheetah\|octopus'` außerhalb `docs/` → Fehler | N07 §9 B, N08 |
 | keine fremden Maps | `map.json.license == "own"` (Pflicht), `builders` nur eigenes Team. Map-Repo mit Herkunftsnachweis je Map (Commit-Autor) | N07 §9 B |
 | keine fremden Logos/Texte | Texte nur in `core-i18n`, eigene Formulierungen. Status- und Wartungstexte selbst schreiben (nicht die N08-Vorlage übernehmen) | N07 §9 B, N08 §8 |
 | keine Mojang-Logos, Disclaimer | Bot-Embed-Footer und API-`/v1/status` enthalten `disclaimer` (Text in §7) | N07 §9 A |
@@ -546,7 +546,7 @@ Präfixe (Annahme): `prefix.cloud` = `§7[§bCloud§7] `, `prefix.discord` = `§
 
 | Key | Format (§, {Platzhalter}) | Standardtext | Original-Referenz | Beleg |
 |---|---|---|---|---|
-| tab.header.line1 | → S02 `tab.header.mode` (`§e{brand}.net {modeColor}{serverDisplay}`) | – | „GommeHD.net <Servername>“ (N15 §1.1) | belegt (Struktur) |
+| tab.header.line1 | → S02 `tab.header.mode` (`§e{brand}.net {modeColor}{serverDisplay}`) | – | „Vorbild.net <Servername>“ (N15 §1.1) | belegt (Struktur) |
 | server.current | `{p:cloud}§7Du bist auf §e{server}§7.` | Du bist auf … | – | Annahme |
 | server.list.header | `{p:cloud}§7Server (§e{count}§7):` | – | – | Annahme |
 | server.list.entry | `§8» §e{server} §7({online}/{max}) §8[{stateColor}{state}§8]` (klickbar: `/server {server}`) | – | – | Annahme |
@@ -700,7 +700,7 @@ Präfixe (Annahme): `prefix.cloud` = `§7[§bCloud§7] `, `prefix.discord` = `§
 
 | # | Offener Punkt | DEFAULT-ENTSCHEIDUNG |
 |---|---|---|
-| O1 | GommeHDs Cloud-/Controller-Software, Servernamen und Balancing-Regeln sind nicht öffentlich (N08 §9, §11.3) | eigene Regeln aus §6.6–6.9; Werte als Template-Felder konfigurierbar |
+| O1 | Vorbild-Cloud-/Controller-Software, Servernamen und Balancing-Regeln sind nicht öffentlich (N08 §9, §11.3) | eigene Regeln aus §6.6–6.9; Werte als Template-Felder konfigurierbar |
 | O2 | Kubernetes/Agones fehlt (ARCH Lücke 9) | Phase 1 `DockerCliLauncher` auf 1–3 Hosts. `AgonesLauncher` (Fleets je Template, Buffer = `minReady`) erst ab ~500 CCU oder 2. Host |
 | O3 | Mehrere Docker-Hosts im Dev/Staging | Phase 1: genau ein Host. Mehrhost-Betrieb erst über Agones |
 | O4 | Pub/Sub kann Nachrichten verlieren | bleibt (W7). Wenn `QUEUE_FAILED TIMEOUT` > 1 % der Tickets → Umstieg auf Valkey Streams für `net:queue` |
@@ -713,8 +713,8 @@ Präfixe (Annahme): `prefix.cloud` = `§7[§bCloud§7] `, `prefix.discord` = `§
 | O11 | DataVersion-Prüfung von `level.dat` (NBT lesen) | Phase 1 nur Existenzprüfung. NBT-Prüfung, sobald eine NBT-Bibliothek eingebunden ist |
 | O12 | Zeitpunkt des täglichen Neustarts von CityBuild | 05:00 Europe/Berlin, 300 s Countdown, abschaltbar per Template `dailyRestart: false` |
 | O13 | Discord-Rollen je Rang | `integ.discord_role_map` leer ausliefern. Ohne Einträge findet kein Rollen-Sync statt, nur die Verknüpfung |
-| O14 | Statusseite (GommeHD nutzt „issue-status“, MIT, N08 §8) | Phase 2: issue-status oder Uptime Kuma mit eigenen Texten. `/v1/status` reicht bis dahin |
-| O15 | Mehrere Paper-Versionen parallel (GommeHD fährt das, N08 §2.2) | nein. Alle Templates auf derselben Paper-Version. `image` je Template erlaubt Ausnahmen |
+| O14 | Statusseite (Vorbild nutzt „issue-status“, MIT, N08 §8) | Phase 2: issue-status oder Uptime Kuma mit eigenen Texten. `/v1/status` reicht bis dahin |
+| O15 | Mehrere Paper-Versionen parallel (Vorbild fährt das, N08 §2.2) | nein. Alle Templates auf derselben Paper-Version. `image` je Template erlaubt Ausnahmen |
 | O16 | Rechtsprüfung (Impressum, DSGVO, DSA) liegt außerhalb dieser Spec und ist unverifiziert (N07 §9 Gaps) | vor Launch anwaltlich prüfen. Technische Punkte aus §6.19 sind Pflicht ab Phase 1 |
 | O17 | `/whereami` für alle Spieler sichtbar? | ja (hilft bei Bug-Reports). Ändern über das LuckPerms-Node `retromc.whereami` (Standard: true) |
 

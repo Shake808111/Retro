@@ -2,7 +2,7 @@
 
 Stand 2026-10-21 · Bereich: Velocity-Core, Ränge, Freunde, Party, Clan, PN, Global-Chat, Report, Strafen, Nick, Sprache, Einstellungen, AFK, Wartung, Anti-Spam.
 
-**Kürzel Belege:** N05/N15/N16/N17/N08 = Notizen `research_notes/GommeHD Analyse und Nachbau/NN_*.md` · V = Video-Sweep (`scratchpad/sweep/batch2_*.md`, `thumbs.md`) · OCR = `sweep/review/*.md` · B1 = Bild Partymenü (tw_dreix31_clip_20250603_3365521103 t26s) · B2 = Bild Nick-Menü (tw_gommehd_clip_20260728_1361148519 t0s).
+**Kürzel Belege:** N05/N15/N16/N17/N08 = Notizen `research_notes/NN_*.md` · V = Video-Sweep (`scratchpad/sweep/batch2_*.md`, `thumbs.md`) · OCR = `sweep/review/*.md` · B1 = Bild Partymenü (tw_dreix31_clip_20250603_3365521103 t26s) · B2 = Bild Nick-Menü (tw_gommehd_clip_20260728_1361148519 t0s).
 **Beleg-Stufen:** *belegt* (Code/Text/lesbarer Frame) · *abgeleitet* (aus Belegen geschlossen) · *Annahme* (festgelegt, unbelegt).
 **Ära:** **26** = Standard (2025/26, 1.21-Lobby) · **20+** = 2023–Anfang 2026 · **18** = 1.8-Ära (Option `legacyStyle`).
 **Textregel:** Formate mit §-Codes; Umsetzung in `core-i18n` als MiniMessage (`§7`→`<gray>` …, `{x}`→`<x>`). Spalte „Standardtext“ = eigene Formulierung; Original nur als Referenz.
@@ -324,7 +324,7 @@ Recht = LuckPerms-Node `retromc.<…>` (Präfix = `brandId`); „alle“ = ohne 
 
 | Element | Ära 26 (Standard) | Ära 20+ (Option) | Beleg |
 |---|---|---|---|
-| Zeile 1 | `§6⬇ §6§l{BRAND_UPPER}.NET §6⬇` zentriert (Leerzeichen-Padding auf 45 Zeichen) | `§e{brand}.net §7- §b{brand} Network §7- §f[§d1.8-1.21§f]` | V/N17 (2026 „⬇ GOMMEHD.NET ⬇“ gold), V (2017/2023-Layout) |
+| Zeile 1 | `§6⬇ §6§l{BRAND_UPPER}.NET §6⬇` zentriert (Leerzeichen-Padding auf 45 Zeichen) | `§e{brand}.net §7- §b{brand} Network §7- §f[§d1.8-1.21§f]` | V/N17 (2026 „⬇ VORBILD.NET ⬇“ gold), V (2017/2023-Layout) |
 | Zeile 2 | News in Großbuchstaben, Hex-Verlauf (1.16+), Fallback `§9{WORT1} §d{REST}` aus `network_setting.motd.news` | gleich | N17, V („DUELS“ §9 + Rest §d-Verlauf) |
 | Spielerzahl | `online/10000` (max konfigurierbar, Default 10000) | ältere Option 20000 | N05, V |
 | Versionstext bei inkompatiblem Client | `1.21.11+` (Annahme) | – | N17 |
@@ -349,7 +349,7 @@ Recht = LuckPerms-Node `retromc.<…>` (Präfix = `brandId`); „alle“ = ohne 
 
 ### 4.3 Scoreboard (nur Social-Zeilen; Board selbst = Kern-UI/Lobby)
 
-Lobby-Board Ära 26 (V, mehrere Frames 2024–2026), Titel `§f§lGOMMEHD.NET` → `§f§l{BRAND_UPPER}.NET`:
+Lobby-Board Ära 26 (V, mehrere Frames 2024–2026), Titel `§f§lVORBILD.NET` → `§f§l{BRAND_UPPER}.NET`:
 
 | Zeile (Score) | Text | Farbe | Quelle Wert |
 |---|---|---|---|
@@ -745,7 +745,7 @@ Präfixe (Keys `prefix.*`) werden in Formaten als `{p:friends}` usw. eingesetzt.
 | party.disbanded | `{p:party}§cDie Party wurde aufgelöst.` | gleich | – | Annahme |
 | party.afk.on / .off | `{p:party}{name} §7ist jetzt abwesend` / `{p:party}{name} §7ist wieder da` | eigen | „ist nun (nicht mehr) abwesend“ | belegt (Struktur) |
 | party.chat | `{p:party}{name}§7: §f{text}` | – | „[Party] Name: Text“ | belegt |
-| party.list.header | `{p:party}§eMitglieder der Party von {name} §e({n})` | `§eParty von {name} §e({n} Mitglieder)` | „Mitglieder der Party von GommeHD (4)“ | belegt (Struktur) |
+| party.list.header | `{p:party}§eMitglieder der Party von {name} §e({n})` | `§eParty von {name} §e({n} Mitglieder)` | „Mitglieder der Party vom Vorbild (4)“ | belegt (Struktur) |
 | party.list.names | `§7{name1}§7, {name2}§7, …` | – | Namen §7/§e | belegt |
 | party.jump.ok / party.pull / party.pull.skipped | `{p:party}§7Du springst zum Party-Leiter …` / `{p:party}§7Der Leiter holt die Party zu sich …` / `{p:party}§e{name} §7ist in einer Runde und wurde übersprungen.` | gleich | – | Annahme |
 | party.public.on / .off / .filter / .requests | `{p:party}§7Die Party ist jetzt §aöffentlich§7.` / `§cprivat§7.` / `§7Beitritt: §e{alle∣Premium}` / `§7Beitrittsanfragen: §e{an∣aus}` | gleich | Public Party | Annahme |
@@ -814,7 +814,7 @@ Präfixe (Keys `prefix.*`) werden in Formaten als `{p:friends}` usw. eingesetzt.
 | admin.reloaded | `§aKonfiguration und Texte neu geladen.` | eigen | – | Annahme |
 | tab.header | → Spec 02 §7 (`tab.header.mode`, `tab.header.report`) | – | „Du möchtest einen Spieler melden? /report <Spieler>“ | belegt (Struktur/Farben) |
 | tab.footer | → Spec 02 §7 (`tab.footer.1`, `tab.footer.2`) | – | „Füge deine Freunde hinzu, erstelle Partys oder gründe deinen eigenen Clan mit: …“ | belegt (Struktur/Farben) |
-| motd.line1 / motd.line2 | §4.1 | – | „⬇ GOMMEHD.NET ⬇“ | belegt |
+| motd.line1 / motd.line2 | §4.1 | – | „⬇ VORBILD.NET ⬇“ | belegt |
 | scoreboard.clan.none | → Spec 02 `sb.value.no-clan` (`§7-`); Ära 18 Option `§7Kein Clan` | – | „Kein Clan“ (OCR 18) | belegt (OCR) |
 
 **Meldungen: 130 Katalogzeilen ≈ 215 Schlüssel** (Sammelzeilen `a / .b / .c` einzeln gezählt).
@@ -938,7 +938,7 @@ Präfixe (Keys `prefix.*`) werden in Formaten als `{p:friends}` usw. eingesetzt.
 | O27 | `[-] Name:` im Wartechat (1 Frame) | Bedeutung unklar | ignorieren (kein Platzhalter für „kein Clan“) |
 | O28 | Lobby-Scoreboard Rang⇄Spielzeit | Wechsel beobachtet, Intervall unbekannt | **5 s** Wechsel (Kern-UI) |
 | O29 | Sprachen 2026 | 19 Codes gelistet, Verfügbarkeit offen | de, en, bar, gsw ausliefern; Rest bei Übersetzung |
-| O30 | Multi-Proxy | GommeHD-Setup unbekannt | von Anfang an Multi-Proxy-fähig (alle Zustellungen über `net:*` + `presence.proxy`) |
+| O30 | Multi-Proxy | Vorbild-Setup unbekannt | von Anfang an Multi-Proxy-fähig (alle Zustellungen über `net:*` + `presence.proxy`) |
 
 ### 10.1 Integrationskorrekturen (Prüfung 2026-10-21, siehe `00_bauplan_uebersicht.md`)
 

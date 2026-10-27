@@ -6,7 +6,7 @@
 
 Paper-Plugin für den Modus GunGame (GunGame: dauerhaftes FFA mit Level-Aufstieg pro Kill). Baut auf `game/game-framework` auf (Rundenablauf, Teams, Karten, Zuschauer, Kits, Shops, Statistik-Senke) und läuft zusammen mit `platform/paper-core` auf einem Spielserver; laut Notiz 07 (Abschnitt 3) eine Runde pro Server/Pod.
 
-## Welches GommeHD-Feature wird nachgebaut?
+## Welches Vorbild-Feature wird nachgebaut?
 
 Notiz 03, Abschnitt 5: dauerhafter, lobbyartiger Free-for-all ohne Rundenende, bis zu 40 Spieler pro Server:
 - jeder Kill +1 Level (bessere Ausrüstung und volle Heilung), jeder Tod −1 Level;
@@ -20,5 +20,5 @@ Notiz 03, Abschnitt 5: dauerhafter, lobbyartiger Free-for-all ohne Rundenende, b
 `LEGACY_1_8` nach Notiz 07, Abschnitt 1.
 
 
-Quellen: `research_notes/GommeHD Analyse und Nachbau/` (Notiz-Nummern wie angegeben). Keine Namen, Texte,
-Karten oder Grafiken von GommeHD übernehmen (Notiz 07, Abschnitt 9 B).
+Quellen: `research_notes/` (Notiz-Nummern wie angegeben). Keine Namen, Texte,
+Karten oder Grafiken vom Vorbild übernehmen (Notiz 07, Abschnitt 9 B).

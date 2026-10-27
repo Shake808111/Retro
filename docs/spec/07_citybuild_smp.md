@@ -375,7 +375,7 @@ Priorität: `boss` > `combat` > `event` > `plot` > `tutorial` (max. 2 gleichzeit
 | `JOBS` Arbeitsamt | §e | G1 | Jobs |
 | `MEINE GILDE` Gildenwächter | §a | G2 bzw. Info ohne Gilde | Gildenwächter |
 | `TALISMANE` | §d | G3 | Talismane |
-| `GOLD-SHOP` | §6 | §5.16 | GOMMESHOP / Gold-Shop |
+| `GOLD-SHOP` | §6 | §5.16 | MARKENSHOP / Gold-Shop |
 | `MOB-COLLECTION` | §2 | §5.14 | Mob-Collection |
 | `REZEPTE` | §b | §5.15 | Custom Craftingrezepte |
 | `STADTWACHE` | §c | Chattext zu `/report` und Bugmeldung | Stadtwache |
@@ -743,7 +743,7 @@ Gleiche Typen im Beutel stapeln nicht (nur der höchste wirkt, Annahme).
 | Wachturm | Hauptmann Varus | Kette, Logbuch | Schlossturm / Leonidas |
 | Uralter Baum | Borkmund | Stock, Ticket | Mammutbaum / Gruut |
 | Schattenreich | Umbrax | Ticket, Metall, Totem | UpsideDown / Demongor |
-| Die Villa | Der Hausherr | Wächter-Brustplatte, Stock, Ticket | GommeHD's Villa / Don |
+| Die Villa | Der Hausherr | Wächter-Brustplatte, Stock, Ticket | Vorbild- Villa / Don |
 2. Drop-Chancen (Annahme): Ticket 50 %, Material 35 %, Totem 10 %, Beutel-Fragment 8 % (alle Bosse), Möbel-Ticket 5 %, Reparaturbuch 3 % (2025 belegt nur für einige Weltall-Bosse). Loot an jeden Teilnehmer mit ≥ 5 % Schaden einzeln gewürfelt.
 3. Seltener Boss „Der Fremde“ (Original Herobrine): Prüfung alle 10 min je aktivem Spieler 0,2 % (belegt Chance), mit Anführer + Gefolge, Geräusche, starrt an, Blindheit nach Angriff, kein Hit-Cooldown, verschwindet nach 15 s (belegt); Drops: Glück-V-Spitzhacke 10 %, Sichel 40 %, Stärke-IV-Trank 5 % (Annahme).
 4. Saisonal „Herzhüter“ (Original Valentinsprotektor): Februar, nur Flower Forest / Sunflower Plains, mit Skeletten; 30 % Kopf + Rosenstrauch mit Verzauberung „Liebe X“ (sinkt alle 24 h um 1) (belegt).
@@ -871,7 +871,7 @@ Beleg: b = belegt (Wortlaut/Struktur aus Quelle), a = abgeleitet, A = Annahme. �
 | Key | Format | Standardtext | Original-Referenz | Beleg |
 |---|---|---|---|---|
 | `cb.join.chat` | `{P}§aAlle Neuigkeiten zu CityBuild findest du unter §b{url}` | Alle Neuigkeiten … unter {url} | „Alle Informationen zu den neusten CityBuild Updates findest du unter …/go/cb“ | b |
-| `cb.join.title` | `§eWillkommen, {rankColor}{name}§e!` / `§fViel Freude in unserer Stadt!` | – | „Willkommen GommeHD!“ / „Viel Spaß auf unserem CityBuild!“ | b |
+| `cb.join.title` | `§eWillkommen, {rankColor}{name}§e!` / `§fViel Freude in unserer Stadt!` | – | „Willkommen Vorbild!“ / „Viel Spaß auf unserem CityBuild!“ | b |
 | `cb.restart` | `{P}§cDiese Lobby startet in §e{s} Sekunden §cneu` | Diese Lobby startet in {s} Sekunden neu | „Diese Lobby wird in 60 Sekunden neugestartet“ | b |
 | `cb.afk.on` | `§aDu bist jetzt als abwesend markiert` | – | „Du wurdest als abwesend markiert“ | b |
 | `cb.afk.off` | `§aDu bist nicht mehr als abwesend markiert` | – | gleich | b |
@@ -1009,7 +1009,7 @@ Beleg: b = belegt (Wortlaut/Struktur aus Quelle), a = abgeleitet, A = Annahme. �
 | `smp.sell.done` / `.limit` / `.info` | `{S}§7Verkauft für §a{netto}$ §8(§7Gebühr §c{f}$§8)` / `{S}§cLimit für §e{kat} §cerreicht. Reset in §e{mm} min§c.` / `{S}§e{kat}§7: §a{genutzt}$§7/§a{limit}$ §8| §7Reset §e{mm} min` | – | Mechanik belegt | A |
 | `smp.playtime` | `{S}§7Spielzeit von §e{name}§7: §e{d}T {h}h {m}min` | – | – | A |
 | `smp.trade.request` | `{S}{nameColor}{name} §7hat dir eine Handelsanfrage geschickt` + Buttons | – | „[SMP] X hat dir eine Anfrage zum Handeln geschickt“ | b |
-| `smp.private` | `{S}{nameColor}{von} §7» §c{an}§7: §f{text}` | – | „[SMP] 3YYD >> GommeHD: …“ | b |
+| `smp.private` | `{S}{nameColor}{von} §7» §c{an}§7: §f{text}` | – | „[SMP] 3YYD >> Vorbild: …“ | b |
 
 Gesamt: 140 Tabellenzeilen (Keys bzw. Key-Gruppen); Gruppen mit `/` einzeln gezählt ca. 220 Meldungen.
 

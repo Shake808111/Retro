@@ -13,9 +13,9 @@ die Proxy, Paper-Server und Dienste gemeinsam nutzen.
 - `FriendPair` normalisiert Freundespaare in **PostgreSQL-Reihenfolge** für `social.friendship` mit `CHECK (a < b)`.
   Java vergleicht UUIDs mit Vorzeichen, PostgreSQL byteweise ohne – ein Unit-Test sichert das ab.
 
-## Welches GommeHD-Feature wird nachgebaut?
+## Welches Vorbild-Feature wird nachgebaut?
 
 Kein einzelnes Feature, sondern die gemeinsame Grundlage für die netzwerkweiten Systeme Freunde, Party und Clan
 (Notiz 05, Abschnitt 3) und die Server-Registry hinter dem NPC-Joinsystem der Lobby (Notiz 05, Abschnitt 1).
 
-Quellen: `research_notes/GommeHD Analyse und Nachbau/`.
+Quellen: `research_notes/`.

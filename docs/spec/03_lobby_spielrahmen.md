@@ -2,7 +2,7 @@
 
 Stand 2026-10-21 · Bereich: Hauptlobby, Modus-Lobbys, Silent-Lobby, NPC-/Schilder-Join, Belohnungen, Private Runden; Rundenrahmen aller Minigames (Wartelobby, Countdown, Teams, Zuschauer, Kill-Meldungen, Rundenende, Rückkehr).
 
-**Kürzel Belege:** N02/N03/N05/N09/N17 = Notizen `research_notes/GommeHD Analyse und Nachbau/NN_*.md` (N09 = Wiki-GUI G6 „Wähle ein Ziel“) · V = Video-Sweep (`scratchpad/sweep/batch2_*.md`, `thumbs.md`) · OCR = `sweep/review/*.md` · F = eigene Bildsichtung `videos/tw_gommehd_clip_20260728_1361148519` t08 s/t10 s (Lobby-Hotbar 2026, Menü „Private Runden“, Scoreboard).
+**Kürzel Belege:** N02/N03/N05/N09/N17 = Notizen `research_notes/NN_*.md` (N09 = Wiki-GUI G6 „Wähle ein Ziel“) · V = Video-Sweep (`scratchpad/sweep/batch2_*.md`, `thumbs.md`) · OCR = `sweep/review/*.md` · F = eigene Bildsichtung `videos/tw_gommehd_clip_20260728_1361148519` t08 s/t10 s (Lobby-Hotbar 2026, Menü „Private Runden“, Scoreboard).
 **Beleg-Stufen:** *B* = belegt · *A* = abgeleitet · *AN* = Annahme (festgelegt, ohne Beleg).
 **Ära:** **26** = Standard (neue 1.21-Lobby ab ca. 05/2026) · **20+** = 2023 bis 04/2026 (Option) · **18** = 1.8-Ära (Option `legacyStyle`, Schilder-Join).
 **Textregel:** §-Notation, Umsetzung in `core-i18n` als MiniMessage (`§7`→`<gray>`, `{x}`→`<x>`). `{prefix}` = `prefix.<mode>` (Spec 02 §7), `{p:lobby}` = `§6[Lobby] `, `{p:coins}` = CoinSystem-Präfix (Spec 02). Marke: `{brand}`, `{BRAND_UPPER}`. Ränge nach **Spec 01 §6.1** (LuckPerms-Gruppen `default`, `premium`, `premiumplus`, `supremium`, `supremiumplus`, `vip`, Team); „X+“ = Gewicht ≥ X (z. B. `supremium`+ = Supremium, Supremium+, VIP, Team).
@@ -101,7 +101,7 @@ Befehls-Fehlerformat: Präfix des Servers + `§c`-Text (Spec 02). Unbekannter Be
 ### 4.1 Lobby-Scoreboard (Ära 26, `MODERN`, 15 Zeilen) – Rendering Spec 02 §4.2, hier verbindlich übernommen
 | Score | Text | Farbe / Wert | Beleg |
 |---|---|---|---|
-| Titel | `§f§l{BRAND_UPPER}.NET` (Marke + `.NET`, AN statt Domain) | – | B (V „GOMMEHD.NET“, F) |
+| Titel | `§f§l{BRAND_UPPER}.NET` (Marke + `.NET`, AN statt Domain) | – | B (V „VORBILD.NET“, F) |
 | 14 | (leer) | – | B |
 | 13 | `Rang` ⇄ `Spielzeit` (Wechsel alle 5 s) | `§f` | B (V, F zeigt beide Zustände) |
 | 12 | `{rankColor}{rankName}` ⇄ `§6{hours} Stunden` | Stunden mit Tausenderpunkt (`2.079 Stunden`, F) | B |
@@ -113,7 +113,7 @@ Befehls-Fehlerformat: Präfix des Servers + `§c`-Text (Spec 02). Unbekannter Be
 | 6 | `§6{gold}` | – | B |
 | 5 | (leer) | – | B |
 | 4 | `Clan` | `§f` | B |
-| 3 | `§b{online}§7/{members} §7[§b{tag}§7]`, ohne Clan `§7-` | `6/26 [GOMME]` (F) | B |
+| 3 | `§b{online}§7/{members} §7[§b{tag}§7]`, ohne Clan `§7-` | `6/26 [CLAN]` (F) | B |
 | 2 | (leer) | – | B |
 | 1 | `Freunde` | `§f` | B |
 | 0 | `§a{online}§7/{total}` | `1/83` (F) | B |
@@ -168,7 +168,7 @@ Rendering Spec 02 §4.4. Header Zeile 1: `§e{brand}.net {modeColor}{serverDispl
 | Coin-Truhe (Cosmetics-Spec) | `§6§lCOIN-TRUHE` | `§7Bis zu §e1.000.000 §7Coins drin` | – | B (Betrag), Text eigen |
 | `NPC_PRIVATE` | `§c§lPRIVATE RUNDE` (groß, Scale 2.0) | `§aStarte deine §lEIGENE§a Runde!` (Scale 1.5) | – | B (F: rot fett / grün, „EIGENE“ hervorgehoben), Text eigen |
 | `NPC_REPLAY` | `§e§lREPLAYS` | `§7Schau dir deine Runden an` | – | Titel B (N17), Zeile 2 AN |
-| `NPC_COMMUNITY` | `§6§lCOMMUNITY` | `§7{n} Spieler online` | – | B (V „GOMMEUNITY“ / „91 Spieler online“), Name eigen |
+| `NPC_COMMUNITY` | `§6§lCOMMUNITY` | `§7{n} Spieler online` | – | B (V „Wortspiel aus Marke und COMMUNITY“ / „91 Spieler online“), Name eigen |
 | `NPC_JOIN` (Ära 26) | `{modeColor}§l{MODE}` | `§7{online} Spieler online` | `§eRechtsklick §7Spielen §8┃ §eLinksklick §7Runden` | Z1/Z2 Muster B, Z3 AN |
 | `NPC_DIALOG` | `§e§l{NAME}` | `§7(Rechtsklick)` | – | Muster B (CityBuild-NPCs „(Rechtsklick)“ §7) |
 | Schilder-Spalte (Ära 18/20+) | `{modeColor}{MODE}` über Schildreihe, darunter `{variantColor}{Variante}` je Spalte | – | – | B (V BuildFFA „Classic/Rod/Bow“, BedWars „❄ UPDATE ❄“) |
@@ -558,7 +558,7 @@ Spalten: Key | Format | Standardtext (eigen bzw. funktional gleich) | Original-R
 | `common.join` | `§7» {nameColor}{name} §7hat die Runde betreten` | wie Original (funktional) | „» X hat die Runde betreten“ | belegt |
 | `common.quit` | `§7« {nameColor}{name} §7hat die Runde verlassen` | wie Original (funktional) | „« X hat die Runde verlassen“ | belegt |
 | `common.online` | `{p}§7Spieler online: §b{n}§7/§b{max}` | – | „[BedWars] Spieler online 14/32“ | belegt (Zahl §b) |
-| `common.map` | `{p}§7Map: §e{map} §7von §e{brand}-Buildteam §7({builders})` | – | „Map: Dragons von GommeHD.net-Buildteam (BitConi)“ | belegt (Struktur) |
+| `common.map` | `{p}§7Map: §e{map} §7von §e{brand}-Buildteam §7({builders})` | – | „Map: Dragons von Vorbild.net-Buildteam (BitConi)“ | belegt (Struktur) |
 | `common.countdown` | `{p}§7Die Runde beginnt in §e{n} §7Sekunden` | wie Original (funktional) | „Die Runde beginnt in 5 Sekunden“ | belegt |
 | `common.countdown.one` | `{p}§7Die Runde beginnt in §e1 §7Sekunde` | wie Original | „… in 1 Sekunde“ | belegt |
 | `common.countdown.cancel` | `{p}§cZu wenige Spieler – der Countdown wurde angehalten.` | – | – | Annahme |

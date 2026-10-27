@@ -1,6 +1,6 @@
 -- =====================================================================
 -- V1__init.sql - Grundschema des Netzwerks (PostgreSQL)
--- Quelle: research_notes/GommeHD Analyse und Nachbau/07_technik_stack_recht.md,
+-- Quelle: research_notes/07_technik_stack_recht.md,
 --         Abschnitt 4 "Schema sketch (PostgreSQL, build-ready starting point)".
 -- Übernommen wie skizziert; ergänzt wurden nur die CREATE-SCHEMA-Anweisungen
 -- (ein Schema pro fachlichem Bereich, Notiz 07 Abschnitt 4) und Kommentare.

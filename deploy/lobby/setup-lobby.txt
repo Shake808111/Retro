@@ -1,0 +1,79 @@
+# RetroMC Hub-Einrichtung (RCON-Befehlsliste, eine Zeile = ein Befehl, "#" = Kommentar)
+# Map: NetherGames "Factions Hub" (Burg, CC BY 4.0); Thronhalle: Mittelschiff x=-18..-10, z=12..34, Boden y=61
+# Aufraeumen (idempotent)
+kill @e[tag=retromc_lobby]
+# Welt: Spawn, Tag, Wetter, keine Mobs
+setworldspawn -14 62 34 180 0
+gamerule respawn_radius 0
+time set 6000
+weather clear
+gamerule advance_time false
+gamerule advance_weather false
+gamerule spawn_mobs false
+gamerule spawn_patrols false
+gamerule spawn_wandering_traders false
+gamerule fall_damage false
+gamerule fire_damage false
+gamerule drowning_damage false
+gamerule immediate_respawn true
+gamerule show_death_messages false
+gamerule show_advancement_messages false
+gamerule natural_health_regeneration true
+gamerule mob_griefing false
+gamerule block_drops false
+gamerule fire_spread_radius_around_player 0
+difficulty peaceful
+defaultgamemode adventure
+# Spawn-Hologramm
+summon minecraft:text_display -13.5 66.2 12.5 {text:{text:"",extra:[{text:"Willkommen auf ",color:"gold",bold:1b},{text:"RetroMC",color:"yellow",bold:1b},{text:"\n"},{text:"Wähle deinen Spielmodus an den Statuen",color:"gray",bold:0b}]},billboard:"center",background:0,shadow:1b,alignment:"center",line_width:300,Tags:["retromc_lobby","retromc_holo_spawn"],transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],translation:[0.0f,0.0f,0.0f],scale:[1.6f,1.6f,1.6f]}}
+# Spielmodus-Statuen (Mannequin auf Sockel) + NPC_JOIN-Hologramme
+# BedWars bei -18 62 14
+setblock -18 62 14 minecraft:red_wool
+summon minecraft:mannequin -17.5 63 14.5 {profile:{name:"BedWars"},immovable:1b,hide_description:1b,Invulnerable:1b,Silent:1b,PersistenceRequired:1b,Rotation:[-90.0f,0.0f],equipment:{mainhand:{id:"red_bed"},head:{id:"leather_helmet",components:{"minecraft:dyed_color":11546150}},chest:{id:"leather_chestplate",components:{"minecraft:dyed_color":11546150}},legs:{id:"leather_leggings",components:{"minecraft:dyed_color":11546150}},feet:{id:"leather_boots",components:{"minecraft:dyed_color":11546150}}},Tags:["retromc_lobby","retromc_npc_join","mode_bedwars"]}
+summon minecraft:text_display -17.5 65.25 14.5 {text:{text:"",extra:[{text:"BedWars",color:"red",bold:1b},{text:"\n"},{text:"0 Spieler online",color:"gray",bold:0b},{text:"\n"},{text:"Rechtsklick ",color:"yellow",bold:0b},{text:"Spielen ",color:"gray",bold:0b},{text:"┃ ",color:"dark_gray",bold:0b},{text:"Linksklick ",color:"yellow",bold:0b},{text:"Runden",color:"gray",bold:0b}]},billboard:"center",background:0,shadow:1b,alignment:"center",line_width:300,Tags:["retromc_lobby","retromc_holo"],transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],translation:[0.0f,0.0f,0.0f],scale:[1.3f,1.3f,1.3f]}}
+# SkyWars bei -10 62 14
+setblock -10 62 14 minecraft:grass_block
+summon minecraft:mannequin -9.5 63 14.5 {profile:{name:"SkyWars"},immovable:1b,hide_description:1b,Invulnerable:1b,Silent:1b,PersistenceRequired:1b,Rotation:[90.0f,0.0f],equipment:{mainhand:{id:"iron_sword"},offhand:{id:"ender_pearl"},head:{id:"iron_helmet"},chest:{id:"iron_chestplate"},legs:{id:"iron_leggings"},feet:{id:"iron_boots"}},Tags:["retromc_lobby","retromc_npc_join","mode_skywars"]}
+summon minecraft:text_display -9.5 65.25 14.5 {text:{text:"",extra:[{text:"SkyWars",color:"yellow",bold:1b},{text:"\n"},{text:"0 Spieler online",color:"gray",bold:0b},{text:"\n"},{text:"Rechtsklick ",color:"yellow",bold:0b},{text:"Spielen ",color:"gray",bold:0b},{text:"┃ ",color:"dark_gray",bold:0b},{text:"Linksklick ",color:"yellow",bold:0b},{text:"Runden",color:"gray",bold:0b}]},billboard:"center",background:0,shadow:1b,alignment:"center",line_width:300,Tags:["retromc_lobby","retromc_holo"],transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],translation:[0.0f,0.0f,0.0f],scale:[1.3f,1.3f,1.3f]}}
+# SurvivalGames bei -18 62 18
+setblock -18 62 18 minecraft:chiseled_stone_bricks
+summon minecraft:mannequin -17.5 63 18.5 {profile:{name:"SurvivalGames"},immovable:1b,hide_description:1b,Invulnerable:1b,Silent:1b,PersistenceRequired:1b,Rotation:[-90.0f,0.0f],equipment:{mainhand:{id:"bow"},head:{id:"chainmail_helmet"},chest:{id:"chainmail_chestplate"},legs:{id:"chainmail_leggings"},feet:{id:"chainmail_boots"}},Tags:["retromc_lobby","retromc_npc_join","mode_survivalgames"]}
+summon minecraft:text_display -17.5 65.25 18.5 {text:{text:"",extra:[{text:"SurvivalGames",color:"aqua",bold:1b},{text:"\n"},{text:"0 Spieler online",color:"gray",bold:0b},{text:"\n"},{text:"Rechtsklick ",color:"yellow",bold:0b},{text:"Spielen ",color:"gray",bold:0b},{text:"┃ ",color:"dark_gray",bold:0b},{text:"Linksklick ",color:"yellow",bold:0b},{text:"Runden",color:"gray",bold:0b}]},billboard:"center",background:0,shadow:1b,alignment:"center",line_width:300,Tags:["retromc_lobby","retromc_holo"],transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],translation:[0.0f,0.0f,0.0f],scale:[1.3f,1.3f,1.3f]}}
+# EnderGames bei -10 62 18
+setblock -10 62 18 minecraft:purpur_block
+summon minecraft:mannequin -9.5 63 18.5 {profile:{name:"EnderGames"},immovable:1b,hide_description:1b,Invulnerable:1b,Silent:1b,PersistenceRequired:1b,Rotation:[90.0f,0.0f],equipment:{mainhand:{id:"ender_eye"},head:{id:"dragon_head"},chest:{id:"leather_chestplate",components:{"minecraft:dyed_color":8991416}},legs:{id:"leather_leggings",components:{"minecraft:dyed_color":8991416}},feet:{id:"leather_boots",components:{"minecraft:dyed_color":8991416}}},Tags:["retromc_lobby","retromc_npc_join","mode_endergames"]}
+summon minecraft:text_display -9.5 65.25 18.5 {text:{text:"",extra:[{text:"EnderGames",color:"dark_purple",bold:1b},{text:"\n"},{text:"0 Spieler online",color:"gray",bold:0b},{text:"\n"},{text:"Rechtsklick ",color:"yellow",bold:0b},{text:"Spielen ",color:"gray",bold:0b},{text:"┃ ",color:"dark_gray",bold:0b},{text:"Linksklick ",color:"yellow",bold:0b},{text:"Runden",color:"gray",bold:0b}]},billboard:"center",background:0,shadow:1b,alignment:"center",line_width:300,Tags:["retromc_lobby","retromc_holo"],transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],translation:[0.0f,0.0f,0.0f],scale:[1.3f,1.3f,1.3f]}}
+# TTT bei -18 62 22
+setblock -18 62 22 minecraft:red_nether_bricks
+summon minecraft:mannequin -17.5 63 22.5 {profile:{name:"TTT"},immovable:1b,hide_description:1b,Invulnerable:1b,Silent:1b,PersistenceRequired:1b,Rotation:[-90.0f,0.0f],equipment:{mainhand:{id:"stick"},offhand:{id:"iron_sword"},chest:{id:"leather_chestplate",components:{"minecraft:dyed_color":1908001}},legs:{id:"leather_leggings",components:{"minecraft:dyed_color":1908001}},feet:{id:"leather_boots",components:{"minecraft:dyed_color":1908001}}},Tags:["retromc_lobby","retromc_npc_join","mode_ttt"]}
+summon minecraft:text_display -17.5 65.25 22.5 {text:{text:"",extra:[{text:"TTT",color:"dark_red",bold:1b},{text:"\n"},{text:"0 Spieler online",color:"gray",bold:0b},{text:"\n"},{text:"Rechtsklick ",color:"yellow",bold:0b},{text:"Spielen ",color:"gray",bold:0b},{text:"┃ ",color:"dark_gray",bold:0b},{text:"Linksklick ",color:"yellow",bold:0b},{text:"Runden",color:"gray",bold:0b}]},billboard:"center",background:0,shadow:1b,alignment:"center",line_width:300,Tags:["retromc_lobby","retromc_holo"],transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],translation:[0.0f,0.0f,0.0f],scale:[1.3f,1.3f,1.3f]}}
+# MasterBuilders bei -10 62 22
+setblock -10 62 22 minecraft:bricks
+summon minecraft:mannequin -9.5 63 22.5 {profile:{name:"MasterBuilders"},immovable:1b,hide_description:1b,Invulnerable:1b,Silent:1b,PersistenceRequired:1b,Rotation:[90.0f,0.0f],equipment:{mainhand:{id:"iron_pickaxe"},offhand:{id:"bricks"},head:{id:"leather_helmet",components:{"minecraft:dyed_color":16351261}},chest:{id:"leather_chestplate",components:{"minecraft:dyed_color":3847130}}},Tags:["retromc_lobby","retromc_npc_join","mode_masterbuilders"]}
+summon minecraft:text_display -9.5 65.25 22.5 {text:{text:"",extra:[{text:"MasterBuilders",color:"aqua",bold:1b},{text:"\n"},{text:"0 Spieler online",color:"gray",bold:0b},{text:"\n"},{text:"Rechtsklick ",color:"yellow",bold:0b},{text:"Spielen ",color:"gray",bold:0b},{text:"┃ ",color:"dark_gray",bold:0b},{text:"Linksklick ",color:"yellow",bold:0b},{text:"Runden",color:"gray",bold:0b}]},billboard:"center",background:0,shadow:1b,alignment:"center",line_width:300,Tags:["retromc_lobby","retromc_holo"],transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],translation:[0.0f,0.0f,0.0f],scale:[1.3f,1.3f,1.3f]}}
+# CityBuild bei -18 62 26
+setblock -18 62 26 minecraft:smooth_quartz
+summon minecraft:mannequin -17.5 63 26.5 {profile:{name:"CityBuild"},immovable:1b,hide_description:1b,Invulnerable:1b,Silent:1b,PersistenceRequired:1b,Rotation:[-90.0f,0.0f],equipment:{mainhand:{id:"crafting_table"},head:{id:"golden_helmet"},chest:{id:"golden_chestplate"},legs:{id:"golden_leggings"},feet:{id:"golden_boots"}},Tags:["retromc_lobby","retromc_npc_join","mode_citybuild"]}
+summon minecraft:text_display -17.5 65.25 26.5 {text:{text:"",extra:[{text:"CityBuild",color:"yellow",bold:1b},{text:"\n"},{text:"0 Spieler online",color:"gray",bold:0b},{text:"\n"},{text:"Rechtsklick ",color:"yellow",bold:0b},{text:"Spielen ",color:"gray",bold:0b},{text:"┃ ",color:"dark_gray",bold:0b},{text:"Linksklick ",color:"yellow",bold:0b},{text:"Runden",color:"gray",bold:0b}]},billboard:"center",background:0,shadow:1b,alignment:"center",line_width:300,Tags:["retromc_lobby","retromc_holo"],transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],translation:[0.0f,0.0f,0.0f],scale:[1.3f,1.3f,1.3f]}}
+# Cores bei -10 62 26
+setblock -10 62 26 minecraft:beacon
+summon minecraft:mannequin -9.5 63 26.5 {profile:{name:"Cores"},immovable:1b,hide_description:1b,Invulnerable:1b,Silent:1b,PersistenceRequired:1b,Rotation:[90.0f,0.0f],equipment:{mainhand:{id:"diamond_pickaxe"},head:{id:"diamond_helmet"},chest:{id:"diamond_chestplate"},legs:{id:"diamond_leggings"},feet:{id:"diamond_boots"}},Tags:["retromc_lobby","retromc_npc_join","mode_cores"]}
+summon minecraft:text_display -9.5 65.25 26.5 {text:{text:"",extra:[{text:"Cores",color:"aqua",bold:1b},{text:"\n"},{text:"0 Spieler online",color:"gray",bold:0b},{text:"\n"},{text:"Rechtsklick ",color:"yellow",bold:0b},{text:"Spielen ",color:"gray",bold:0b},{text:"┃ ",color:"dark_gray",bold:0b},{text:"Linksklick ",color:"yellow",bold:0b},{text:"Runden",color:"gray",bold:0b}]},billboard:"center",background:0,shadow:1b,alignment:"center",line_width:300,Tags:["retromc_lobby","retromc_holo"],transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],translation:[0.0f,0.0f,0.0f],scale:[1.3f,1.3f,1.3f]}}
+# GunGame bei -18 62 30
+setblock -18 62 30 minecraft:target
+summon minecraft:mannequin -17.5 63 30.5 {profile:{name:"GunGame"},immovable:1b,hide_description:1b,Invulnerable:1b,Silent:1b,PersistenceRequired:1b,Rotation:[-90.0f,0.0f],equipment:{mainhand:{id:"wooden_axe"},chest:{id:"leather_chestplate",components:{"minecraft:dyed_color":3949738}},legs:{id:"leather_leggings",components:{"minecraft:dyed_color":3949738}},feet:{id:"leather_boots",components:{"minecraft:dyed_color":3949738}}},Tags:["retromc_lobby","retromc_npc_join","mode_gungame"]}
+summon minecraft:text_display -17.5 65.25 30.5 {text:{text:"",extra:[{text:"GunGame",color:"aqua",bold:1b},{text:"\n"},{text:"0 Spieler online",color:"gray",bold:0b},{text:"\n"},{text:"Rechtsklick ",color:"yellow",bold:0b},{text:"Spielen ",color:"gray",bold:0b},{text:"┃ ",color:"dark_gray",bold:0b},{text:"Linksklick ",color:"yellow",bold:0b},{text:"Runden",color:"gray",bold:0b}]},billboard:"center",background:0,shadow:1b,alignment:"center",line_width:300,Tags:["retromc_lobby","retromc_holo"],transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],translation:[0.0f,0.0f,0.0f],scale:[1.3f,1.3f,1.3f]}}
+# JumpLeague bei -10 62 30
+setblock -10 62 30 minecraft:slime_block
+summon minecraft:mannequin -9.5 63 30.5 {profile:{name:"JumpLeague"},immovable:1b,hide_description:1b,Invulnerable:1b,Silent:1b,PersistenceRequired:1b,Rotation:[90.0f,0.0f],equipment:{mainhand:{id:"feather"},feet:{id:"diamond_boots"},chest:{id:"leather_chestplate",components:{"minecraft:dyed_color":8439583}}},Tags:["retromc_lobby","retromc_npc_join","mode_jumpleague"]}
+summon minecraft:text_display -9.5 65.25 30.5 {text:{text:"",extra:[{text:"JumpLeague",color:"red",bold:1b},{text:"\n"},{text:"0 Spieler online",color:"gray",bold:0b},{text:"\n"},{text:"Rechtsklick ",color:"yellow",bold:0b},{text:"Spielen ",color:"gray",bold:0b},{text:"┃ ",color:"dark_gray",bold:0b},{text:"Linksklick ",color:"yellow",bold:0b},{text:"Runden",color:"gray",bold:0b}]},billboard:"center",background:0,shadow:1b,alignment:"center",line_width:300,Tags:["retromc_lobby","retromc_holo"],transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],translation:[0.0f,0.0f,0.0f],scale:[1.3f,1.3f,1.3f]}}
+# Belohnungs-Kisten am Spawn (links/rechts vom Tor-Spawn)
+setblock -17 61 33 minecraft:gold_block
+setblock -17 62 33 minecraft:chest[facing=east]
+summon minecraft:text_display -16.5 63.25 33.5 {text:{text:"",extra:[{text:"TÄGLICHE BELOHNUNG",color:"aqua",bold:1b},{text:"\n"},{text:"Deine Tagesbelohnung wartet!",color:"white",bold:0b}]},billboard:"center",background:0,shadow:1b,alignment:"center",line_width:300,Tags:["retromc_lobby","retromc_holo"]}
+setblock -11 61 33 minecraft:gold_block
+setblock -11 62 33 minecraft:chest[facing=west]
+summon minecraft:text_display -10.5 63.25 33.5 {text:{text:"",extra:[{text:"COIN-TRUHE",color:"gold",bold:1b},{text:"\n"},{text:"Bis zu ",color:"gray",bold:0b},{text:"1.000.000 ",color:"yellow",bold:0b},{text:"Coins drin",color:"gray",bold:0b}]},billboard:"center",background:0,shadow:1b,alignment:"center",line_width:300,Tags:["retromc_lobby","retromc_holo"]}
+setblock -17 61 35 minecraft:emerald_block
+setblock -17 62 35 minecraft:ender_chest[facing=east]
+summon minecraft:text_display -16.5 63.25 35.5 {text:{text:"",extra:[{text:"ITEM-TRUHE",color:"green",bold:1b},{text:"\n"},{text:"Öffne sie für ein seltenes Item",color:"gray",bold:0b}]},billboard:"center",background:0,shadow:1b,alignment:"center",line_width:300,Tags:["retromc_lobby","retromc_holo"]}

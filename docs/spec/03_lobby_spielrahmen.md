@@ -2,7 +2,7 @@
 
 Stand 2026-10-21 · Bereich: Hauptlobby, Modus-Lobbys, Silent-Lobby, NPC-/Schilder-Join, Belohnungen, Private Runden; Rundenrahmen aller Minigames (Wartelobby, Countdown, Teams, Zuschauer, Kill-Meldungen, Rundenende, Rückkehr).
 
-**Kürzel Belege:** N02/N03/N05/N09/N17 = Notizen `research_notes/NN_*.md` (N09 = Wiki-GUI G6 „Wähle ein Ziel“) · V = Video-Sweep (`scratchpad/sweep/batch2_*.md`, `thumbs.md`) · OCR = `sweep/review/*.md` · F = eigene Bildsichtung `videos/tw_gommehd_clip_20260728_1361148519` t08 s/t10 s (Lobby-Hotbar 2026, Menü „Private Runden“, Scoreboard).
+**Kürzel Belege:** N02/N03/N05/N09/N17 = Notizen `research_notes/NN_*.md` (N09 = Wiki-GUI G6 „Wähle ein Ziel“) · V = Video-Sweep (`scratchpad/sweep/batch2_*.md`, `thumbs.md`) · OCR = `sweep/review/*.md` · F = eigene Bildsichtung `videos/tw_vorbild_clip_20260728_1361148519` t08 s/t10 s (Lobby-Hotbar 2026, Menü „Private Runden“, Scoreboard).
 **Beleg-Stufen:** *B* = belegt · *A* = abgeleitet · *AN* = Annahme (festgelegt, ohne Beleg).
 **Ära:** **26** = Standard (neue 1.21-Lobby ab ca. 05/2026) · **20+** = 2023 bis 04/2026 (Option) · **18** = 1.8-Ära (Option `legacyStyle`, Schilder-Join).
 **Textregel:** §-Notation, Umsetzung in `core-i18n` als MiniMessage (`§7`→`<gray>`, `{x}`→`<x>`). `{prefix}` = `prefix.<mode>` (Spec 02 §7), `{p:lobby}` = `§6[Lobby] `, `{p:coins}` = CoinSystem-Präfix (Spec 02). Marke: `{brand}`, `{BRAND_UPPER}`. Ränge nach **Spec 01 §6.1** (LuckPerms-Gruppen `default`, `premium`, `premiumplus`, `supremium`, `supremiumplus`, `vip`, Team); „X+“ = Gewicht ≥ X (z. B. `supremium`+ = Supremium, Supremium+, VIP, Team).

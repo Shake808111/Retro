@@ -36,6 +36,7 @@ include(
     ":core:core-data",
     ":core:core-messaging",
     ":core:core-i18n",
+    ":core:core-stats",
     // Plattform-Kerne
     ":platform:paper-core",
     ":platform:velocity-core",

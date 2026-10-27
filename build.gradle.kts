@@ -1,5 +1,6 @@
 // Root-Build: gemeinsame Konventionen für alle Module.
 // - Java-Toolchain 25 (Paper 26.x und Velocity 4.3 verlangen Java 25, siehe docs/VERSIONEN.md)
+// - Source-Set "integrationTest" in jedem Java-Modul (Testcontainers, Teil von "check")
 // - Marke aus gradle.properties -> paper-plugin.yml und BuildInfo
 // - Shadow-Jar = das auslieferbare Plugin-Jar
 // - run-paper/run-velocity für lokale Testserver
@@ -92,6 +93,32 @@ subprojects {
             "testImplementation"(libs.junit.jupiter)
             "testRuntimeOnly"(libs.junit.platform.launcher)
         }
+
+        // Integrationstests (Spec 00 §4.5, Spec 08 §6.16): eigenes Source-Set src/integrationTest,
+        // JUnit-Tag "integration", Testcontainers. Läuft nach "test" und gehört zu "check" (also zu "build").
+        val sourceSets = extensions.getByType<SourceSetContainer>()
+        val main = sourceSets.getByName("main")
+        val integrationTest = sourceSets.create("integrationTest") {
+            compileClasspath += main.output
+            runtimeClasspath += main.output
+        }
+        configurations.named(integrationTest.implementationConfigurationName) {
+            extendsFrom(configurations.getByName("testImplementation"))
+        }
+        configurations.named(integrationTest.runtimeOnlyConfigurationName) {
+            extendsFrom(configurations.getByName("testRuntimeOnly"))
+        }
+        val integrationTestTask = tasks.register<Test>("integrationTest") {
+            description = "Integrationstests mit Testcontainers (PostgreSQL, Valkey)."
+            group = LifecycleBasePlugin.VERIFICATION_GROUP
+            testClassesDirs = integrationTest.output.classesDirs
+            classpath = integrationTest.runtimeClasspath
+            shouldRunAfter(tasks.named("test"))
+            systemProperty("org.slf4j.simpleLogger.defaultLogLevel", "warn")
+        }
+        tasks.named("check") {
+            dependsOn(integrationTestTask)
+        }
     }
 
     // Dienste: Konsolenausgabe immer UTF-8 (Umlaute), unabhängig von der Systemsprache.
@@ -118,9 +145,11 @@ subprojects {
                 duplicatesStrategy = DuplicatesStrategy.EXCLUDE
             }
             dependencies {
-                // Netty und SLF4J liefern Paper und Velocity selbst mit.
+                // Netty, SLF4J und Gson liefern Paper und Velocity selbst mit
+                // (Gson: Spec 08 §6.18 "auf Paper/Velocity compileOnly").
                 exclude(dependency("io.netty:.*"))
                 exclude(dependency("org.slf4j:.*"))
+                exclude(dependency("com.google.code.gson:.*"))
             }
         }
     }

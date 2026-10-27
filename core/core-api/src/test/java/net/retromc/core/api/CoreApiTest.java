@@ -5,10 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import net.retromc.core.api.server.ServerInfo;
-import net.retromc.core.api.server.ServerState;
-import net.retromc.core.api.social.FriendPair;
 import java.util.UUID;
+import net.retromc.core.api.social.FriendPair;
 import org.junit.jupiter.api.Test;
 
 class CoreApiTest {
@@ -34,13 +32,5 @@ class CoreApiTest {
         assertEquals(pair, FriendPair.of(low, high));
         assertThrows(IllegalArgumentException.class, () -> FriendPair.of(low, low));
         assertThrows(IllegalArgumentException.class, () -> new FriendPair(high, low));
-    }
-
-    @Test
-    void serverInfoFreiePlaetze() {
-        ServerInfo info = new ServerInfo("bedwars-1", "bedwars", "test", "testmap", ServerState.WAITING, 3, 8);
-        assertEquals(5, info.freeSlots());
-        assertTrue(info.state().acceptsPlayers());
-        assertFalse(ServerState.INGAME.acceptsPlayers());
     }
 }

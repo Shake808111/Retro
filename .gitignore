@@ -24,3 +24,5 @@ out/
 web/node_modules/
 web/.next/
 .claude/
+recherche/
+deploy/lobby/lobby-welt.zip

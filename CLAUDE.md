@@ -9,7 +9,7 @@ Eigenes Minecraft-Netzwerk **RetroMC**: 1:1-Nachbau der Mechaniken, Zahlen, Abl�
 großen deutschen Minigame-Netzwerks (Lobby, BedWars, SkyWars, SurvivalGames, EnderGames, TTT, MasterBuilders,
 Cores, GunGame, CityBuild/SMP u. a.). **Nicht** übernommen werden Name, Logo, Maps, Code oder eigene Texte des
 Vorbilds. Marke ausschließlich `RetroMC` (aus `gradle.properties` `brandName`), Paket `net.retromc`, Domain
-`retromc.net` nur Platzhalter. Den Namen des Vorbilds nirgends ins Repo schreiben (`git grep -i gomme` muss 0
+`retromc.net` nur Platzhalter. Den Namen des Vorbilds nirgends ins Repo schreiben (`git grep -i 'g[o]mme'` muss 0
 sein) – das Repo ist **öffentlich**.
 
 ## 2. Wo steht was
@@ -29,10 +29,13 @@ sein) – das Repo ist **öffentlich**.
 ## 3. Stand (bitte bei jedem Meilenstein aktualisieren)
 
 - **Fertig in `main`:** Specs 00–08; F1a Verträge (core-api, core-messaging, core-data inkl. Testcontainers-
-  Testhilfen, 5 Migrationen, `ValkeyKeys`); F2 Textkatalog; Lobby-Map-Einrichtung. Voller Build grün.
-- **In Arbeit:** F1b Plattform-Gerüste auf Branch `p1/plattform` (Feature-Muster, Service-Registry, Env-Config,
-  Cloud-Commands, Bridge-Codec, GUI-Framework mit ConfirmGui/PagedGui, ItemBuilder). Wenn der Branch noch nicht
-  fertig/gemergt ist: Stand prüfen (`git log origin/p1/plattform`), fertigstellen, Build grün, in `main` mergen.
+  Testhilfen, 5 Migrationen, `ValkeyKeys`); F2 Textkatalog; Lobby-Map-Einrichtung; F1b Plattform-Gerüste
+  (neues Modul `platform/platform-common`: Feature-Muster, Service-Registry mit Standard/Ersatz, Env-Config,
+  Verbindungen, Executor, Bridge-Codec, Cloud-Fehler, `I18n`; paper-core: Cloud-Commands, Bridge, GUI-Framework
+  mit ChestGui/PagedGui/ConfirmGui, ItemBuilder; velocity-core: Commands, Bridge). Voller Build grün.
+- **Andocken:** Ränge, Profile, Texte und Datenbankzugang nur über die `ServiceRegistry` holen
+  (`PaperCorePlugin.services()` / `VelocityCorePlugin.services()`); ein Adapter an ein bestehendes Kern-Plugin
+  ersetzt sie per `register(...)`. Neue Teilsysteme = eine Zeile in `features()` der Plugin-Hauptklasse.
 - **Als Nächstes – Phase 1 Stränge** (je ein eigener Branch `p1/<name>`, danach mergen):
   - **A** velocity-core Social nach Spec 01 (Login, MOTD, Ränge, Freunde, /msg, Ignore, Party, Clan, Report,
     Punish, Nick, Sprache, Einstellungen, AFK, Wartung, globaler Chat, Anti-Spam, JoinMe) + Repos + IT-Tests.

@@ -1,6 +1,6 @@
 # platform/velocity-core – Kern-Plugin für den Proxy
 
-**Gradle-Pfad:** `:platform:velocity-core` · **Paket:** `net.retromc.velocity.core` · **Einstieg:** `VelocityCorePlugin` (`@Plugin`, Velocity 4.3) · **Status:** Gerüst
+**Gradle-Pfad:** `:platform:velocity-core` · **Paket:** `net.retromc.velocity.core` · **Einstieg:** `VelocityCorePlugin` (`@Plugin`, Velocity 4.3) · **Status:** Plattform-Gerüst (F1b)
 
 ## Verantwortung
 
@@ -12,6 +12,14 @@ Velocity-Plugin (Notiz 07, Abschnitte 1, 4 und 6):
 
 Plugin-ID und Name kommen aus `BuildInfo` (also aus `brandName` in `gradle.properties`); der Velocity-
 Annotation-Prozessor erzeugt daraus `velocity-plugin.json`.
+
+## Aufbau (F1b)
+
+`VelocityCorePlugin` (`@Dependency luckperms`, Lebenszyklus Spec 08 §6.3) startet PostgreSQL → Valkey →
+Nachrichtenbus (je 3 Versuche, sonst Proxy-Stopp) und dann die Features aus `features()`: `TextFeature`
+(Standard-`I18n`), `CommandFeature` (cloud-velocity, Fehler aus dem Katalog), `BridgeFeature` (`ServerBridge`:
+`OPEN_GUI` an den Server; `RUN_COMMAND` vom Server wird als Spieler ausgeführt, vom Client gesendete Bridge-Nachrichten
+werden verworfen und nie weitergeleitet). Dienste über `VelocityCorePlugin.services()`, jeder ersetzbar.
 
 Lokal testen: `./gradlew :platform:velocity-core:runVelocity` (lädt Velocity 4.3.0).
 

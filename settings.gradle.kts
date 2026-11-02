@@ -37,7 +37,8 @@ include(
     ":core:core-messaging",
     ":core:core-i18n",
     ":core:core-stats",
-    // Plattform-Kerne
+    // Plattform-Kerne (platform-common: plattformfreie Bausteine beider Kerne, in beide Jars eingebettet)
+    ":platform:platform-common",
     ":platform:paper-core",
     ":platform:velocity-core",
     // Spielmodi

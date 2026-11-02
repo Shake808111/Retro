@@ -23,4 +23,8 @@ dependencies {
     testImplementation(platform(libs.adventure.bom))
     testImplementation(libs.adventure.text.minimessage)
     testImplementation(libs.adventure.text.serializer.plain)
+    testRuntimeOnly(libs.slf4j.simple)
+
+    // NetworkConnections gegen echte Container (postgres:18.6-alpine, valkey/valkey:8.1.10-alpine).
+    "integrationTestImplementation"(testFixtures(project(":core:core-data")))
 }

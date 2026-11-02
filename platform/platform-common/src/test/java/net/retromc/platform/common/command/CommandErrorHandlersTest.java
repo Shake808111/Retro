@@ -6,18 +6,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import net.retromc.core.i18n.Messages;
+import net.retromc.platform.common.text.CatalogI18n;
+import net.retromc.platform.common.text.I18n;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.caption.Caption;
 import org.incendo.cloud.caption.CaptionVariable;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.exception.parsing.ParserException;
 import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.internal.CommandRegistrationHandler;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.parser.standard.EnumParser;
+import org.incendo.cloud.parser.standard.IntegerParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
@@ -46,7 +50,7 @@ class CommandErrorHandlersTest {
     private static final class TestManager extends CommandManager<Sender> {
 
         TestManager() {
-            super(ExecutionCoordinator.simpleCoordinator(), CommandManager.nullCommandRegistrationHandler());
+            super(ExecutionCoordinator.simpleCoordinator(), CommandRegistrationHandler.nullCommandRegistrationHandler());
         }
 
         @Override
@@ -66,14 +70,16 @@ class CommandErrorHandlersTest {
         }
     }
 
+    private static final I18n I18N = new CatalogI18n(player -> Optional.empty());
+
     private final List<CommandError> replies = new ArrayList<>();
     private final TestManager manager = new TestManager();
     private final Gamer gamer = new Gamer(Set.of());
 
     @BeforeEach
     void setUp() {
-        manager.command(manager.commandBuilder("range").required("n", TestManager.integerParser(1, 5)));
-        manager.command(manager.commandBuilder("count").required("n", TestManager.integerParser()));
+        manager.command(manager.commandBuilder("range").required("n", IntegerParser.integerParser(1, 5)));
+        manager.command(manager.commandBuilder("count").required("n", IntegerParser.integerParser()));
         manager.command(manager.commandBuilder("mode").required("m", EnumParser.enumParser(Mode.class)));
         manager.command(manager.commandBuilder("secret").permission("retromc.test.secret"));
         manager.command(manager.commandBuilder("fly").senderType(Gamer.class));
@@ -140,7 +146,7 @@ class CommandErrorHandlersTest {
                 CommandErrorMapper.ARGUMENT, CommandErrorMapper.INVALID, CommandErrorMapper.NUMBER,
                 CommandErrorMapper.RANGE, CommandErrorMapper.UNKNOWN, CommandErrorMapper.FAILED,
                 CommandErrorMapper.NO_PERMISSION, CommandErrorMapper.PLAYER_UNKNOWN)) {
-            assertEquals(true, Messages.has(key), key);
+            assertEquals(true, I18N.has(key), key);
         }
     }
 
@@ -148,7 +154,7 @@ class CommandErrorHandlersTest {
     void eingabenWerdenNieAlsMiniMessageGelesen() {
         CommandError error = new CommandError(CommandErrorMapper.ARGUMENT, Map.of("input", "<red>x</red>"));
 
-        String text = PlainTextComponentSerializer.plainText().serialize(error.render(Locale.GERMANY));
+        String text = PlainTextComponentSerializer.plainText().serialize(error.render(I18N, Locale.GERMANY));
 
         assertEquals("Ungültige Eingabe: <red>x</red>", text);
     }
@@ -158,7 +164,7 @@ class CommandErrorHandlersTest {
         CommandError error = new CommandError(CommandErrorMapper.USAGE, Map.of("syntax", "range <n>"));
 
         assertEquals("Usage: /range <n>",
-                PlainTextComponentSerializer.plainText().serialize(error.render(Locale.US)));
+                PlainTextComponentSerializer.plainText().serialize(error.render(I18N, Locale.US)));
     }
 
     private CommandError run(Sender sender, String input) {

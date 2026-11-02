@@ -6,10 +6,10 @@ import java.util.Objects;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import net.retromc.core.i18n.MessageRenderer;
+import net.retromc.platform.common.text.I18n;
 
 /**
- * Fehlermeldung eines Befehls als i18n-Schlüssel mit Platzhaltern (core-i18n).
+ * Fehlermeldung eines Befehls als i18n-Schlüssel mit Platzhaltern.
  *
  * @param key Schlüssel im Textkatalog, z. B. {@code error.command.usage}
  * @param placeholders Platzhalter (Name → Text); Werte stammen oft aus Spielereingaben und werden deshalb nie als
@@ -26,11 +26,11 @@ public record CommandError(String key, Map<String, String> placeholders) {
         this(key, Map.of());
     }
 
-    /** Text in der Sprache {@code locale}. */
-    public Component render(Locale locale) {
+    /** Text über den aktiven {@link I18n}-Dienst in der Sprache {@code locale}. */
+    public Component render(I18n i18n, Locale locale) {
         TagResolver[] resolvers = placeholders.entrySet().stream()
                 .map(entry -> Placeholder.unparsed(entry.getKey(), entry.getValue()))
                 .toArray(TagResolver[]::new);
-        return MessageRenderer.render(locale, key, resolvers);
+        return i18n.render(locale, key, resolvers);
     }
 }

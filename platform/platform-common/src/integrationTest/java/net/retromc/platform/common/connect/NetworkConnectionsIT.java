@@ -1,6 +1,7 @@
 package net.retromc.platform.common.connect;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -9,14 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import javax.sql.DataSource;
 import net.retromc.core.api.event.MaintenanceChanged;
 import net.retromc.core.api.msg.Envelope;
 import net.retromc.core.api.util.Registration;
+import net.retromc.core.data.AsyncDatabase;
 import net.retromc.core.data.DatabaseConfig;
 import net.retromc.core.data.testing.TestDatabases;
+import net.retromc.core.messaging.MessageBus;
 import net.retromc.core.messaging.MessageType;
 import net.retromc.platform.common.config.NetworkStage;
 import net.retromc.platform.common.config.NodeConfig;
+import net.retromc.platform.common.service.ServiceRegistry;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -42,17 +47,25 @@ class NetworkConnectionsIT {
     void oeffnetDatenbankValkeyUndBus() throws Exception {
         try (NetworkConnections connections = NetworkConnections.open(config(TestDatabases.valkeyUrl()), retry,
                 LOG)) {
+            ServiceRegistry services = new ServiceRegistry();
+            connections.registerDefaults(services);
+            assertSame(connections.bus(), services.get(MessageBus.class));
+            assertSame(connections.asyncDatabase(), services.get(AsyncDatabase.class));
+            assertSame(connections.database().dataSource(), services.get(DataSource.class));
             assertTrue(connections.asyncDatabase().query(connection -> connection.isValid(2))
                     .get(10, TimeUnit.SECONDS));
 
             CompletableFuture<Envelope<MaintenanceChanged>> received = new CompletableFuture<>();
-            try (Registration ignored = connections.bus().subscribe(MessageType.MAINTENANCE_CHANGED,
-                    received::complete).get(10, TimeUnit.SECONDS)) {
+            Registration subscription = connections.bus().subscribe(MessageType.MAINTENANCE_CHANGED,
+                    received::complete).get(10, TimeUnit.SECONDS);
+            try {
                 connections.bus().publish(MessageType.MAINTENANCE_CHANGED, new MaintenanceChanged(true))
                         .get(10, TimeUnit.SECONDS);
                 Envelope<MaintenanceChanged> envelope = received.get(10, TimeUnit.SECONDS);
                 assertEquals("lobby-1", envelope.src());
                 assertTrue(envelope.d().enabled());
+            } finally {
+                subscription.close();
             }
         }
         assertTrue(pauses.isEmpty());

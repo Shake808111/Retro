@@ -4,12 +4,15 @@ import io.lettuce.core.api.StatefulRedisConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.sql.DataSource;
+import net.retromc.core.api.util.Registration;
 import net.retromc.core.data.AsyncDatabase;
 import net.retromc.core.data.Database;
 import net.retromc.core.data.ValkeyConnector;
 import net.retromc.core.messaging.MessageBus;
 import net.retromc.core.messaging.ValkeyMessageBus;
 import net.retromc.platform.common.config.NodeConfig;
+import net.retromc.platform.common.service.ServiceRegistry;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -66,6 +69,19 @@ public final class NetworkConnections implements AutoCloseable {
         try (StatefulRedisConnection<String, String> connection = connector.connect()) {
             connection.sync().ping();
         }
+    }
+
+    /**
+     * Registriert die Verbindungen als Standard-Dienste: {@link DataSource}, {@link AsyncDatabase},
+     * {@link ValkeyConnector} und {@link MessageBus}. Features und Repositories holen sie nur über die Registry, damit
+     * ein Adapter an ein fremdes Kern-Plugin eigenen Datenbankzugang einsetzen kann.
+     */
+    public List<Registration> registerDefaults(ServiceRegistry services) {
+        return List.of(
+                services.registerDefault(DataSource.class, database.dataSource()),
+                services.registerDefault(AsyncDatabase.class, asyncDatabase),
+                services.registerDefault(ValkeyConnector.class, valkey),
+                services.registerDefault(MessageBus.class, bus));
     }
 
     /** Verbindungspool zu PostgreSQL. */

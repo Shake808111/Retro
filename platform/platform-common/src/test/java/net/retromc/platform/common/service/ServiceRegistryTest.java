@@ -8,10 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import net.retromc.core.api.util.Registration;
+import net.retromc.platform.common.service.ServiceRegistry.Kind;
 import org.junit.jupiter.api.Test;
 
-/** Registrieren, Abfragen, Abmelden und Spiegelung der Service-Registry. */
+/** Standard, Ersatz, Abmelden und Spiegelung der Service-Registry. */
 class ServiceRegistryTest {
 
     private interface Greeter {
@@ -28,81 +30,112 @@ class ServiceRegistryTest {
         private final List<String> calls = new ArrayList<>();
 
         @Override
-        public <T> void registered(Class<T> type, T service) {
-            calls.add("+" + type.getSimpleName());
+        public <T> void registered(Class<T> type, T service, Kind kind) {
+            calls.add("+" + type.getSimpleName() + "/" + kind);
         }
 
         @Override
-        public <T> void unregistered(Class<T> type, T service) {
-            calls.add("-" + type.getSimpleName());
+        public <T> void unregistered(Class<T> type, T service, Kind kind) {
+            calls.add("-" + type.getSimpleName() + "/" + kind);
         }
     }
 
-    @Test
-    void registriertUndLiefertDienste() {
-        ServiceRegistry registry = new ServiceRegistry();
-        Greeter greeter = () -> "Hallo";
-        registry.register(Greeter.class, greeter);
+    private final Mirror mirror = new Mirror();
+    private final ServiceRegistry registry = new ServiceRegistry(mirror);
 
-        assertSame(greeter, registry.get(Greeter.class));
-        assertTrue(registry.find(Greeter.class).isPresent());
+    @Test
+    void standardIstAktivSolangeNichtsErsetztIst() {
+        Greeter core = () -> "Kern";
+        registry.registerDefault(Greeter.class, core);
+
+        assertSame(core, registry.get(Greeter.class));
+        assertFalse(registry.isOverridden(Greeter.class));
         assertTrue(registry.find(Counter.class).isEmpty());
         assertEquals(List.of(Greeter.class), registry.types());
     }
 
     @Test
+    void ersatzHatVorrangUndAbmeldenStelltDenStandardWiederHer() {
+        Greeter core = () -> "Kern";
+        Greeter foreign = () -> "Fremd";
+        registry.registerDefault(Greeter.class, core);
+
+        Registration override = registry.register(Greeter.class, foreign);
+        assertSame(foreign, registry.get(Greeter.class));
+        assertTrue(registry.isOverridden(Greeter.class));
+
+        override.close();
+        assertSame(core, registry.get(Greeter.class));
+        assertEquals(List.of("+Greeter/DEFAULT", "+Greeter/OVERRIDE", "-Greeter/OVERRIDE"), mirror.calls);
+    }
+
+    @Test
+    void ersatzOhneStandardIstMoeglich() {
+        Counter foreign = () -> 3;
+        registry.register(Counter.class, foreign);
+
+        assertSame(foreign, registry.get(Counter.class));
+    }
+
+    @Test
+    void supplierLiefertImmerDieAktuelleImplementierung() {
+        Supplier<Greeter> greeter = registry.supplier(Greeter.class);
+        registry.registerDefault(Greeter.class, () -> "Kern");
+        assertEquals("Kern", greeter.get().greet());
+
+        registry.register(Greeter.class, () -> "Fremd");
+
+        assertEquals("Fremd", greeter.get().greet());
+    }
+
+    @Test
     void fehlenderDienstNenntDieSchnittstelle() {
-        IllegalStateException error = assertThrows(IllegalStateException.class,
-                () -> new ServiceRegistry().get(Counter.class));
+        IllegalStateException error = assertThrows(IllegalStateException.class, () -> registry.get(Counter.class));
 
         assertTrue(error.getMessage().contains(Counter.class.getName()));
     }
 
     @Test
-    void jedeSchnittstelleNurEinmal() {
-        ServiceRegistry registry = new ServiceRegistry();
-        registry.register(Greeter.class, () -> "a");
+    void jeArtNurEineImplementierung() {
+        registry.registerDefault(Greeter.class, () -> "a");
+        registry.register(Greeter.class, () -> "b");
 
-        assertThrows(IllegalStateException.class, () -> registry.register(Greeter.class, () -> "b"));
+        assertThrows(IllegalStateException.class, () -> registry.registerDefault(Greeter.class, () -> "c"));
+        assertThrows(IllegalStateException.class, () -> registry.register(Greeter.class, () -> "d"));
     }
 
     @Test
     @SuppressWarnings({"unchecked", "rawtypes"})
     void implementierungMussZurSchnittstellePassen() {
-        ServiceRegistry registry = new ServiceRegistry();
         Class raw = Counter.class;
 
-        assertThrows(IllegalArgumentException.class, () -> registry.register(raw, (Greeter) () -> "a"));
+        assertThrows(IllegalArgumentException.class, () -> registry.registerDefault(raw, (Greeter) () -> "a"));
     }
 
     @Test
-    void registrierungMeldetGenauDieseImplementierungAb() {
-        Mirror mirror = new Mirror();
-        ServiceRegistry registry = new ServiceRegistry(mirror);
+    void alteRegistrierungMeldetKeineNeueAb() {
         Greeter first = () -> "erst";
-        Registration registration = registry.register(Greeter.class, first);
+        Registration registration = registry.registerDefault(Greeter.class, first);
         registration.close();
         Greeter second = () -> "dann";
-        registry.register(Greeter.class, second);
+        registry.registerDefault(Greeter.class, second);
 
-        // Die alte Registrierung darf den neuen Dienst nicht abmelden.
         registration.close();
-        assertFalse(registry.unregister(Greeter.class, first));
 
+        assertFalse(registry.unregister(Greeter.class, first));
         assertSame(second, registry.get(Greeter.class));
-        assertEquals(List.of("+Greeter", "-Greeter", "+Greeter"), mirror.calls);
     }
 
     @Test
     void leerenMeldetInUmgekehrterReihenfolgeAb() {
-        Mirror mirror = new Mirror();
-        ServiceRegistry registry = new ServiceRegistry(mirror);
-        registry.register(Greeter.class, () -> "a");
-        registry.register(Counter.class, () -> 1);
+        registry.registerDefault(Greeter.class, () -> "a");
+        registry.registerDefault(Counter.class, () -> 1);
+        registry.register(Counter.class, () -> 2);
 
         registry.clear();
 
-        assertEquals(List.of("+Greeter", "+Counter", "-Counter", "-Greeter"), mirror.calls);
+        assertEquals(List.of("+Greeter/DEFAULT", "+Counter/DEFAULT", "+Counter/OVERRIDE", "-Counter/OVERRIDE",
+                "-Counter/DEFAULT", "-Greeter/DEFAULT"), mirror.calls);
         assertTrue(registry.types().isEmpty());
     }
 }

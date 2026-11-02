@@ -18,7 +18,7 @@ forwarding-secret-file = "forwarding.secret"
 announce-forge = false
 kick-existing-players = false
 sample-players-in-ping = false
-enable-player-address-logging = true
+enable-player-address-logging = false
 
 [ping-passthrough]
 version = false

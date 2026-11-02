@@ -2,5 +2,13 @@
 name: ${brandName}Core
 version: '${version}'
 main: net.retromc.paper.core.PaperCorePlugin
-description: 'Netzwerk-Kern für Paper-Server (Profile, Scoreboard, GUIs, Kampfprofile)'
+description: 'Netzwerk-Kern für Paper-Server (Dienste, Befehle, Bridge, GUIs)'
 api-version: '${paperApiVersion}'
+dependencies:
+  server:
+    # Ränge auf allen Servern (Spec 01 §1): Pflicht, vor dem Kern geladen; join-classpath macht die
+    # LuckPerms-API (net.luckperms.api) für den Kern sichtbar.
+    LuckPerms:
+      load: BEFORE
+      required: true
+      join-classpath: true

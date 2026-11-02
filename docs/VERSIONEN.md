@@ -27,11 +27,11 @@ Stand: **2026-10-20**. Jede Version unten wurde an diesem Tag direkt im Reposito
 | `org.slf4j:slf4j-simple` | `2.0.20` | 2026-09-22 | neueste 2.0.x; `2.1.0-alpha1` nicht genutzt |
 | `org.junit:junit-bom` | `6.1.3` | 2026-08-07 | neueste Version (Jupiter und Platform-Launcher über die BOM) |
 | `com.github.ben-manes.caffeine:caffeine` | `3.3.1` | 2026-10-13 | geplant, noch ungenutzt |
-| `net.luckperms:api` | `5.5` | 2025-05-25 | geplant, noch ungenutzt (neueste Version) |
-| `org.incendo:cloud-core` | `2.1.0` | 2026-07-20 | geplant, noch ungenutzt |
-| `org.incendo:cloud-paper`, `cloud-velocity` | `2.0.1` | 2026-09-16 | geplant, noch ungenutzt |
+| `net.luckperms:api` | `5.5` | 2025-05-25 | neueste Version; `compileOnly` in paper-core und velocity-core (LuckPerms ist Pflicht-Plugin), seit F1b |
+| `org.incendo:cloud-core` | `2.1.0` | 2026-07-20 | in platform-common (Befehlsfehler), seit F1b; cloud-paper/-velocity 2.0.1 lösen ebenfalls auf 2.1.0 auf |
+| `org.incendo:cloud-paper`, `cloud-velocity` | `2.0.1` | 2026-09-16 | erneut geprüft 2026-10-27 (`maven-metadata.xml`, höchste Version); im Shadow-Jar von paper-core bzw. velocity-core, seit F1b |
 | `fr.mrmicky:fastboard` | `2.2.2` | 2026-09-21 | geplant, noch ungenutzt |
-| `com.github.stefvanschie.inventoryframework:IF` | `0.12.2` | 2026-10-19 | geplant, noch ungenutzt |
+| `com.github.stefvanschie.inventoryframework:IF` | `0.12.2` | 2026-10-19 | erneut geprüft 2026-10-27; Jar enthält NMS-Module bis `v26_1`, genutzt wird nur `ChestGui` (reine Bukkit-API). Eingebunden 2026-11-02 (2 Wochen nach Veröffentlichung), im Shadow-Jar von paper-core, seit F1b |
 | `net.dv8tion:JDA` | `6.7.0` | 2026-09-20 | geplant, noch ungenutzt |
 
 Nicht im Katalog, weil nicht auf Maven Central bzw. Repository nicht geprüft: PacketEvents, Grim, OldCombatMechanics,

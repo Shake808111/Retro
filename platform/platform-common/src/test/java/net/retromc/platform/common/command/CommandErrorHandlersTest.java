@@ -50,7 +50,8 @@ class CommandErrorHandlersTest {
     private static final class TestManager extends CommandManager<Sender> {
 
         TestManager() {
-            super(ExecutionCoordinator.simpleCoordinator(), CommandRegistrationHandler.nullCommandRegistrationHandler());
+            super(ExecutionCoordinator.simpleCoordinator(),
+                    CommandRegistrationHandler.nullCommandRegistrationHandler());
         }
 
         @Override

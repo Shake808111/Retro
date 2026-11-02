@@ -47,8 +47,9 @@ angelegt (geplant unter `deploy/k8s/`, Notiz 07 §6).
 core-api ◄── core-data ◄──┐
    ▲  ▲      core-messaging◄┤
    │  └───── core-i18n ◄────┤
-   │                        ├── platform/paper-core   (Shadow-Jar enthält alle core-*)
-   │                        ├── platform/velocity-core(Shadow-Jar enthält alle core-*)
+   │                        ├── platform/platform-common (plattformfreie Bausteine beider Kerne)
+   │                        ├── platform/paper-core   (Shadow-Jar enthält platform-common und alle core-*)
+   │                        ├── platform/velocity-core(Shadow-Jar enthält platform-common und alle core-*)
    │                        └── services/controller   (+ Flyway)
    │
 game-framework (compileOnly: paper-api, core-api)
@@ -63,6 +64,7 @@ lobby, citybuild  (compileOnly: paper-core)
 | `core/core-data` | Bibliothek | Plugins, Dienste | HikariCP-Pool, Lettuce-Verbindung, Valkey-Schlüssel |
 | `core/core-messaging` | Bibliothek | Plugins, Dienste | `MessageBus` über Valkey Pub/Sub, Kanäle `net:*` |
 | `core/core-i18n` | Bibliothek | Plugins | MiniMessage-Texte de_DE/en_US, `<brand>` |
+| `platform/platform-common` | Bibliothek, ohne Paper/Velocity | eingebettet in beide Kerne | Feature-Muster, Service-Registry (Standard/Ersatz), Env-Konfiguration, Verbindungsaufbau, Executor, Bridge-Codec, Befehlsfehler, `I18n` |
 | `platform/paper-core` | Paper-Plugin | jedem Paper-Server | Netzwerk-Kern, stellt core-* bereit |
 | `platform/velocity-core` | Velocity-Plugin | Proxy | Login, Soziales, Routing, MOTD |
 | `game/game-framework` | Bibliothek | Spielserver | Rundenablauf, Kampfprofil, Basisklasse `MiniGamePlugin` |

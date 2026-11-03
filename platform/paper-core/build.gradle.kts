@@ -28,7 +28,9 @@ dependencies {
     // Scoreboard (Spec 02 §1, §4.1): flackerfrei, nur geänderte Zeilen werden gesendet.
     implementation(libs.fastboard)
 
-    // Plattformfreie Tests (Layout, Paging, Item-Logik): Adventure ohne Server.
+    // Plattformfreie Tests (Layout, Paging, Item-Logik): Adventure ohne Server. paper-api nur, damit Klassen mit
+    // Bukkit-Typen in der Signatur (Hotbar, Newsticker/Gson) ladbar sind; es läuft kein Server.
+    testImplementation(libs.paper.api)
     testImplementation(platform(libs.adventure.bom))
     testImplementation(libs.adventure.text.minimessage)
     testImplementation(libs.adventure.text.serializer.plain)

@@ -25,6 +25,8 @@ dependencies {
     api(libs.cloud.paper)
     // GUIs: nur Unterbau des eigenen GUI-API (Spec 02 §5), daher nicht Teil der öffentlichen API.
     implementation(libs.inventoryframework)
+    // Scoreboard (Spec 02 §1, §4.1): flackerfrei, nur geänderte Zeilen werden gesendet.
+    implementation(libs.fastboard)
 
     // Plattformfreie Tests (Layout, Paging, Item-Logik): Adventure ohne Server.
     testImplementation(platform(libs.adventure.bom))

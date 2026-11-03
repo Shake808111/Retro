@@ -28,9 +28,10 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Standard-{@link ProfileService} auf {@code core.player} (Spec 01 §2.1, §6.3 Nr. 4/7). Ein bestehendes Kern-Plugin
- * ersetzt ihn per Adapter. Profile werden aus Datenbank, Rang ({@link RankService}) und Clan zusammengesetzt; Level,
- * Coins, Gold und Stats-Sichtbarkeit pflegt Spec 02 (hier 0 bzw. {@code false}). Namensauflösung über
- * {@code name:{lower}} (24 h).
+ * ersetzt ihn per Adapter. Profile werden aus Datenbank, Rang ({@link RankService}) und Clan zusammengesetzt; die
+ * Spec-02-Felder kommen aus {@code stats.network_level} (Level), {@code economy.wallet} (Coins, Gold) und
+ * {@code stats.player_settings} (Stats verborgen), fehlende Zeilen gelten als 0 bzw. {@code false}.
+ * Namensauflösung über {@code name:{lower}} (24 h).
  */
 public final class PlayerRepository implements ProfileService {
 
@@ -47,9 +48,12 @@ public final class PlayerRepository implements ProfileService {
         this.events = Objects.requireNonNull(events, "events");
     }
 
-    /** Spalten aus {@code core.player} und Clan. */
+    /**
+     * Spalten aus {@code core.player}, Clan und den Spec-02-Feldern ({@code economy.wallet.coins/gold},
+     * {@code stats.network_level.level}, {@code stats.player_settings.hidden}).
+     */
     private record Row(UUID uuid, String name, String locale, long playtime, @Nullable String clanTag,
-            @Nullable Long clanId) {
+            @Nullable Long clanId, int level, long coins, long gold, boolean statsHidden) {
     }
 
     @Override
@@ -64,12 +68,18 @@ public final class PlayerRepository implements ProfileService {
         }
         UUID[] ids = players.stream().distinct().toArray(UUID[]::new);
         return database.query(connection -> Jdbc.list(connection, "SELECT p.uuid, p.name, p.locale, p.playtime_s,"
-                + " c.tag, c.id AS clan_id FROM core.player p LEFT JOIN social.clan_member m ON m.uuid = p.uuid"
-                + " LEFT JOIN social.clan c ON c.id = m.clan_id WHERE p.uuid = ANY (?)", row -> {
+                + " c.tag, c.id AS clan_id, COALESCE(l.level, 0) AS level, COALESCE(w.coins, 0) AS coins,"
+                + " COALESCE(w.gold, 0) AS gold, COALESCE(s.hidden, false) AS stats_hidden"
+                + " FROM core.player p LEFT JOIN social.clan_member m ON m.uuid = p.uuid"
+                + " LEFT JOIN social.clan c ON c.id = m.clan_id LEFT JOIN economy.wallet w ON w.uuid = p.uuid"
+                + " LEFT JOIN stats.network_level l ON l.uuid = p.uuid"
+                + " LEFT JOIN stats.player_settings s ON s.uuid = p.uuid WHERE p.uuid = ANY (?)", row -> {
                     long clanId = row.getLong("clan_id");
                     boolean noClan = row.wasNull();
                     return new Row(Jdbc.requireUuid(row, "uuid"), row.getString("name"), row.getString("locale"),
-                            row.getLong("playtime_s"), row.getString("tag"), noClan ? null : clanId);
+                            row.getLong("playtime_s"), row.getString("tag"), noClan ? null : clanId,
+                            row.getInt("level"), row.getLong("coins"), row.getLong("gold"),
+                            row.getBoolean("stats_hidden"));
                 }, connection.createArrayOf("uuid", ids)))
                 .thenCompose(rows -> ranks.get().ranks(rows.stream().map(Row::uuid).toList())
                         .thenCombine(nickNames(rows), (rankMap, nicks) -> {
@@ -78,9 +88,9 @@ public final class PlayerRepository implements ProfileService {
                         RankInfo rank = rankMap.get(row.uuid());
                         result.put(row.uuid(), new Profile(row.uuid(), row.name(),
                                 rank == null ? "default" : rank.id(), rank == null ? "§a" : rank.legacyColor(),
-                                rank == null ? null : rank.prefix(), row.locale(), row.clanTag(), row.clanId(), 0,
-                                nicks.get(row.uuid()),
-                                0, 0, row.playtime(), false));
+                                rank == null ? null : rank.prefix(), row.locale(), row.clanTag(), row.clanId(),
+                                row.level(), nicks.get(row.uuid()), row.coins(), row.gold(), row.playtime(),
+                                row.statsHidden()));
                     }
                     return Map.copyOf(result);
                 }));

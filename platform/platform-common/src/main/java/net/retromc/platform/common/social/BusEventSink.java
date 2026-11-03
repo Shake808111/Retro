@@ -7,6 +7,7 @@ import net.retromc.core.api.event.Broadcast;
 import net.retromc.core.api.event.ClanChat;
 import net.retromc.core.api.event.ClanUpdate;
 import net.retromc.core.api.event.Kick;
+import net.retromc.core.api.event.LeaderboardChanged;
 import net.retromc.core.api.event.MaintenanceChanged;
 import net.retromc.core.api.event.MuteUpdate;
 import net.retromc.core.api.event.PartyChat;
@@ -22,6 +23,7 @@ import net.retromc.core.api.event.PunishRevoked;
 import net.retromc.core.api.event.ReportClosed;
 import net.retromc.core.api.event.ReportNew;
 import net.retromc.core.api.event.StaffChat;
+import net.retromc.core.api.event.StatsUpdated;
 import net.retromc.core.api.social.PartyInvite;
 import net.retromc.core.data.EventSink;
 import net.retromc.core.messaging.MessageBus;
@@ -66,6 +68,8 @@ public final class BusEventSink implements EventSink {
             case PartyInvite payload -> send(MessageType.PARTY_INVITE, payload);
             case PartyWarp payload -> send(MessageType.PARTY_WARP, payload);
             case PartyChat payload -> send(MessageType.PARTY_CHAT, payload);
+            case StatsUpdated payload -> send(MessageType.STATS_UPDATED, payload);
+            case LeaderboardChanged payload -> send(MessageType.LEADERBOARD_CHANGED, payload);
             default -> throw new IllegalArgumentException("Kein Nachrichtentyp für " + event.getClass().getName());
         }
     }

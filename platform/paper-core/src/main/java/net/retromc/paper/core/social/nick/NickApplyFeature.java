@@ -2,6 +2,7 @@ package net.retromc.paper.core.social.nick;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,11 +13,13 @@ import net.retromc.core.api.event.NickChanged;
 import net.retromc.core.api.rank.Rank;
 import net.retromc.core.api.server.ServerCategory;
 import net.retromc.core.api.social.Nick;
+import net.retromc.core.api.social.Profile;
 import net.retromc.core.api.social.NickService;
 import net.retromc.core.api.util.Registration;
 import net.retromc.core.messaging.MessageBus;
 import net.retromc.core.messaging.MessageType;
 import net.retromc.paper.core.PaperCore;
+import net.retromc.paper.core.profile.PlayerProfiles;
 import net.retromc.platform.common.feature.CoreFeature;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -25,19 +28,15 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Nick-Anwendung auf Spielservern (Spec 01 §6.11 Nr. 2–3, O20/O21): Profil mit Nick-Name und -Skin
- * ({@code nick:{uuid}}), Anzeige als Premium (§6) ohne Clan-Tag in Chatname, Tab und Nametag. In Lobbys und auf
- * dauerhaften Servern bleibt der Originalname. Auslöser: Beitritt und {@code NICK_CHANGED}.
+ * ({@code nick:{uuid}}). Die Anzeige als Premium (§6) ohne Clan-Tag und Level übernehmen Chat, Tab und Nametag der
+ * Kern-UI über {@code profile.nickName} ({@code ProfileView}, Spec 02). In Lobbys und auf dauerhaften Servern bleibt
+ * der Originalname. Auslöser: Beitritt und {@code NICK_CHANGED}.
  */
 public final class NickApplyFeature implements CoreFeature<PaperCore>, Listener {
-
-    /** Scoreboard-Team für die Nametag-Farbe der Nicks. */
-    static final String TEAM = "retromc_nick";
 
     private final Map<UUID, PlayerProfile> originals = new ConcurrentHashMap<>();
     private @Nullable PaperCore core;
@@ -125,11 +124,8 @@ public final class NickApplyFeature implements CoreFeature<PaperCore>, Listener 
         PlayerProfile profile = Bukkit.createProfileExact(player.getUniqueId(), nick.name());
         profile.setProperty(new ProfileProperty("textures", nick.texture(), nick.signature()));
         player.setPlayerProfile(profile);
-        Component display = Component.text(nick.name(), NamedTextColor.GOLD);
-        player.displayName(display);
-        player.playerListName(display);
-        Team team = team(player.getServer().getScoreboardManager().getMainScoreboard());
-        team.addEntry(nick.name());
+        player.displayName(Component.text(nick.name(), NamedTextColor.GOLD));
+        redraw(player);
     }
 
     void reset(Player player) {
@@ -137,24 +133,18 @@ public final class NickApplyFeature implements CoreFeature<PaperCore>, Listener 
         if (original == null) {
             return;
         }
-        String nickName = player.getName();
         player.setPlayerProfile(original);
         player.displayName(null);
-        player.playerListName(null);
-        Team team = player.getServer().getScoreboardManager().getMainScoreboard().getTeam(TEAM);
-        if (team != null) {
-            team.removeEntry(nickName);
-        }
+        redraw(player);
     }
 
-    /** Team mit Premium-Farbe §6 ohne Präfix/Suffix (kein Clan-Tag, O20). */
-    private static Team team(Scoreboard scoreboard) {
-        Team team = scoreboard.getTeam(TEAM);
-        if (team == null) {
-            team = scoreboard.registerNewTeam(TEAM);
-            team.color(NamedTextColor.GOLD);
+    /** Chat, Tab und Nametag zeichnen mit dem neuen Namen neu ({@code ProfileUpdatedEvent}). */
+    private void redraw(Player player) {
+        PaperCore context = core;
+        if (context != null) {
+            context.services().find(PlayerProfiles.class).ifPresent(profiles -> profiles.refresh(
+                    player.getUniqueId(), List.of(Profile.NICK_NAME)));
         }
-        return team;
     }
 
     /** Anzeigefarbe eines Nicks (Rang Premium, §6). */

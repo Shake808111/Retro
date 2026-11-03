@@ -26,6 +26,7 @@ import net.retromc.velocity.core.clan.ClanFeature;
 import net.retromc.velocity.core.friend.FriendFeature;
 import net.retromc.velocity.core.joinme.JoinMeFeature;
 import net.retromc.velocity.core.command.CommandFeature;
+import net.retromc.velocity.core.lang.LanguageFeature;
 import net.retromc.velocity.core.lang.TextFeature;
 import net.retromc.velocity.core.maintenance.MaintenanceFeature;
 import net.retromc.velocity.core.motd.MotdFeature;
@@ -93,7 +94,8 @@ public final class VelocityCorePlugin {
                 new JoinMeFeature(),
                 new ClanFeature(),
                 new ReportFeature(),
-                new NickFeature());
+                new NickFeature(),
+                new LanguageFeature());
     }
 
     /**

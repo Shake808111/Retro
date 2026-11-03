@@ -34,6 +34,7 @@ import net.retromc.velocity.core.clan.ClanFeature;
 import net.retromc.velocity.core.command.CommandName;
 import net.retromc.velocity.core.friend.FriendFeature;
 import net.retromc.velocity.core.joinme.JoinMeFeature;
+import net.retromc.velocity.core.lang.LanguageFeature;
 import net.retromc.velocity.core.maintenance.MaintenanceFeature;
 import net.retromc.velocity.core.motd.MotdBuilder;
 import net.retromc.velocity.core.motd.MotdFeature;
@@ -52,7 +53,7 @@ class SocialProxyTest {
         List<CommandName> all = new ArrayList<>();
         Stream.of(FriendFeature.COMMANDS, PartyFeature.COMMANDS, MsgFeature.COMMANDS, ClanFeature.COMMANDS,
                 PunishFeature.COMMANDS, ReportFeature.COMMANDS, MaintenanceFeature.COMMANDS, MotdFeature.COMMANDS,
-                NickFeature.COMMANDS, JoinMeFeature.COMMANDS).forEach(all::addAll);
+                NickFeature.COMMANDS, JoinMeFeature.COMMANDS, LanguageFeature.COMMANDS).forEach(all::addAll);
         return all;
     }
 
@@ -63,12 +64,12 @@ class SocialProxyTest {
             assertTrue(names.add(command.name()), "doppelt: " + command.name());
             command.aliases().forEach(alias -> assertTrue(names.add(alias), "doppelt: " + alias));
         }
-        // Spec 01 §3.1–§3.6 (ohne /l /hub /gameteleport /rank /language /settings /tc: andere Pakete)
+        // Spec 01 §3.1–§3.6 und #67 /language (ohne /l /hub /gameteleport /rank /settings /tc: andere Pakete)
         Set<String> expected = Set.of("friend", "friends", "fr", "msg", "tell", "whisper", "r", "reply", "ignore",
                 "unignore", "party", "pi", "pa", "pl", "pk", "ppm", "pj", "pp", "p", "partytoggle", "clan", "cc",
                 "clc", "clanlvl", "clanstatsreset", "joinme", "nick", "unnick", "nicks", "keepnick", "report",
                 "chatlog", "ban", "mute", "kick", "warn", "unban", "pardon", "unmute", "history", "reports", "goto",
-                "maintenance", "wartung", "netreload");
+                "maintenance", "wartung", "netreload", "language", "sprache");
         assertEquals(new TreeSet<>(expected), names);
     }
 

@@ -1,21 +1,24 @@
 package net.retromc.velocity.core.lang;
 
 import com.velocitypowered.api.proxy.Player;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import net.retromc.core.api.util.Registration;
 import net.retromc.platform.common.feature.CoreFeature;
 import net.retromc.platform.common.text.CatalogI18n;
 import net.retromc.platform.common.text.I18n;
+import net.retromc.platform.common.text.PlayerLocales;
 import net.retromc.velocity.core.VelocityCore;
-import org.jspecify.annotations.Nullable;
 
 /**
- * Registriert den Standard-{@link I18n} auf dem Proxy (Katalog aus core-i18n, Sprache aus der Client-Einstellung).
- * Die Sprachwahl über {@code /language} (Spec 01 §6.14) oder ein fremdes Kern-Plugin ersetzen ihn über die
- * Service-Registry.
+ * Registriert den Standard-{@link I18n} auf dem Proxy: Katalog aus core-i18n, Sprache aus dem Profil
+ * ({@link PlayerLocales}, gefüllt von {@link LanguageFeature}), sonst aus der Client-Einstellung. Ein fremdes
+ * Kern-Plugin ersetzt ihn über die Service-Registry.
  */
 public final class TextFeature implements CoreFeature<VelocityCore> {
 
-    private @Nullable Registration registration;
+    private final List<Registration> registrations = new ArrayList<>();
 
     @Override
     public String name() {
@@ -24,16 +27,17 @@ public final class TextFeature implements CoreFeature<VelocityCore> {
 
     @Override
     public void enable(VelocityCore core) {
-        registration = core.services().registerDefault(I18n.class, new CatalogI18n(
-                player -> core.proxy().getPlayer(player).map(Player::getEffectiveLocale)));
+        PlayerLocales locales = new PlayerLocales();
+        registrations.add(core.services().registerDefault(PlayerLocales.class, locales));
+        registrations.add(core.services().registerDefault(I18n.class, new CatalogI18n(locales,
+                player -> core.proxy().getPlayer(player).map(Player::getEffectiveLocale))));
     }
 
     @Override
     public void disable(VelocityCore core) {
-        Registration current = registration;
-        if (current != null) {
-            current.close();
-            registration = null;
-        }
+        List<Registration> reversed = new ArrayList<>(registrations);
+        Collections.reverse(reversed);
+        reversed.forEach(Registration::close);
+        registrations.clear();
     }
 }

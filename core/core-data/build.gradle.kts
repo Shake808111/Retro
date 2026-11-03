@@ -9,6 +9,8 @@ description = "Datenzugriff: PostgreSQL-Pool und Valkey-Verbindungen, Schlüssel
 
 dependencies {
     api(project(":core:core-api"))
+    // Punkteformeln, Ranking-Score und Fenster der Statistik (Spec 02 §6.4–§6.6), reines Java.
+    api(project(":core:core-stats"))
     api(libs.hikaricp)
     api(libs.lettuce)
     implementation(libs.gson)

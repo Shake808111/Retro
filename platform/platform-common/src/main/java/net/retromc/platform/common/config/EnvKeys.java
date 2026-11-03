@@ -28,6 +28,10 @@ public final class EnvKeys {
     public static final String DB_POOL_SIZE = "NETWORK_DB_POOL_SIZE";
     /** Valkey-URL, z. B. {@code redis://valkey:6379} (Pflicht). */
     public static final String VALKEY_URL = "NETWORK_VALKEY_URL";
+    /** Schlüssel für IP-HMACs (Spec 08 §6.15 IP-Datenschutz); ohne ihn keine IP-Bans. */
+    public static final String HMAC_SECRET = "NETWORK_HMAC_SECRET";
+    /** Öffentliche Web-Adresse, z. B. {@code https://retromc.net} (Chatlog, Entbannung). */
+    public static final String WEB_ORIGIN = "NETWORK_WEB_ORIGIN";
 
     private EnvKeys() {
     }

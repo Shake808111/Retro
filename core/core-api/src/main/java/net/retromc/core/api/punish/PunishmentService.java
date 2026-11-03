@@ -17,6 +17,9 @@ public interface PunishmentService {
     /** {@code reason_code} eines Kicks ({@code /kick <Spieler> <Grund-Text>}, freier Text in {@code reason_text}). */
     String KICK_REASON_CODE = "kick";
 
+    /** {@code reason_code} einer Verwarnung ({@code /warn}). */
+    String WARN_REASON_CODE = "warn";
+
     /**
      * Aktiver Bann: {@code type='BAN' AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at > now())},
      * zusätzlich IP-Bann über {@code moderation.ban_ip}; Negativ-Cache 60 s.
@@ -31,6 +34,12 @@ public interface PunishmentService {
 
     /** Kick vom Netzwerk verbuchen und {@code KICK} senden. */
     CompletableFuture<Punishment> kick(UUID player, String reasonText, @Nullable UUID actor, @Nullable String server);
+
+    /**
+     * Verwarnung verbuchen ({@code /warn <Spieler> <Grund-Text>}, Typ {@code WARN}, freier Text in
+     * {@code reason_text}); zählt nicht als Stufe eines Grundes.
+     */
+    CompletableFuture<Punishment> warn(UUID player, String reasonText, @Nullable UUID actor, @Nullable String server);
 
     /** Aktive Strafe des Typs aufheben ({@code /unban <Spieler>}, {@code /unmute <Spieler>}). */
     CompletableFuture<Optional<Punishment>> revokeActive(UUID player, PunishmentType type, UUID actor, String note);

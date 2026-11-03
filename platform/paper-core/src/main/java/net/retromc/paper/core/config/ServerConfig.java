@@ -4,14 +4,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import net.retromc.core.api.server.ServerCategory;
 import net.retromc.core.api.server.TemplateId;
 import net.retromc.platform.common.config.ConfigException;
 import net.retromc.platform.common.config.EnvKeys;
 import net.retromc.platform.common.config.EnvReader;
 import net.retromc.platform.common.config.NodeConfig;
+import net.retromc.platform.common.config.ServerNames;
 
 /**
  * Konfiguration eines Paper-Servers (Spec 08 §6.2 Nr. 1, §6.6, §6.15): gemeinsame Werte ({@link NodeConfig}, Pool
@@ -38,7 +37,6 @@ public record ServerConfig(NodeConfig node, TemplateId template, ServerCategory 
     /** Standard-Port. */
     public static final int DEFAULT_PORT = 25565;
 
-    private static final Pattern NUMBERED = Pattern.compile("(.+)-[1-9][0-9]*");
 
     public ServerConfig {
         Objects.requireNonNull(node, "node");
@@ -78,26 +76,13 @@ public record ServerConfig(NodeConfig node, TemplateId template, ServerCategory 
 
     /** Template aus dem Servernamen ({@code bedwars-4x4-12} → {@code bedwars-4x4}, Spec 08 §6.6). */
     public static TemplateId templateOf(String serverName) {
-        Matcher matcher = NUMBERED.matcher(serverName);
-        String candidate = matcher.matches() ? matcher.group(1) : serverName;
-        if (!TemplateId.PATTERN.matcher(candidate).matches()) {
-            throw new IllegalArgumentException("Aus '" + serverName + "' folgt kein Template; "
-                    + EnvKeys.SERVER_TEMPLATE + " setzen");
-        }
-        return TemplateId.of(candidate);
+        return ServerNames.templateOf(serverName).orElseThrow(() -> new IllegalArgumentException("Aus '"
+                + serverName + "' folgt kein Template; " + EnvKeys.SERVER_TEMPLATE + " setzen"));
     }
 
     /** Kategorie der Standard-Templates (Spec 08 §6.5). */
     public static ServerCategory categoryOf(TemplateId template) {
-        String id = template.value();
-        if (template.equals(TemplateId.LOBBY) || template.equals(TemplateId.PREMIUM_LOBBY)
-                || template.equals(TemplateId.SILENT_LOBBY) || id.startsWith("lobby-")) {
-            return ServerCategory.LOBBY;
-        }
-        if (id.startsWith("cb-") || id.startsWith("smp-")) {
-            return ServerCategory.PERSISTENT;
-        }
-        return ServerCategory.GAME;
+        return ServerNames.categoryOf(template);
     }
 
     /** Servername ({@code src} im Envelope). */

@@ -15,6 +15,7 @@ dependencies {
     annotationProcessor(libs.velocity.api)
     // LuckPerms-Velocity ist Pflicht-Plugin (@Dependency) und liefert die API zur Laufzeit (Spec 01 §1).
     compileOnly(libs.luckperms.api)
+    compileOnly(libs.gson)
 
     implementation(project(":platform:platform-common"))
     implementation(project(":core:core-api"))
@@ -22,4 +23,8 @@ dependencies {
     implementation(project(":core:core-messaging"))
     implementation(project(":core:core-i18n"))
     implementation(libs.cloud.velocity)
+
+    testImplementation(libs.velocity.api)
+    testImplementation(libs.gson)
+    testRuntimeOnly(libs.slf4j.simple)
 }

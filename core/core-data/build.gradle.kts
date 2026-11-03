@@ -11,6 +11,7 @@ dependencies {
     api(project(":core:core-api"))
     api(libs.hikaricp)
     api(libs.lettuce)
+    implementation(libs.gson)
     runtimeOnly(libs.postgresql)
 
     // TestDatabases: geteilte Container (postgres:18.6-alpine, valkey/valkey:8.1.10-alpine) + Flyway.

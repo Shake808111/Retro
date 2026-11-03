@@ -4,6 +4,7 @@ import java.util.Locale;
 import java.util.Objects;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.retromc.platform.common.text.I18n;
 
@@ -74,7 +75,7 @@ public final class MotdBuilder {
     }
 
     private static String legacy(Component component) {
-        return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection()
+        return LegacyComponentSerializer.legacySection()
                 .serialize(component);
     }
 }

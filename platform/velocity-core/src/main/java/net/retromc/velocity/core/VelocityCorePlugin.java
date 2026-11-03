@@ -22,8 +22,16 @@ import net.retromc.platform.common.feature.CoreFeature;
 import net.retromc.platform.common.feature.FeatureManager;
 import net.retromc.platform.common.service.ServiceRegistry;
 import net.retromc.velocity.core.bridge.BridgeFeature;
+import net.retromc.velocity.core.clan.ClanFeature;
 import net.retromc.velocity.core.command.CommandFeature;
 import net.retromc.velocity.core.lang.TextFeature;
+import net.retromc.velocity.core.maintenance.MaintenanceFeature;
+import net.retromc.velocity.core.motd.MotdFeature;
+import net.retromc.velocity.core.msg.MsgFeature;
+import net.retromc.velocity.core.nick.NickFeature;
+import net.retromc.velocity.core.punish.PunishFeature;
+import net.retromc.velocity.core.report.ReportFeature;
+import net.retromc.velocity.core.social.SocialServicesFeature;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -71,7 +79,15 @@ public final class VelocityCorePlugin {
         return List.of(
                 new TextFeature(),
                 new CommandFeature(),
-                new BridgeFeature());
+                new BridgeFeature(),
+                new SocialServicesFeature(),
+                new PunishFeature(),
+                new MaintenanceFeature(),
+                new MotdFeature(),
+                new MsgFeature(),
+                new ClanFeature(),
+                new ReportFeature(),
+                new NickFeature());
     }
 
     /**

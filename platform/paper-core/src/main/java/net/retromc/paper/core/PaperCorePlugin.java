@@ -5,16 +5,30 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Optional;
 import net.retromc.core.api.BuildInfo;
+import net.retromc.paper.core.bar.BarFeature;
+import net.retromc.paper.core.board.BoardFeature;
 import net.retromc.paper.core.bridge.BridgeFeature;
+import net.retromc.paper.core.chat.ChatFormatFeature;
+import net.retromc.paper.core.coins.CoinFeature;
 import net.retromc.paper.core.command.CommandFeature;
 import net.retromc.paper.core.config.ServerConfig;
 import net.retromc.paper.core.gui.GuiFeature;
+import net.retromc.paper.core.holo.HologramFeature;
+import net.retromc.paper.core.holo.StatsWallFeature;
+import net.retromc.paper.core.hotbar.HotbarFeature;
 import net.retromc.paper.core.lang.TextFeature;
+import net.retromc.paper.core.npc.NpcFeature;
+import net.retromc.paper.core.profile.ProfileFeature;
 import net.retromc.paper.core.service.BukkitServiceMirror;
 import net.retromc.paper.core.social.SocialFeature;
 import net.retromc.paper.core.social.afk.AfkFeature;
 import net.retromc.paper.core.social.chat.ChatGuardFeature;
 import net.retromc.paper.core.social.nick.NickApplyFeature;
+import net.retromc.paper.core.stats.StatsFeature;
+import net.retromc.paper.core.stats.StatsServicesFeature;
+import net.retromc.paper.core.tab.NametagFeature;
+import net.retromc.paper.core.tab.TabFeature;
+import net.retromc.paper.core.title.TitleFeature;
 import net.retromc.platform.common.concurrent.AsyncExecutor;
 import net.retromc.platform.common.concurrent.MainThreadExecutor;
 import net.retromc.platform.common.config.ConfigException;
@@ -62,9 +76,23 @@ public final class PaperCorePlugin extends JavaPlugin {
                 new BridgeFeature(),
                 new GuiFeature(),
                 new SocialFeature(),
+                new StatsServicesFeature(),
+                new ProfileFeature(),
                 new ChatGuardFeature(),
+                new ChatFormatFeature(),
                 new NickApplyFeature(),
-                new AfkFeature());
+                new AfkFeature(),
+                new TabFeature(),
+                new NametagFeature(),
+                new BoardFeature(),
+                new BarFeature(),
+                new TitleFeature(),
+                new HotbarFeature(),
+                new CoinFeature(),
+                new StatsFeature(),
+                new HologramFeature(),
+                new StatsWallFeature(),
+                new NpcFeature());
     }
 
     /**

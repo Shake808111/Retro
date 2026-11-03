@@ -233,7 +233,7 @@ public final class MsgFeature implements CoreFeature<VelocityCore> {
         });
     }
 
-    static String ignoreKey(IgnoreOutcome outcome) {
+    public static String ignoreKey(IgnoreOutcome outcome) {
         return switch (outcome) {
             case ADDED -> "ignore.added";
             case SELF -> "ignore.err.self";

@@ -761,10 +761,15 @@ public final class ClanFeature implements CoreFeature<VelocityCore> {
                 "Clan-Status senden");
     }
 
+    /** Fehlertext eines Clan-Ergebnisses; Erfolge werfen {@link IllegalArgumentException}. */
+    public static String errorKey(ClanOutcome outcome) {
+        return ClanTexts.error(outcome);
+    }
+
     // ------------------------------------------------------------------ Inaktivität
 
     /** Zeit bis zum nächsten Lauf um 04:00 Europe/Berlin. */
-    static Duration untilNextRun(Instant now) {
+    public static Duration untilNextRun(Instant now) {
         ZonedDateTime local = now.atZone(BERLIN);
         ZonedDateTime next = local.with(JOB_TIME);
         if (!next.isAfter(local)) {

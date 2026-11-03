@@ -197,7 +197,7 @@ public final class PartyFeature implements CoreFeature<VelocityCore> {
     }
 
     /** Fehlertexte (Spec 01 §3.3 Ausgaben). */
-    static String errorKey(PartyOutcome outcome) {
+    public static String errorKey(PartyOutcome outcome) {
         return switch (outcome) {
             case NOT_IN_PARTY -> "party.err.notinparty";
             case NOT_LEADER -> "party.err.notleader";
@@ -727,7 +727,7 @@ public final class PartyFeature implements CoreFeature<VelocityCore> {
     }
 
     /** Empfänger einer AFK-Meldung: alle Mitglieder außer dem Spieler selbst (A16). */
-    static List<UUID> afkRecipients(Party party, UUID player) {
+    public static List<UUID> afkRecipients(Party party, UUID player) {
         return party.memberIds().stream().filter(uuid -> !uuid.equals(player)).toList();
     }
 }

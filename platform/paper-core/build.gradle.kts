@@ -30,4 +30,5 @@ dependencies {
     testImplementation(platform(libs.adventure.bom))
     testImplementation(libs.adventure.text.minimessage)
     testImplementation(libs.adventure.text.serializer.plain)
+    testImplementation(libs.adventure.text.serializer.legacy)
 }

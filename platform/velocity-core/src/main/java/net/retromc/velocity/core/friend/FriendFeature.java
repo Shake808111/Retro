@@ -153,7 +153,7 @@ public final class FriendFeature implements CoreFeature<VelocityCore> {
     }
 
     /** Fehlertexte (Spec 01 §3.1 Ausgaben). */
-    static String errorKey(FriendOutcome outcome) {
+    public static String errorKey(FriendOutcome outcome) {
         return switch (outcome) {
             case SELF -> "friend.err.self";
             case UNKNOWN_PLAYER -> "error.player.unknown";

@@ -162,7 +162,7 @@ public final class ReportFeature implements CoreFeature<VelocityCore> {
         });
     }
 
-    static String resultKey(ReportResult.Outcome outcome) {
+    public static String resultKey(ReportResult.Outcome outcome) {
         return switch (outcome) {
             case CREATED -> "report.thanks";
             case SELF -> "report.err.self";

@@ -40,4 +40,12 @@ public interface ProfileService {
      * @param fields geänderte Felder (Konstanten aus {@link Profile}); leer = alle
      */
     CompletableFuture<Void> invalidate(UUID player, Collection<String> fields);
+
+    /**
+     * Zeitpunkt des letzten Logouts ({@code core.player.last_quit}); Grundlage für Meldungen, die während der
+     * Abwesenheit entstanden sind (Report-Ergebnisse, Spec 01 §6.9 Nr. 5). Ohne Angabe leer.
+     */
+    default CompletableFuture<Optional<Instant>> lastQuit(UUID player) {
+        return CompletableFuture.completedFuture(Optional.empty());
+    }
 }

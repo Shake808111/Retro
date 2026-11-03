@@ -15,6 +15,7 @@ dependencies {
     api(project(":core:core-i18n"))
     // Befehle (Spec 01 §1, Spec 02 §1): cloud-core ist plattformfrei; cloud-paper/-velocity bringen es ebenfalls mit.
     api(libs.cloud.core)
+    compileOnly(libs.luckperms.api)
 
     // Adventure/MiniMessage liefern Paper und Velocity zur Laufzeit (wie in core-i18n).
     compileOnly(platform(libs.adventure.bom))

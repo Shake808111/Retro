@@ -36,7 +36,7 @@ public final class RollingWindow {
         return today.minusDays(days - 1L);
     }
 
-    /** Liegt {@code day} im Fenster der letzten {@code days} Tage ({@code day > today − days}, nicht in der Zukunft)? */
+    /** Liegt {@code day} im Fenster der letzten {@code days} Tage ({@code day > today − days}, nicht künftig)? */
     public static boolean contains(LocalDate day, LocalDate today, int days) {
         return !day.isBefore(firstDay(today, days)) && !day.isAfter(today);
     }

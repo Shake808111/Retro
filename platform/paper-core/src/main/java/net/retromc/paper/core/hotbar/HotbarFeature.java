@@ -114,7 +114,8 @@ public final class HotbarFeature implements CoreFeature<PaperCore>, Listener, Ho
         event.setCancelled(true);
         HotbarLayout.Slot entry = layout.slots().get(slot);
         if (entry != null) {
-            boolean right = event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK;
+            Action action = event.getAction();
+            boolean right = action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK;
             entry.handler().onClick(event.getPlayer(), right);
         }
     }

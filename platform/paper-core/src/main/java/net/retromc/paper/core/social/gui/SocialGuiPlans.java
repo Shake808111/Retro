@@ -460,7 +460,7 @@ public final class SocialGuiPlans {
         }
         plan.item(45, "ARROW", "gui.social.back", List.of(), TagResolver.empty(), new Click.Action("back"));
         plan.item(49, "WRITABLE_BOOK", "gui.settings.language", List.of("gui.settings.language.lore"),
-                Placeholder.unparsed("lang", view.language()), Click.Commands.any("language"));
+                Placeholder.unparsed("language", view.language()), Click.Commands.any("language"));
         return plan.build();
     }
 

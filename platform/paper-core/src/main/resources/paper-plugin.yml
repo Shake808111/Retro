@@ -2,7 +2,7 @@
 name: ${brandName}Core
 version: '${version}'
 main: net.retromc.paper.core.PaperCorePlugin
-description: 'Netzwerk-Kern für Paper-Server (Dienste, Befehle, Bridge, GUIs)'
+description: 'Netzwerk-Kern für Paper-Server (Dienste, Befehle, Bridge, GUIs, Chat, Tab, Scoreboard, Stats)'
 api-version: '${paperApiVersion}'
 dependencies:
   server:

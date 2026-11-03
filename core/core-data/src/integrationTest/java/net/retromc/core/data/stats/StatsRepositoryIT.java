@@ -293,6 +293,16 @@ class StatsRepositoryIT {
     }
 
     @Test
+    void abnahme11VersteckteSpielerBleibenInBestenlisten() {
+        UUID hidden = fixture.player("Versteckt");
+        await(stats.submit(match(ModeKey.BEDWARS, bedwars(hidden, 3, 0, 1, true))));
+        await(stats.setHidden(hidden, true));
+        assertEquals(OptionalLong.of(1), await(stats.position(hidden, ModeKey.BEDWARS, StatPeriod.DAYS_30)));
+        assertEquals(List.of("Versteckt"), await(stats.top(ModeKey.BEDWARS, StatPeriod.DAYS_30, 10)).stream()
+                .map(TopEntry::name).toList());
+    }
+
+    @Test
     void abnahme21NurEineAbfrageProSekunde() {
         UUID player = fixture.player("Spammer");
         assertTrue(await(stats.tryQuery(player)));

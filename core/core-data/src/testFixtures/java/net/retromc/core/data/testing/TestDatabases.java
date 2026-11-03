@@ -102,6 +102,8 @@ public final class TestDatabases {
         return Flyway.configure()
                 .dataSource(dataSource)
                 .locations(MIGRATIONS)
+                // wie controller Migrations: Spec-Nummern V3_1 … V7_1 dürfen nach V8_1 kommen
+                .outOfOrder(true)
                 .load();
     }
 

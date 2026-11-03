@@ -47,6 +47,7 @@ import net.retromc.core.messaging.payload.CtlLine;
 import net.retromc.core.messaging.payload.CtlReply;
 import net.retromc.core.messaging.payload.CtlRequest;
 import net.retromc.core.messaging.payload.DiscordLink;
+import net.retromc.core.messaging.payload.GameEnded;
 import net.retromc.core.messaging.payload.MapsChanged;
 import net.retromc.core.messaging.payload.MatchAssigned;
 import net.retromc.core.messaging.payload.ProxyStatus;
@@ -139,6 +140,8 @@ final class Samples {
         samples.put(MessageType.PROFILE_CHANGED, new ProfileChanged(A, List.of(ProfileChanged.COINS)));
         samples.put(MessageType.STATS_UPDATED, new StatsUpdated(ModeKey.BEDWARS, List.of(A, B)));
         samples.put(MessageType.LEADERBOARD_CHANGED, new LeaderboardChanged(ModeKey.SKYWARS, StatPeriod.DAYS_30));
+        samples.put(MessageType.GAME_ENDED, new GameEnded("c0ffee00-0000-0000-0000-000000000001", "bedwars", "4x4",
+                "beispiel", List.of(A), 1260, null, List.of(A, B)));
         return samples;
     }
 }

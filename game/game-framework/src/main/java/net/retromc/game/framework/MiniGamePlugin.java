@@ -1,27 +1,69 @@
 package net.retromc.game.framework;
 
+import java.util.Objects;
 import net.retromc.core.api.BuildInfo;
+import net.retromc.game.framework.server.PrivateRoundContext;
+import net.retromc.paper.core.PaperCorePlugin;
+import net.retromc.paper.core.server.ServerLifecycle;
+import net.retromc.platform.common.service.ServiceRegistry;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Basisklasse für alle Spielmodus-Plugins. Ein Spielserver führt genau einen Modus und eine
- * Runde aus (Notiz 07, Abschnitt 3: "one match per pod").
+ * Basisklasse aller Spielmodus-Plugins. Ein Spielserver führt genau einen Modus und eine Runde aus (Spec 08
+ * §6.10, {@code oneMatch}). Das Modul liefert {@link #definition()} und seinen {@link GameMode}; Wartelobby,
+ * Countdown, Teams, Map, Zuschauer, Kill-Feed, Rundenende und Server-Status kommen aus {@link Game}.
+ *
+ * <p>Die Variante kommt aus dem Template ({@code bedwars-4x4} → {@code 4x4}), sonst aus {@code game.variant} in
+ * {@code config.yml}.
  */
 public abstract class MiniGamePlugin extends JavaPlugin {
 
-    private final GameLifecycle lifecycle = new GameLifecycle();
+    private @Nullable Game game;
 
     /** Beschreibung des Modus, den dieses Plugin umsetzt. */
     protected abstract GameDefinition definition();
 
+    /** Modus-Logik; wird nach dem Aufbau des Rahmens erzeugt. */
+    protected abstract GameMode createMode(Game game);
+
+    /** Laufende Runde. */
+    public final Game game() {
+        Game current = game;
+        if (current == null) {
+            throw new IllegalStateException("Runde nicht aktiv");
+        }
+        return current;
+    }
+
     public final GameLifecycle lifecycle() {
-        return lifecycle;
+        return game().lifecycle();
     }
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
+        ServiceRegistry services = PaperCorePlugin.services();
         GameDefinition definition = definition();
-        getLogger().info(BuildInfo.BRAND_NAME + " " + definition.displayName() + " bereit (Gerüst), Zustand "
-                + lifecycle.state() + ", Kampfprofil " + definition.defaultCombat() + ".");
+        String variantKey = services.find(ServerLifecycle.class).map(lifecycle -> lifecycle.self().variant())
+                .orElse(null);
+        GameSettings settings = GameSettings.read(getConfig().getConfigurationSection("game"),
+                getConfig().getString("game.variant", "4x4"));
+        GameVariant variant = settings.variant(variantKey);
+        Game created = new Game(this, definition, settings, services, variant,
+                PrivateRoundContext.fromEnv(System::getenv));
+        game = created;
+        created.enable(Objects.requireNonNull(createMode(created), "createMode"));
+        getSLF4JLogger().info("{} {} bereit: Variante {}, Kampfprofil {}", BuildInfo.BRAND_NAME,
+                definition.displayName(), variant.key(), definition.defaultCombat());
+    }
+
+    @Override
+    public void onDisable() {
+        Game current = game;
+        if (current != null) {
+            current.disable();
+        }
+        game = null;
     }
 }

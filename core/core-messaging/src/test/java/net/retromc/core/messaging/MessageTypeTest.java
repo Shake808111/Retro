@@ -40,7 +40,8 @@ class MessageTypeTest {
         assertEquals(Set.of("DISCORD_LINKED", "DISCORD_UNLINKED", "ROLE_SYNC_REQUEST"), names(NetworkChannel.INTEG));
         assertEquals(Set.of("PROFILE_CHANGED"), names(NetworkChannel.PROFILE));
         assertEquals(Set.of("STATS_UPDATED", "LEADERBOARD_CHANGED"), names(NetworkChannel.STATS));
-        assertEquals(58, MessageType.all().size());
+        assertEquals(Set.of("GAME_ENDED"), names(NetworkChannel.GAME));
+        assertEquals(59, MessageType.all().size());
     }
 
     @Test

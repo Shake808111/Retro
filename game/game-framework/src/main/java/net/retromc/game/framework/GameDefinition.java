@@ -22,9 +22,9 @@ public record GameDefinition(String modeId, String displayName, CombatProfile de
         Objects.requireNonNull(displayName, "displayName");
         Objects.requireNonNull(defaultCombat, "defaultCombat");
         Objects.requireNonNull(teamMode, "teamMode");
-        if (!modeId.matches("[a-z][a-z0-9_-]{0,23}")) {
+        if (!modeId.matches("[a-z][a-z0-9_]{0,23}")) {
             // VARCHAR(24) in stats.match.mode / stats.total.mode (db/migrations/V1__init.sql)
-            throw new IllegalArgumentException("modeId muss [a-z][a-z0-9_-]{0,23} entsprechen: " + modeId);
+            throw new IllegalArgumentException("modeId muss [a-z][a-z0-9_]{0,23} entsprechen: " + modeId);
         }
     }
 

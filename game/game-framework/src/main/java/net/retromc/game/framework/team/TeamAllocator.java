@@ -18,9 +18,10 @@ import java.util.UUID;
  *   <li>Party-Gruppen ohne Team, größte zuerst, in das Team mit den meisten freien Plätzen, das die ganze Gruppe
  *       fasst ({@link Strategy#PREFER_FILLED}: mit den meisten Spielern); passt keine, wird die Gruppe in möglichst
  *       großen Teilen auf die freiesten Teams verteilt und gemeldet ({@code common.team.party_split}).</li>
- *   <li>Einzelspieler: {@link Strategy#BALANCE} ins Team mit den wenigsten Spielern, {@link Strategy#PREFER_FILLED}
- *       (BedWars, Spec 04 §6.1.2) ins Team mit den meisten Spielern, das noch Platz hat. Gleichstand: kleinere
- *       Reihenfolge-Nummer.</li>
+ *   <li>Einzelspieler: {@link Strategy#BALANCE} ins Team mit den wenigsten Spielern (Gleichstand: kleinere
+ *       Reihenfolge-Nummer); ergäbe das eine Differenz &gt; 1 zwischen nicht leeren Teams, bleiben so wenige leere
+ *       Teams wie nötig leer. {@link Strategy#PREFER_FILLED} (BedWars, Spec 04 §6.1.2) ins Team mit den meisten
+ *       Spielern, das noch Platz hat.</li>
  *   <li>Leere Teams sind erlaubt. Bei {@code PREFER_FILLED} spielen mindestens zwei Teams, sobald es zwei
  *       zuteilbare Spieler gibt (sonst gäbe es keinen Gegner, Annahme).</li>
  * </ol>
@@ -137,17 +138,19 @@ public final class TeamAllocator {
 
         List<UUID> singles = groups.stream().filter(group -> !group.party()).map(group -> group.players().getFirst())
                 .toList();
-        List<UUID> placedSingles = new ArrayList<>();
-        for (UUID single : singles) {
-            Box target = strategy == Strategy.BALANCE ? emptiest(boxes) : fullestWithSpace(boxes);
-            if (target == null) {
-                unassigned.add(single);
-            } else {
-                target.members.add(single);
-                placedSingles.add(single);
+        if (strategy == Strategy.BALANCE) {
+            placeBalanced(boxes, singles, unassigned);
+        } else {
+            List<UUID> placedSingles = new ArrayList<>();
+            for (UUID single : singles) {
+                Box target = fullestWithSpace(boxes);
+                if (target == null) {
+                    unassigned.add(single);
+                } else {
+                    target.members.add(single);
+                    placedSingles.add(single);
+                }
             }
-        }
-        if (strategy == Strategy.PREFER_FILLED) {
             ensureOpponent(boxes, placedSingles);
         }
 
@@ -177,6 +180,81 @@ public final class TeamAllocator {
         return boxes.stream().filter(box -> box.free() > 0)
                 .sorted(Comparator.comparingInt((Box box) -> box.members.size()).thenComparingInt(box -> box.order))
                 .findFirst().orElse(null);
+    }
+
+    /**
+     * Einzelspieler je ins Team mit den wenigsten Spielern. Wäre die Differenz zwischen nicht leeren Teams dann
+     * größer als 1 (z. B. durch eine Party), bleiben so wenige leere Teams wie nötig leer (Spec 03 §6.6 Nr. 4:
+     * Ziel Differenz ≤ 1, leere Teams erlaubt).
+     */
+    private static void placeBalanced(List<Box> boxes, List<UUID> singles, List<UUID> unassigned) {
+        if (singles.isEmpty()) {
+            return;
+        }
+        List<Box> occupied = boxes.stream().filter(box -> !box.members.isEmpty()).toList();
+        List<Box> empty = boxes.stream().filter(box -> box.members.isEmpty()).toList();
+        int bestActive = boxes.size();
+        int bestDiff = Integer.MAX_VALUE;
+        for (int active = boxes.size(); active >= Math.max(1, occupied.size()); active--) {
+            List<Box> chosen = new ArrayList<>(occupied);
+            chosen.addAll(empty.subList(0, active - occupied.size()));
+            int[] sizes = chosen.stream().mapToInt(box -> box.members.size()).toArray();
+            int[] caps = chosen.stream().mapToInt(box -> box.capacity).toArray();
+            int left = fill(sizes, caps, singles.size());
+            if (left > 0 && active < boxes.size()) {
+                continue;
+            }
+            int diff = spread(sizes);
+            if (diff < bestDiff) {
+                bestDiff = diff;
+                bestActive = active;
+            }
+            if (diff <= 1) {
+                break;
+            }
+        }
+        List<Box> chosen = new ArrayList<>(occupied);
+        chosen.addAll(empty.subList(0, bestActive - occupied.size()));
+        for (UUID single : singles) {
+            Box target = emptiest(chosen);
+            if (target == null) {
+                unassigned.add(single);
+            } else {
+                target.members.add(single);
+            }
+        }
+    }
+
+    /** Verteilt {@code count} Spieler auf die kleinsten Teams; liefert den Rest ohne Platz. */
+    private static int fill(int[] sizes, int[] caps, int count) {
+        int left = count;
+        while (left > 0) {
+            int target = -1;
+            for (int i = 0; i < sizes.length; i++) {
+                if (sizes[i] < caps[i] && (target < 0 || sizes[i] < sizes[target])) {
+                    target = i;
+                }
+            }
+            if (target < 0) {
+                return left;
+            }
+            sizes[target]++;
+            left--;
+        }
+        return 0;
+    }
+
+    /** Größte minus kleinste Belegung nicht leerer Teams. */
+    private static int spread(int[] sizes) {
+        int max = 0;
+        int min = Integer.MAX_VALUE;
+        for (int size : sizes) {
+            if (size > 0) {
+                max = Math.max(max, size);
+                min = Math.min(min, size);
+            }
+        }
+        return min == Integer.MAX_VALUE ? 0 : max - min;
     }
 
     private static Box fullestWithSpace(List<Box> boxes) {

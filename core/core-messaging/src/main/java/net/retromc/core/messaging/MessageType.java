@@ -44,6 +44,7 @@ import net.retromc.core.messaging.payload.ConnectMany;
 import net.retromc.core.messaging.payload.CtlReply;
 import net.retromc.core.messaging.payload.CtlRequest;
 import net.retromc.core.messaging.payload.DiscordLink;
+import net.retromc.core.messaging.payload.GameEnded;
 import net.retromc.core.messaging.payload.MapsChanged;
 import net.retromc.core.messaging.payload.MatchAssigned;
 import net.retromc.core.messaging.payload.ProxyStatus;
@@ -195,6 +196,10 @@ public final class MessageType<P> {
             StatsUpdated.class);
     public static final MessageType<LeaderboardChanged> LEADERBOARD_CHANGED = define("LEADERBOARD_CHANGED",
             NetworkChannel.STATS, LeaderboardChanged.class);
+
+    // net:game (Spec 03 §2.2, §8.4)
+    public static final MessageType<GameEnded> GAME_ENDED = define("GAME_ENDED", NetworkChannel.GAME,
+            GameEnded.class);
 
     /** Aktuelle Version aller hier definierten Typen. */
     public static final int VERSION = 1;

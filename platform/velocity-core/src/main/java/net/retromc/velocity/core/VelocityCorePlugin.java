@@ -23,12 +23,15 @@ import net.retromc.platform.common.feature.FeatureManager;
 import net.retromc.platform.common.service.ServiceRegistry;
 import net.retromc.velocity.core.bridge.BridgeFeature;
 import net.retromc.velocity.core.clan.ClanFeature;
+import net.retromc.velocity.core.friend.FriendFeature;
+import net.retromc.velocity.core.joinme.JoinMeFeature;
 import net.retromc.velocity.core.command.CommandFeature;
 import net.retromc.velocity.core.lang.TextFeature;
 import net.retromc.velocity.core.maintenance.MaintenanceFeature;
 import net.retromc.velocity.core.motd.MotdFeature;
 import net.retromc.velocity.core.msg.MsgFeature;
 import net.retromc.velocity.core.nick.NickFeature;
+import net.retromc.velocity.core.party.PartyFeature;
 import net.retromc.velocity.core.punish.PunishFeature;
 import net.retromc.velocity.core.report.ReportFeature;
 import net.retromc.velocity.core.social.SocialServicesFeature;
@@ -85,6 +88,9 @@ public final class VelocityCorePlugin {
                 new MaintenanceFeature(),
                 new MotdFeature(),
                 new MsgFeature(),
+                new FriendFeature(),
+                new PartyFeature(),
+                new JoinMeFeature(),
                 new ClanFeature(),
                 new ReportFeature(),
                 new NickFeature());

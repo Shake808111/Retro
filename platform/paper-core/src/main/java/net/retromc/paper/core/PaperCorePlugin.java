@@ -11,6 +11,10 @@ import net.retromc.paper.core.config.ServerConfig;
 import net.retromc.paper.core.gui.GuiFeature;
 import net.retromc.paper.core.lang.TextFeature;
 import net.retromc.paper.core.service.BukkitServiceMirror;
+import net.retromc.paper.core.social.SocialFeature;
+import net.retromc.paper.core.social.afk.AfkFeature;
+import net.retromc.paper.core.social.chat.ChatGuardFeature;
+import net.retromc.paper.core.social.nick.NickApplyFeature;
 import net.retromc.platform.common.concurrent.AsyncExecutor;
 import net.retromc.platform.common.concurrent.MainThreadExecutor;
 import net.retromc.platform.common.config.ConfigException;
@@ -56,7 +60,11 @@ public final class PaperCorePlugin extends JavaPlugin {
                 new TextFeature(),
                 new CommandFeature(),
                 new BridgeFeature(),
-                new GuiFeature());
+                new GuiFeature(),
+                new SocialFeature(),
+                new ChatGuardFeature(),
+                new NickApplyFeature(),
+                new AfkFeature());
     }
 
     /**

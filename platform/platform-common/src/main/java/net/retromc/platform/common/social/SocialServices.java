@@ -54,8 +54,9 @@ import org.slf4j.Logger;
 
 /**
  * Registriert die Standard-Dienste für Social und Moderation (Spec 01 §8.1) in der Service-Registry eines
- * Kern-Plugins: Ränge (LuckPerms), Profile, Präsenz, Freunde, Party, JoinMe, Einstellungen, Ignorieren, Clans, Nicks, private
- * Nachrichten, Strafen, Reports, Chat-Prüfung, Wartung und Netzwerk-Einstellungen. Datenbank, Valkey und Bus kommen
+ * Kern-Plugins: Ränge (LuckPerms), Profile, Präsenz, Freunde, Party, JoinMe, Einstellungen, Ignorieren, Clans,
+ * Nicks, private Nachrichten, Strafen, Reports, Chat-Prüfung, Wartung und Netzwerk-Einstellungen. Datenbank,
+ * Valkey und Bus kommen
  * aus der Registry; die Dienste holen einander über {@link ServiceRegistry#supplier}, damit ein Adapter jeden
  * einzelnen per {@code register(...)} ersetzen kann (z. B. Ränge/Profile eines bestehenden Netzwerk-Kerns).
  */

@@ -21,7 +21,10 @@ import net.retromc.core.api.server.NetworkSettingService;
 import net.retromc.core.api.social.ClanService;
 import net.retromc.core.api.social.FriendService;
 import net.retromc.core.api.social.IgnoreService;
+import net.retromc.core.api.social.JoinMeService;
 import net.retromc.core.api.social.NickService;
+import net.retromc.core.api.social.PartyService;
+import net.retromc.core.api.social.PresenceService;
 import net.retromc.core.api.social.PrivateMessageService;
 import net.retromc.core.api.social.ProfileService;
 import net.retromc.core.api.social.SettingsService;
@@ -36,11 +39,14 @@ import net.retromc.core.data.punish.ValkeyChatGuard;
 import net.retromc.core.data.server.MaintenanceRepository;
 import net.retromc.core.data.server.NetworkSettingRepository;
 import net.retromc.core.data.social.ClanRepository;
-import net.retromc.core.data.social.FriendshipLookup;
+import net.retromc.core.data.social.FriendRepository;
 import net.retromc.core.data.social.IgnoreRepository;
 import net.retromc.core.data.social.NickRepository;
 import net.retromc.core.data.social.PlayerRepository;
 import net.retromc.core.data.social.PrivacyRepository;
+import net.retromc.core.data.social.ValkeyJoinMe;
+import net.retromc.core.data.social.ValkeyPartyService;
+import net.retromc.core.data.social.ValkeyPresenceService;
 import net.retromc.core.data.social.ValkeyPrivateMessages;
 import net.retromc.core.messaging.MessageBus;
 import net.retromc.platform.common.service.ServiceRegistry;
@@ -48,10 +54,10 @@ import org.slf4j.Logger;
 
 /**
  * Registriert die Standard-Dienste für Social und Moderation (Spec 01 §8.1) in der Service-Registry eines
- * Kern-Plugins: Ränge (LuckPerms), Profile, Freunde (nur lesend), Einstellungen, Ignorieren, Clans, Nicks, private
+ * Kern-Plugins: Ränge (LuckPerms), Profile, Präsenz, Freunde, Party, JoinMe, Einstellungen, Ignorieren, Clans, Nicks, private
  * Nachrichten, Strafen, Reports, Chat-Prüfung, Wartung und Netzwerk-Einstellungen. Datenbank, Valkey und Bus kommen
  * aus der Registry; die Dienste holen einander über {@link ServiceRegistry#supplier}, damit ein Adapter jeden
- * einzelnen per {@code register(...)} ersetzen kann (Freunde/Party/Ränge/Profile des bestehenden Netzwerk-Kerns).
+ * einzelnen per {@code register(...)} ersetzen kann (z. B. Ränge/Profile eines bestehenden Netzwerk-Kerns).
  */
 public final class SocialServices implements AutoCloseable {
 
@@ -96,7 +102,16 @@ public final class SocialServices implements AutoCloseable {
             registrations.add(services.registerDefault(RankService.class, ranks));
             registrations.add(services.registerDefault(ProfileService.class, new PlayerRepository(database, valkey,
                     services.supplier(RankService.class), events)));
-            registrations.add(services.registerDefault(FriendService.class, new FriendshipLookup(database)));
+            registrations.add(services.registerDefault(PresenceService.class, new ValkeyPresenceService(valkey,
+                    events)));
+            registrations.add(services.registerDefault(FriendService.class, new FriendRepository(database,
+                    services.supplier(PresenceService.class), services.supplier(RankService.class),
+                    services.supplier(IgnoreService.class), services.supplier(SettingsService.class), clock)));
+            registrations.add(services.registerDefault(PartyService.class, new ValkeyPartyService(valkey,
+                    services.supplier(RankService.class), services.supplier(SettingsService.class),
+                    services.supplier(FriendService.class), services.supplier(IgnoreService.class),
+                    platform.online(), events, clock)));
+            registrations.add(services.registerDefault(JoinMeService.class, new ValkeyJoinMe(valkey, clock)));
             registrations.add(services.registerDefault(SettingsService.class,
                     new PrivacyRepository(database, valkey, events)));
             registrations.add(services.registerDefault(IgnoreService.class, new IgnoreRepository(database, valkey,

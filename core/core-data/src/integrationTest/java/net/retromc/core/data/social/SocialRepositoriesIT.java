@@ -4,7 +4,6 @@ import static net.retromc.core.data.testing.TestExecutors.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
@@ -49,7 +48,7 @@ class SocialRepositoriesIT {
     private static IgnoreRepository ignores;
     private static PrivacyRepository privacy;
     private static PlayerRepository players;
-    private static FriendshipLookup friends;
+    private static FriendRepository friends;
     private static final Set<UUID> ONLINE = ConcurrentHashMap.newKeySet();
 
     @BeforeAll
@@ -58,7 +57,8 @@ class SocialRepositoriesIT {
         ignores = new IgnoreRepository(data.async, data.valkey, () -> data.ranks);
         privacy = new PrivacyRepository(data.async, data.valkey, data.events);
         players = new PlayerRepository(data.async, data.valkey, () -> data.ranks, data.events);
-        friends = new FriendshipLookup(data.async);
+        friends = new FriendRepository(data.async, () -> new ValkeyPresenceService(data.valkey, data.events),
+                () -> data.ranks, () -> ignores, () -> privacy, data.clock);
     }
 
     @AfterAll
@@ -184,16 +184,6 @@ class SocialRepositoriesIT {
         long ttl = await(data.valkey.pttl(ValkeyKeys.msgLast(a)).toCompletableFuture());
         assertTrue(ttl < 0, "msg:last ist abgelaufen");
         assertEquals(30, PrivateMessageService.REPLY_WINDOW.toMinutes());
-    }
-
-    @Test
-    void freundeStandardBeantwortetNurAreFriends() {
-        UUID a = data.player("Friend5a");
-        UUID b = data.player("Friend5b");
-        assertFalse(await(friends.areFriends(a, b)));
-        befriend(a, b);
-        assertTrue(await(friends.areFriends(b, a)));
-        assertThrows(UnsupportedOperationException.class, () -> await(friends.counts(a)));
     }
 
     @Test

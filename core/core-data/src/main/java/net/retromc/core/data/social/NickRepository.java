@@ -18,6 +18,7 @@ import java.util.function.Predicate;
 import net.retromc.core.api.server.ServerCategory;
 import net.retromc.core.api.social.Nick;
 import net.retromc.core.api.social.NickService;
+import net.retromc.core.api.social.Presence;
 import net.retromc.core.data.AsyncDatabase;
 import net.retromc.core.data.Jdbc;
 import net.retromc.core.data.ValkeyKeys;
@@ -99,7 +100,7 @@ public final class NickRepository implements NickService {
             return Jdbc.future(valkey.<Long>eval(WRITE_IF_ABSENT, ScriptOutputType.INTEGER,
                     new String[] {ValkeyKeys.nick(player)}, args.toArray(String[]::new))).thenCompose(written -> {
                         if (written != null && written == 1L) {
-                            return CompletableFuture.completedFuture(Optional.of(nick));
+                            return mirrorPresence(player, nick.name()).thenApply(ignored -> Optional.of(nick));
                         }
                         // Gleichzeitig schon ein Nick vergeben: reservierten Namen zurückgeben.
                         return releaseName(entry.name(), player).thenCompose(ignored -> nickOf(player));
@@ -112,7 +113,16 @@ public final class NickRepository implements NickService {
         String key = ValkeyKeys.nick(player);
         return Jdbc.future(valkey.hget(key, Nick.NAME)).thenCompose(name -> Jdbc.future(valkey.del(key))
                 .thenCompose(ignored -> name == null
-                        ? CompletableFuture.completedFuture(null) : releaseName(name, player)));
+                        ? CompletableFuture.completedFuture(null)
+                        : releaseName(name, player).thenCompose(done -> mirrorPresence(player, ""))));
+    }
+
+    /** {@code presence:{uuid}.nick} spiegeln (leer = kein Nick, Spec 01 §2.3), nur wenn die Präsenz existiert. */
+    private CompletableFuture<Void> mirrorPresence(UUID player, String nick) {
+        String key = ValkeyKeys.presence(player);
+        return Jdbc.future(valkey.exists(key)).thenCompose(exists -> exists > 0
+                ? Jdbc.future(valkey.hset(key, Presence.NICK, nick)).thenApply(ignored -> (Void) null)
+                : CompletableFuture.completedFuture((Void) null));
     }
 
     private CompletableFuture<Void> releaseName(String name, UUID player) {

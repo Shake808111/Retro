@@ -16,6 +16,7 @@ import java.util.function.Supplier;
 import net.retromc.core.api.event.ProfileInvalidate;
 import net.retromc.core.api.rank.RankInfo;
 import net.retromc.core.api.rank.RankService;
+import net.retromc.core.api.social.Nick;
 import net.retromc.core.api.social.PlayerLogin;
 import net.retromc.core.api.social.Profile;
 import net.retromc.core.api.social.ProfileService;
@@ -70,17 +71,35 @@ public final class PlayerRepository implements ProfileService {
                     return new Row(Jdbc.requireUuid(row, "uuid"), row.getString("name"), row.getString("locale"),
                             row.getLong("playtime_s"), row.getString("tag"), noClan ? null : clanId);
                 }, connection.createArrayOf("uuid", ids)))
-                .thenCompose(rows -> ranks.get().ranks(rows.stream().map(Row::uuid).toList()).thenApply(rankMap -> {
+                .thenCompose(rows -> ranks.get().ranks(rows.stream().map(Row::uuid).toList())
+                        .thenCombine(nickNames(rows), (rankMap, nicks) -> {
                     Map<UUID, Profile> result = new HashMap<>();
                     for (Row row : rows) {
                         RankInfo rank = rankMap.get(row.uuid());
                         result.put(row.uuid(), new Profile(row.uuid(), row.name(),
                                 rank == null ? "default" : rank.id(), rank == null ? "§a" : rank.legacyColor(),
-                                rank == null ? null : rank.prefix(), row.locale(), row.clanTag(), row.clanId(), 0, null,
+                                rank == null ? null : rank.prefix(), row.locale(), row.clanTag(), row.clanId(), 0,
+                                nicks.get(row.uuid()),
                                 0, 0, row.playtime(), false));
                     }
                     return Map.copyOf(result);
                 }));
+    }
+
+    /** Aktive Nicks ({@code nick:{uuid}.name}) für {@code profile.nickName}. */
+    private CompletableFuture<Map<UUID, String>> nickNames(List<Row> rows) {
+        List<CompletableFuture<String>> names = rows.stream()
+                .map(row -> Jdbc.future(valkey.hget(ValkeyKeys.nick(row.uuid()), Nick.NAME))).toList();
+        return CompletableFuture.allOf(names.toArray(CompletableFuture[]::new)).thenApply(ignored -> {
+            Map<UUID, String> result = new HashMap<>();
+            for (int i = 0; i < rows.size(); i++) {
+                String nick = names.get(i).join();
+                if (nick != null) {
+                    result.put(rows.get(i).uuid(), nick);
+                }
+            }
+            return result;
+        });
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.velocitypowered.api.proxy.Player;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import net.retromc.core.api.event.NickChanged;
 import net.retromc.core.api.server.ServerCategory;
 import net.retromc.core.api.server.ServerInfo;
@@ -15,6 +16,8 @@ import net.retromc.core.api.server.ServerState;
 import net.retromc.core.api.social.Nick;
 import net.retromc.core.api.social.NickService;
 import net.retromc.core.api.social.PrivacySettings;
+import net.retromc.core.api.social.Profile;
+import net.retromc.core.api.social.ProfileService;
 import net.retromc.core.api.social.Setting;
 import net.retromc.core.api.social.SettingsService;
 import net.retromc.core.messaging.MessageBus;
@@ -190,6 +193,8 @@ public final class NickFeature implements CoreFeature<VelocityCore> {
         Social helper = social();
         helper.log(helper.get(MessageBus.class).publish(MessageType.NICK_CHANGED,
                 new NickChanged(player, nick, server)), "NICK_CHANGED senden");
+        helper.log(helper.get(ProfileService.class).invalidate(player, List.of(Profile.NICK_NAME)),
+                "Profil nach Nick-Wechsel");
     }
 
     /**
@@ -204,20 +209,46 @@ public final class NickFeature implements CoreFeature<VelocityCore> {
         }
         Player player = event.getPlayer();
         String server = event.getServer().getServerInfo().getName();
+        boolean fromOtherGame = event.getPreviousServer()
+                .map(previous -> previous.getServerInfo().getName())
+                .filter(previous -> !previous.equals(server) && helper.category(previous) == ServerCategory.GAME)
+                .isPresent();
         ServerCategory category = helper.category(server);
         helper.log(helper.get(SettingsService.class).settings(player.getUniqueId())
                 .thenCombine(helper.get(NickService.class).nickOf(player.getUniqueId()), Current::new)
-                .thenAccept(current -> {
-                    if (category == ServerCategory.GAME) {
-                        if (current.nick().isPresent()) {
-                            publish(player.getUniqueId(), current.nick().get().name(), server);
-                        } else if (current.settings().nickOnJoin() && player.hasPermission(PERMISSION)) {
-                            assign(player, server, false);
-                        }
-                    } else if (current.nick().isPresent() && !current.settings().nickKeep()) {
-                        release(player, server, false);
-                    }
-                }), "Nick beim Serverwechsel");
+                .thenAccept(current -> onSwitch(player, server, category, fromOtherGame, current)),
+                "Nick beim Serverwechsel");
+    }
+
+    /**
+     * Regeln beim Serverwechsel (Spec 01 §6.11 Nr. 2–4): nach einer Runde ohne {@code nick_keep} wird der Nick
+     * freigegeben; auf einem GAME-Server erhält ein Spieler mit {@code nick_on_join} einen (neuen) Nick, ein
+     * behaltener Nick wird weiter angezeigt; außerhalb von GAME-Servern bleibt nur ein behaltener Nick reserviert.
+     */
+    private void onSwitch(Player player, String server, ServerCategory category, boolean fromOtherGame,
+            Current current) {
+        boolean keep = current.settings().nickKeep();
+        if (category != ServerCategory.GAME) {
+            if (current.nick().isPresent() && !keep) {
+                release(player, server, false);
+            }
+            return;
+        }
+        if (current.nick().isPresent() && (keep || !fromOtherGame)) {
+            publish(player.getUniqueId(), current.nick().get().name(), server);
+            return;
+        }
+        Social helper = social();
+        CompletableFuture<Void> released = current.nick().isPresent()
+                ? helper.get(NickService.class).release(player.getUniqueId())
+                : CompletableFuture.completedFuture(null);
+        helper.log(released.thenRun(() -> {
+            if (current.settings().nickOnJoin() && player.hasPermission(PERMISSION)) {
+                assign(player, server, false);
+            } else if (current.nick().isPresent()) {
+                publish(player.getUniqueId(), null, server);
+            }
+        }), "Nick nach Rundenwechsel");
     }
 
     /** Einstellungen und Nick beim Serverwechsel. */

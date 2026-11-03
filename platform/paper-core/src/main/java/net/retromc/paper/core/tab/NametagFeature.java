@@ -39,6 +39,7 @@ public final class NametagFeature implements CoreFeature<PaperCore>, Listener, N
     private final Map<UUID, String> teams = new ConcurrentHashMap<>();
     private final Map<UUID, Component> prefixes = new ConcurrentHashMap<>();
     private final Map<UUID, Component> suffixes = new ConcurrentHashMap<>();
+    private final Map<UUID, NamedTextColor> nameColors = new ConcurrentHashMap<>();
     private @Nullable PaperCore core;
     private @Nullable Registration registration;
 
@@ -68,6 +69,7 @@ public final class NametagFeature implements CoreFeature<PaperCore>, Listener, N
         teams.clear();
         prefixes.clear();
         suffixes.clear();
+        nameColors.clear();
         core = null;
     }
 
@@ -84,9 +86,20 @@ public final class NametagFeature implements CoreFeature<PaperCore>, Listener, N
     }
 
     @Override
+    public void nameColor(Player player, @Nullable NamedTextColor color) {
+        if (color == null) {
+            nameColors.remove(player.getUniqueId());
+        } else {
+            nameColors.put(player.getUniqueId(), color);
+        }
+        apply(player);
+    }
+
+    @Override
     public void reset(Player player) {
         prefixes.remove(player.getUniqueId());
         suffixes.remove(player.getUniqueId());
+        nameColors.remove(player.getUniqueId());
         apply(player);
     }
 
@@ -110,7 +123,7 @@ public final class NametagFeature implements CoreFeature<PaperCore>, Listener, N
         if (team == null) {
             team = scoreboard.registerNewTeam(name);
         }
-        team.color(NamedTextColor.nearestTo(ColorText.color(rank.color())));
+        team.color(nameColors.getOrDefault(uuid, NamedTextColor.nearestTo(ColorText.color(rank.color()))));
         team.prefix(prefixes.getOrDefault(uuid, TabFormat.rankPrefix(i18n, Messages.DEFAULT_LOCALE, rank)));
         team.suffix(suffixes.getOrDefault(uuid, TabFormat.clanSuffix(i18n, Messages.DEFAULT_LOCALE,
                 view.map(ProfileView::clanTag).orElse(null))));
@@ -142,6 +155,7 @@ public final class NametagFeature implements CoreFeature<PaperCore>, Listener, N
         UUID uuid = event.getPlayer().getUniqueId();
         prefixes.remove(uuid);
         suffixes.remove(uuid);
+        nameColors.remove(uuid);
         String name = teams.remove(uuid);
         if (name != null) {
             Optional.ofNullable(Bukkit.getScoreboardManager().getMainScoreboard().getTeam(name))

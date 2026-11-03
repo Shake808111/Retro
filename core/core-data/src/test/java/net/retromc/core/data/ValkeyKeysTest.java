@@ -77,6 +77,8 @@ class ValkeyKeysTest {
         assertEquals("ctl:names:bedwars-4x4", ValkeyKeys.controllerNames(template));
         assertEquals("ctl:override:bedwars-4x4", ValkeyKeys.controllerOverride(template));
         assertEquals("ticket:t-1", ValkeyKeys.ticket("t-1"));
+        assertEquals("player:" + PLAYER + ":ticket", ValkeyKeys.playerTicket(PLAYER));
+        assertEquals("cnt:forcemap:" + PLAYER + ":2026-10-27", ValkeyKeys.forcemapCount(PLAYER, DAY));
         assertEquals("queue:bedwars-test", ValkeyKeys.queue("bedwars-test"));
         assertEquals("maps:bedwars", ValkeyKeys.maps("bedwars"));
         assertEquals("restart:cb-plot-1", ValkeyKeys.restart("cb-plot-1"));

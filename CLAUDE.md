@@ -22,7 +22,7 @@ sein) – das Repo ist **öffentlich**.
 | `core/` | `core-api` (Verträge/DTOs/Events), `core-data` (Postgres/Valkey, `ValkeyKeys`, Testhilfen), `core-messaging` (Bus, Envelope, RequestReply), `core-i18n` (Textkatalog de/en/bar/gsw), `core-stats` |
 | `platform/paper-core`, `platform/velocity-core` | Basis-Plugins RetroMCCore (Paper) und retromc-core (Velocity) |
 | `game/*`, `lobby/`, `citybuild/` | Spielmodi, Lobby, CityBuild (noch Gerüste) |
-| `db/migrations/` | Flyway: V1, V1_1, V1_2, V2_1, V8_1 (+ später V3_1 … V7_1) |
+| `db/migrations/` | Flyway: V1, V1_1, V1_2, V2_1, V2_2, V8_1 (+ später V3_1 … V7_1) |
 | `deploy/lobby/` | Lobby-Map-Einrichtung (Statuen, Kisten, Hologramme), `warps.yml` (Navigator-Ziele), Map-Credits |
 | `docker/` | Compose für Entwicklung (Postgres 18.6, Valkey 8.1.10, Velocity) |
 
@@ -40,16 +40,27 @@ sein) – das Repo ist **öffentlich**.
   (`/ban /mute /kick /warn /unban /unmute /history`, Login-Sperre), Wartung, MOTD/`/netreload`, Nick, Präsenz;
   paper-core `social` (GUIs §5.1–5.7 als testbare `GuiPlan`s, Chat-Schutz, Nick-Anwendung, AFK). Offen: Nick-Pool
   (`core.nick_pool`) braucht signierte Skins als Betriebsdaten; Clan-/Party-Meldungen außer Chat nur auf dem Proxy
-  des Auslösers; Login (`/l`, Lobby-Wahl), Ränge-Befehle, Sprache, Global-Chat, `/tc` noch nicht gebaut.
+  des Auslösers; Login (`/l`, Lobby-Wahl), Ränge-Befehle, Global-Chat, `/tc` noch nicht gebaut.
+- **Paket 3 Kern-UI/Stats (`p3/ui-stats`, in `main`, Spec 02 §9 #1–22 abgehakt):** core-api `StatsStore`,
+  `StatsMode`, `StatWindow`, `economy` (`WalletService`), `NetworkLevelService`, `DisplayAnchorStore`; core-stats
+  (Punkteformel, Ranking-Score, Fenster, Coin-Boost, `StatsReport`, Regeln, Gleichstand); core-data
+  `StatsRepository` (Rundenende idempotent, ZSETs `lb:{mode}:30d|all`, Rollover/Reconcile/Partitionen, Reset),
+  `WalletRepository`, `DisplayAnchorRepository`, `NetworkLevelRepository`, Profilfelder Coins/Gold/Level/verborgen;
+  Migration V2_2 (Modus-Icon); platform-common `StatsServices`, `ColorText`, `PlayerLocales`; velocity-core
+  `/language` (`/sprache`); paper-core Features Profile, Chat-Format, Tab, Nametags, Scoreboard (FastBoard, Lobby
+  §4.2), Bossbar/Actionbar/Newsticker, Titles, Hotbar, Coins (`/coins`, `/tokens`, Boost), Statistik (`/stats`,
+  `/statsall`, `/statsd`, `/togglestats`, `/top`, `/resetstats`/`/ja`, `/statsadmin`, Profil-GUI, Jobs),
+  Hologramme/Wände (`/statswall`), NPCs (Mannequin). Nick-Anzeige (Premium, ohne Clan-Tag/Level) über `ProfileView`.
+  Offen: Party-Kennung im Tab je Betrachter (`[Party]`, braucht Pakete), LEGACY-Ära je Spieler (`ui.era`) nur in den
+  Formatern, Spielzeit-Zwischenspeicherung alle 5 min (Proxy bucht die Sitzung beim Logout).
 - **Andocken:** Ränge, Profile, Texte und Datenbankzugang nur über die `ServiceRegistry` holen
   (`PaperCorePlugin.services()` / `VelocityCorePlugin.services()`); ein Adapter an ein bestehendes Kern-Plugin
   ersetzt sie per `register(...)`. Neue Teilsysteme = eine Zeile in `features()` der Plugin-Hauptklasse.
 - **Als Nächstes – Phase 1 Stränge** (je ein eigener Branch `p1/<name>`, danach mergen):
-  - **A** Rest von Spec 01: Login/Lobby-Wahl (`/l`, `/hub`, `/gameteleport`), `/rank`, `/language`, `/settings`
-    (Befehl), globaler Chat, `/tc` (Social, Moderation, Freunde, Party, Nick, Wartung, MOTD: Paket 2, fertig).
-  - **B** paper-core UI/Stats nach Spec 02 (/stats 30 Tage, /statsall, /statsd, /togglestats, /top, /resetstats,
-    /coins, /tokens, /language, /statsadmin, /statswall; Scoreboard, Tab, Bossbar, Actionbar, Title,
-    Chat-Format, Hologramme, NPC, Nametag, NetworkLevel; core-stats-Formeln; Stats/Wallet/Profile-Repos).
+  - **A** Rest von Spec 01: Login/Lobby-Wahl (`/l`, `/hub`, `/gameteleport`), `/rank`, `/settings`
+    (Befehl), globaler Chat, `/tc` (Social, Moderation, Freunde, Party, Nick, Wartung, MOTD: Paket 2, fertig;
+    `/language`: Paket 3, fertig).
+  - **B** paper-core UI/Stats nach Spec 02: erledigt in Paket 3.
   - **C** Plattform-Teile Spec 08 (ServerRegistry Heartbeat 5 s/TTL 15 s, Lifecycle, PlayerTransfer,
     LobbyBalancer, /server /send /whereami /glist /cloud, infra-Repos).
   - **D** paper-core Social: erledigt in Paket 2 (GUIs §5, Mute/Spam/Ignore, Nick-Anwendung, AFK).

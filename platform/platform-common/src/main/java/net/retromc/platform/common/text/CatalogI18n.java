@@ -13,9 +13,9 @@ import net.retromc.core.i18n.MessageRenderer;
 import net.retromc.core.i18n.Messages;
 
 /**
- * Standard-{@link I18n} der Kern-Plugins: Texte aus dem Katalog von core-i18n, Sprache aus der Client-Einstellung
- * des Spielers (auf die unterstützten Sprachen abgebildet, Spec 01 §6.14). Die Sprachwahl über {@code /language}
- * ersetzt diesen Dienst später durch eine Implementierung mit Profil.
+ * Standard-{@link I18n} der Kern-Plugins: Texte aus dem Katalog von core-i18n, Sprache aus dem Profil
+ * ({@link PlayerLocales}, gesetzt mit {@code /language}, Spec 02 §6.13), sonst aus der Client-Einstellung des Spielers
+ * (auf die unterstützten Sprachen abgebildet, Spec 01 §6.14).
  */
 public final class CatalogI18n implements I18n {
 
@@ -26,6 +26,11 @@ public final class CatalogI18n implements I18n {
      */
     public CatalogI18n(Function<UUID, Optional<Locale>> clientLocale) {
         this.clientLocale = Objects.requireNonNull(clientLocale, "clientLocale");
+    }
+
+    /** Profil-Sprache vor Client-Sprache. */
+    public CatalogI18n(PlayerLocales profileLocales, Function<UUID, Optional<Locale>> clientLocale) {
+        this(player -> profileLocales.get(player).or(() -> clientLocale.apply(player)));
     }
 
     @Override

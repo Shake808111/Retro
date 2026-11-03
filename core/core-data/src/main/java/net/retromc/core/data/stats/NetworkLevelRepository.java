@@ -1,28 +1,34 @@
 package net.retromc.core.data.stats;
 
 import java.time.Clock;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import net.retromc.core.api.event.ProfileInvalidate;
+import net.retromc.core.api.social.Profile;
 import net.retromc.core.api.stats.LevelUp;
 import net.retromc.core.api.stats.NetworkLevelService;
 import net.retromc.core.api.util.LevelCurve;
 import net.retromc.core.data.AsyncDatabase;
+import net.retromc.core.data.EventSink;
 import net.retromc.core.data.Jdbc;
 
 /**
  * Standard-{@link NetworkLevelService} auf {@code stats.network_level} (Spec 02 §2.1, §8.1): XP addieren und Level
- * nach {@link LevelCurve} ({@code 250·n·(n+1)}) in derselben Anweisung nachziehen. Ein Aufstieg ändert das
- * Profilfeld {@code level}; die Plattform meldet ihn.
+ * nach {@link LevelCurve} ({@code 250·n·(n+1)}) in derselben Transaktion nachziehen. Ein Aufstieg ändert das
+ * Profilfeld {@code level} und wird als {@code PROFILE_INVALIDATE} mit Feld {@code level} gemeldet.
  */
 public final class NetworkLevelRepository implements NetworkLevelService {
 
     private final AsyncDatabase database;
+    private final EventSink events;
     private final Clock clock;
 
-    public NetworkLevelRepository(AsyncDatabase database, Clock clock) {
+    public NetworkLevelRepository(AsyncDatabase database, EventSink events, Clock clock) {
         this.database = Objects.requireNonNull(database, "database");
+        this.events = Objects.requireNonNull(events, "events");
         this.clock = Objects.requireNonNull(clock, "clock");
     }
 
@@ -50,6 +56,9 @@ public final class NetworkLevelRepository implements NetworkLevelService {
                     total, newLevel, clock.instant(), player);
             return newLevel > oldLevel ? Optional.of(new LevelUp(player, oldLevel, newLevel, total))
                     : Optional.<LevelUp>empty();
+        }).thenApply(levelUp -> {
+            levelUp.ifPresent(up -> events.publish(new ProfileInvalidate(player, List.of(Profile.LEVEL))));
+            return levelUp;
         });
     }
 }

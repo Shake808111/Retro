@@ -61,7 +61,7 @@ public final class StatsServices implements AutoCloseable {
             registrations.add(services.registerDefault(DisplayAnchorStore.class,
                     new DisplayAnchorRepository(database)));
             registrations.add(services.registerDefault(NetworkLevelService.class,
-                    new NetworkLevelRepository(database, clock)));
+                    new NetworkLevelRepository(database, events, clock)));
         } catch (RuntimeException e) {
             Collections.reverse(registrations);
             registrations.forEach(Registration::close);

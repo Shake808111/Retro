@@ -14,6 +14,7 @@ import net.retromc.core.api.economy.Currency;
 import net.retromc.core.api.economy.LedgerReason;
 import net.retromc.core.api.economy.Wallet;
 import net.retromc.core.api.event.ProfileChanged;
+import net.retromc.core.api.event.ProfileInvalidate;
 import net.retromc.core.api.social.Profile;
 import net.retromc.core.api.stats.AnchorType;
 import net.retromc.core.api.stats.DisplayAnchor;
@@ -81,7 +82,7 @@ class EconomyAndProfileIT {
                 fixture.events);
         await(wallets.book(player, Currency.COINS, 1_355_470, LedgerReason.ADMIN, null));
         await(wallets.book(player, Currency.GOLD, 4_950, LedgerReason.ADMIN, null));
-        NetworkLevelRepository levels = new NetworkLevelRepository(fixture.async, fixture.clock);
+        NetworkLevelRepository levels = new NetworkLevelRepository(fixture.async, fixture.events, fixture.clock);
         await(levels.addXp(player, "test", LevelCurve.xpForLevel(3)));
         StatsRepository stats = new StatsRepository(fixture.async, fixture.valkey, () -> fixture.ranks,
                 fixture.events, fixture.clock);
@@ -100,12 +101,14 @@ class EconomyAndProfileIT {
     @Test
     void levelAufstiegNachKurve() {
         UUID player = fixture.player("Leveler");
-        NetworkLevelRepository levels = new NetworkLevelRepository(fixture.async, fixture.clock);
+        NetworkLevelRepository levels = new NetworkLevelRepository(fixture.async, fixture.events, fixture.clock);
         assertEquals(0, await(levels.level(player)).level());
         assertEquals(Optional.empty(), await(levels.addXp(player, "kill", 499)));
         assertEquals(Optional.of(new LevelUp(player, 0, 1, 500)), await(levels.addXp(player, "kill", 1)));
         assertEquals(Optional.of(new LevelUp(player, 1, 3, 3_000)), await(levels.addXp(player, "bingo", 2_500)));
         assertEquals(3, await(levels.level(player)).level());
+        assertEquals(List.of(new ProfileInvalidate(player, List.of(Profile.LEVEL)),
+                new ProfileInvalidate(player, List.of(Profile.LEVEL))), fixture.events.of(ProfileInvalidate.class));
         assertEquals(3, TestTransactions.count(fixture.database.dataSource(),
                 "SELECT level FROM stats.network_level WHERE uuid = ?", player));
         assertThrows(IllegalArgumentException.class, () -> levels.addXp(player, "x", -1));

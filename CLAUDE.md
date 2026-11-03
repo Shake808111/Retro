@@ -33,18 +33,26 @@ sein) – das Repo ist **öffentlich**.
   (neues Modul `platform/platform-common`: Feature-Muster, Service-Registry mit Standard/Ersatz, Env-Config,
   Verbindungen, Executor, Bridge-Codec, Cloud-Fehler, `I18n`; paper-core: Cloud-Commands, Bridge, GUI-Framework
   mit ChestGui/PagedGui/ConfirmGui, ItemBuilder; velocity-core: Commands, Bridge). Voller Build grün.
+- **Paket 2 Social/Moderation (`p2/social`, in `main`):** core-data Repos (Clan, Freunde, Party, Präsenz, Ignore,
+  Einstellungen, Profile, Nick, PN, JoinMe, Strafen, Reports/Chatlog, Spam-Filter, Wartung, Netz-Einstellungen) mit
+  ITs; platform-common `social` (Standard-Dienste `SocialServices`, `BusEventSink`, LuckPerms-Ränge,
+  `ModerationTexts`); velocity-core Features Freunde, Party, JoinMe, Msg/Ignore, Clans, Reports/`/goto`, Strafen
+  (`/ban /mute /kick /warn /unban /unmute /history`, Login-Sperre), Wartung, MOTD/`/netreload`, Nick, Präsenz;
+  paper-core `social` (GUIs §5.1–5.7 als testbare `GuiPlan`s, Chat-Schutz, Nick-Anwendung, AFK). Offen: Nick-Pool
+  (`core.nick_pool`) braucht signierte Skins als Betriebsdaten; Clan-/Party-Meldungen außer Chat nur auf dem Proxy
+  des Auslösers; Login (`/l`, Lobby-Wahl), Ränge-Befehle, Sprache, Global-Chat, `/tc` noch nicht gebaut.
 - **Andocken:** Ränge, Profile, Texte und Datenbankzugang nur über die `ServiceRegistry` holen
   (`PaperCorePlugin.services()` / `VelocityCorePlugin.services()`); ein Adapter an ein bestehendes Kern-Plugin
   ersetzt sie per `register(...)`. Neue Teilsysteme = eine Zeile in `features()` der Plugin-Hauptklasse.
 - **Als Nächstes – Phase 1 Stränge** (je ein eigener Branch `p1/<name>`, danach mergen):
-  - **A** velocity-core Social nach Spec 01 (Login, MOTD, Ränge, Freunde, /msg, Ignore, Party, Clan, Report,
-    Punish, Nick, Sprache, Einstellungen, AFK, Wartung, globaler Chat, Anti-Spam, JoinMe) + Repos + IT-Tests.
+  - **A** Rest von Spec 01: Login/Lobby-Wahl (`/l`, `/hub`, `/gameteleport`), `/rank`, `/language`, `/settings`
+    (Befehl), globaler Chat, `/tc` (Social, Moderation, Freunde, Party, Nick, Wartung, MOTD: Paket 2, fertig).
   - **B** paper-core UI/Stats nach Spec 02 (/stats 30 Tage, /statsall, /statsd, /togglestats, /top, /resetstats,
     /coins, /tokens, /language, /statsadmin, /statswall; Scoreboard, Tab, Bossbar, Actionbar, Title,
     Chat-Format, Hologramme, NPC, Nametag, NetworkLevel; core-stats-Formeln; Stats/Wallet/Profile-Repos).
   - **C** Plattform-Teile Spec 08 (ServerRegistry Heartbeat 5 s/TTL 15 s, Lifecycle, PlayerTransfer,
     LobbyBalancer, /server /send /whereami /glist /cloud, infra-Repos).
-  - **D** paper-core Social: GUIs aus Spec 01 §5, Mute/Spam/Ignore-Durchsetzung, Nick-Anwendung, AFK-Erkennung.
+  - **D** paper-core Social: erledigt in Paket 2 (GUIs §5, Mute/Spam/Ignore, Nick-Anwendung, AFK).
   - Grenzen: Chat-**Format**/Tab/Nametag = B; Chat-**Durchsetzung**, Social-Tab-Anteile, Nick-Anwendung = D.
 - **Danach:** Merge + voller Build + Abnahmeprüfung (Spec 01 §9 A1–A26, Spec 02 §9 #1–22, Spec 08 §9 #1–3,
   #6–7, #10, #14, #17–18, #21), Smoke-Test lokal (Velocity + Lobby + Postgres + Valkey: Login, /friend, /party,

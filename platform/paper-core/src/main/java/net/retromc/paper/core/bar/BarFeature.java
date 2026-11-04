@@ -14,7 +14,10 @@ import net.retromc.core.api.server.ServerCategory;
 import net.retromc.core.api.util.Registration;
 import net.retromc.core.data.ValkeyConnector;
 import net.retromc.core.data.ValkeyKeys;
+import net.retromc.core.i18n.UiEra;
 import net.retromc.paper.core.PaperCore;
+import net.retromc.platform.common.config.EnvKeys;
+import net.retromc.platform.common.config.EnvReader;
 import net.retromc.platform.common.feature.CoreFeature;
 import net.retromc.platform.common.text.I18n;
 import org.bukkit.Bukkit;
@@ -29,7 +32,9 @@ import org.jspecify.annotations.Nullable;
 /**
  * Bossbar- und Actionbar-Dienst (Spec 02 §4.5, §4.6): Bossbar des wichtigsten Kanals, Actionbar nach Priorität mit
  * erneutem Senden alle 40 Ticks und auf Lobbys der Newsticker {@code §e+ {color}§l{TITLE}: §f{url}}, der alle 8 s
- * durch {@code ui:news} rotiert (Liste vom Lobby-Modul, jede Minute neu gelesen).
+ * durch {@code ui:news} rotiert (Liste vom Lobby-Modul, jede Minute neu gelesen). Lobbys in der Ära {@code LEGACY}
+ * ({@link EnvKeys#UI_ERA}) zeigen die News stattdessen als Bossbar {@code §e§l{TITLE}} im Kanal {@code news}
+ * (Spec 02 §4.5, Spec 03 §4.4 „Lobby Ära 18“).
  */
 public final class BarFeature implements CoreFeature<PaperCore>, Listener, BossbarService, ActionbarService {
 
@@ -59,6 +64,7 @@ public final class BarFeature implements CoreFeature<PaperCore>, Listener, Bossb
     private @Nullable PaperCore core;
     private @Nullable BukkitTask task;
     private @Nullable StatefulRedisConnection<String, String> valkey;
+    private UiEra era = UiEra.MODERN;
     private long tick;
     private int newsIndex;
 
@@ -70,6 +76,9 @@ public final class BarFeature implements CoreFeature<PaperCore>, Listener, Bossb
     @Override
     public void enable(PaperCore context) {
         core = context;
+        EnvReader env = EnvReader.system();
+        era = env.choice(EnvKeys.UI_ERA, UiEra.class).orElse(UiEra.MODERN);
+        env.problems().forEach(problem -> context.log().warn("{}", problem));
         if (context.config().category() == ServerCategory.LOBBY) {
             valkey = context.services().get(ValkeyConnector.class).connect();
         }
@@ -240,9 +249,19 @@ public final class BarFeature implements CoreFeature<PaperCore>, Listener, Bossb
         }
         NewsItem item = news.get(Math.floorMod(newsIndex++, news.size()));
         I18n i18n = context.services().get(I18n.class);
+        boolean bossbar = newsInBossbar(era);
         for (Player player : Bukkit.getOnlinePlayers()) {
-            set(player, TICKER, Priority.TICKER, item.render(i18n, i18n.locale(player.getUniqueId())), 0);
+            if (bossbar) {
+                show(player, NEWS, BossBarSpec.news(i18n, i18n.locale(player.getUniqueId()), item.title()));
+            } else {
+                set(player, TICKER, Priority.TICKER, item.render(i18n, i18n.locale(player.getUniqueId())), 0);
+            }
         }
+    }
+
+    /** Newsticker als Bossbar ({@code LEGACY}, Spec 03 §4.4) statt in der Actionbar ({@code MODERN}). */
+    public static boolean newsInBossbar(UiEra era) {
+        return era == UiEra.LEGACY;
     }
 
     @EventHandler

@@ -3,8 +3,10 @@ package net.retromc.core.i18n;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
@@ -19,8 +21,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
  * ({@code <names:'<gray>, '>}) mit {@code Formatter.joining}.
  */
 public final class MessageRenderer {
-
-    private static final Pattern LINE_BREAK = Pattern.compile("(?<!\\\\)<(?:newline|br)>");
 
     private MessageRenderer() {
     }
@@ -41,15 +41,64 @@ public final class MessageRenderer {
     }
 
     /**
-     * Mehrzeiliger Text als einzelne Zeilen (getrennt an {@code <newline>}), z. B. für Schilder ({@code sign.top})
-     * oder Kick-Bildschirme. Jede Zeile wird für sich gerendert.
+     * Mehrzeiliger Text als einzelne Zeilen (getrennt an {@code <newline>}), z. B. für Schilder ({@code sign.top}),
+     * Lore oder Kick-Bildschirme.
+     *
+     * <p>Der Text wird erst vollständig gerendert und danach an den Zeilenumbrüchen der fertigen Komponente geteilt
+     * ({@link #splitLines(Component)}). So dürfen {@code <newline>} auch in Auswahl-Tags ({@code <online:'…':'…'>}),
+     * Platzhaltern und offenen Farb-Tags stehen; Formatierung gilt wie bei MiniMessage über den Umbruch hinweg.
      */
     public static List<Component> renderLines(Locale locale, String key, TagResolver... placeholders) {
-        List<Component> lines = new ArrayList<>();
-        for (String line : LINE_BREAK.split(Messages.raw(locale, key), -1)) {
-            lines.add(deserialize(line, placeholders));
+        return splitLines(deserialize(Messages.raw(locale, key), placeholders));
+    }
+
+    /**
+     * Teilt eine Komponente an jedem Zeilenumbruch ({@code \n} in Textinhalten, also auch
+     * {@link Component#newline()}) in Zeilen. Jede Zeile trägt die vererbte Formatierung (Farbe, Dekoration,
+     * Klick/Hover) ihrer Teile; nicht-textuelle Bausteine (Übersetzungen, Tastenbelegungen …) bleiben ganz.
+     * {@code "a\nb\n"} ergibt drei Zeilen, die letzte leer.
+     */
+    public static List<Component> splitLines(Component component) {
+        List<List<Component>> lines = new ArrayList<>();
+        lines.add(new ArrayList<>());
+        collectLines(component, Style.empty(), lines);
+        List<Component> out = new ArrayList<>(lines.size());
+        for (List<Component> parts : lines) {
+            if (parts.isEmpty()) {
+                out.add(Component.empty());
+            } else if (parts.size() == 1) {
+                out.add(parts.getFirst());
+            } else {
+                out.add(Component.textOfChildren(parts.toArray(ComponentLike[]::new)).compact());
+            }
         }
-        return List.copyOf(lines);
+        return List.copyOf(out);
+    }
+
+    private static void collectLines(Component node, Style inherited, List<List<Component>> lines) {
+        Style style = node.style().merge(inherited, Style.Merge.Strategy.IF_ABSENT_ON_TARGET);
+        if (node instanceof TextComponent text) {
+            String content = text.content();
+            int start = 0;
+            int lineBreak;
+            while ((lineBreak = content.indexOf('\n', start)) >= 0) {
+                addText(lines, content.substring(start, lineBreak), style);
+                lines.add(new ArrayList<>());
+                start = lineBreak + 1;
+            }
+            addText(lines, content.substring(start), style);
+        } else {
+            lines.getLast().add(node.children(List.of()).style(style));
+        }
+        for (Component child : node.children()) {
+            collectLines(child, style, lines);
+        }
+    }
+
+    private static void addText(List<List<Component>> lines, String content, Style style) {
+        if (!content.isEmpty()) {
+            lines.getLast().add(Component.text(content, style));
+        }
     }
 
     /** MiniMessage-Text mit Platzhaltern zu einer Komponente. */

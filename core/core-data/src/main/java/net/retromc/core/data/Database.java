@@ -11,10 +11,16 @@ import javax.sql.DataSource;
  */
 public final class Database implements AutoCloseable {
 
+    /** JDBC-Treiber von PostgreSQL. */
+    public static final String DRIVER_CLASS = "org.postgresql.Driver";
+
     private final HikariDataSource dataSource;
 
     public Database(DatabaseConfig config) {
         HikariConfig hikari = new HikariConfig();
+        // Treiber ausdrücklich setzen: In Plugin-Jars sieht DriverManager den Treiber aus dem Plugin-Classloader
+        // nicht ("No suitable driver"), daher lädt Hikari ihn über den Klassennamen.
+        hikari.setDriverClassName(DRIVER_CLASS);
         hikari.setJdbcUrl(config.jdbcUrl());
         hikari.setUsername(config.username());
         hikari.setPassword(config.password());

@@ -7,7 +7,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import net.retromc.core.api.util.Registration;
 import net.retromc.paper.core.PaperCore;
+import net.retromc.paper.core.command.CommandService;
+import net.retromc.paper.core.lang.Texts;
 import net.retromc.platform.common.feature.CoreFeature;
+import net.retromc.platform.common.text.I18n;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -28,7 +31,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Standard-{@link NpcService} auf der Vanilla-Entity {@link Mannequin} (Spielerfigur mit Skin, ohne KI): nicht
  * persistent, unverwundbar, unbeweglich; Rechts-/Linksklick lösen die Handler aus, alle 5 Ticks dreht sich der Kopf
- * zum nächsten Spieler.
+ * zum nächsten Spieler. Admins legen NPCs mit {@code /npc} an ({@link NpcAdminCommand}).
  */
 public final class NpcFeature implements CoreFeature<PaperCore>, Listener, NpcService {
 
@@ -39,6 +42,7 @@ public final class NpcFeature implements CoreFeature<PaperCore>, Listener, NpcSe
     private final Map<UUID, Spawned> npcs = new ConcurrentHashMap<>();
     private @Nullable Registration registration;
     private @Nullable BukkitTask look;
+    private @Nullable NpcAdminCommand admin;
 
     @Override
     public String name() {
@@ -50,6 +54,9 @@ public final class NpcFeature implements CoreFeature<PaperCore>, Listener, NpcSe
         context.plugin().getServer().getPluginManager().registerEvents(this, context.plugin());
         look = Bukkit.getScheduler().runTaskTimer(context.plugin(), this::lookAtPlayers, LOOK_TICKS, LOOK_TICKS);
         registration = context.services().registerDefault(NpcService.class, this);
+        NpcAdminCommand command = new NpcAdminCommand(this, new Texts(context.services().supplier(I18n.class)));
+        command.register(context.services().get(CommandService.class).manager());
+        admin = command;
     }
 
     @Override
@@ -65,6 +72,11 @@ public final class NpcFeature implements CoreFeature<PaperCore>, Listener, NpcSe
             current.close();
         }
         registration = null;
+        NpcAdminCommand command = admin;
+        if (command != null) {
+            command.clear();
+        }
+        admin = null;
         npcs.values().forEach(npc -> npc.entity.remove());
         npcs.clear();
     }

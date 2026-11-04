@@ -74,7 +74,9 @@ public final class FriendFeature implements CoreFeature<VelocityCore> {
         social = helper;
         VelocityCommandManager<CommandSource> manager = core.services().get(CommandService.class).manager();
         var friend = FRIEND.builder(manager).senderType(Player.class);
-        manager.command(friend.handler(ctx -> helper.send(ctx.sender(), "help.friend.1")));
+        // Ohne Argument: Freunde-Menü §5.2 (Hauptmenü), Hilfe über /friend help bzw. /friend 1 und 2.
+        manager.command(friend.handler(ctx -> helper.openGuiOrHelp(ctx.sender(), GUI_FRIENDS, "help.friend.1")));
+        manager.command(friend.literal("help", "1").handler(ctx -> helper.send(ctx.sender(), "help.friend.1")));
         manager.command(friend.literal("2").handler(ctx -> helper.send(ctx.sender(), "help.friend.2")));
         manager.command(friend.literal("add").required("player", stringParser(), helper.players())
                 .handler(ctx -> add(ctx.sender(), ctx.get("player"))));

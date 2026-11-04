@@ -49,17 +49,22 @@ public final class StatsArgs {
     }
 
     /**
-     * Ergebnis: Anfrage oder Fehlerschlüssel mit Argument ({@code stats.need-mode}, {@code stats.unknown-mode},
-     * {@code stats.days-invalid}).
+     * Ergebnis: Anfrage, Fehlerschlüssel mit Argument ({@code stats.need-mode}, {@code stats.unknown-mode},
+     * {@code stats.days-invalid}) oder {@link #profile()}: {@code /stats} ohne Modus und ohne Argument auf einem
+     * Server ohne Modus öffnet das Statistik-Profil (Spec 02 §5.4); die Konsole bekommt dann {@code stats.need-mode}.
      */
-    public record Parsed(@Nullable Request request, @Nullable String error, String argument) {
+    public record Parsed(@Nullable Request request, @Nullable String error, String argument, boolean profile) {
 
         static Parsed ok(Request request) {
-            return new Parsed(request, null, "");
+            return new Parsed(request, null, "", false);
         }
 
         static Parsed error(String key, String argument) {
-            return new Parsed(null, key, argument);
+            return new Parsed(null, key, argument, false);
+        }
+
+        static Parsed openProfile() {
+            return new Parsed(null, "stats.need-mode", "", true);
         }
     }
 
@@ -71,7 +76,7 @@ public final class StatsArgs {
             return Parsed.ok(new Request(serverMode.get(), window, args.isEmpty() ? "" : args.getFirst()));
         }
         if (args.isEmpty()) {
-            return Parsed.error("stats.need-mode", "");
+            return Parsed.openProfile();
         }
         Optional<StatsMode> mode = modes.apply(args.getFirst());
         if (mode.isEmpty()) {

@@ -3,12 +3,14 @@ package net.retromc.velocity.core.social;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
+import com.velocitypowered.api.event.player.PlayerSettingsChangedEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scheduler.ScheduledTask;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -21,6 +23,7 @@ import net.retromc.core.api.social.NickService;
 import net.retromc.core.api.social.PlayerLogin;
 import net.retromc.core.api.social.Presence;
 import net.retromc.core.api.social.PresenceService;
+import net.retromc.core.api.social.Profile;
 import net.retromc.core.api.social.ProfileService;
 import net.retromc.core.api.social.SettingsService;
 import net.retromc.core.data.ValkeyKeys;
@@ -40,6 +43,8 @@ import org.jspecify.annotations.Nullable;
 public final class SocialServicesFeature implements CoreFeature<VelocityCore> {
 
     private final Map<UUID, Instant> sessions = new ConcurrentHashMap<>();
+    /** Login dieser Sitzung, bis der Client seine Einstellungen (Sprache) geschickt hat. */
+    private final Map<UUID, CompletableFuture<Profile>> awaitingLocale = new ConcurrentHashMap<>();
     private @Nullable SocialServices registered;
     private @Nullable Social social;
     private @Nullable SocialConfig config;
@@ -112,6 +117,7 @@ public final class SocialServicesFeature implements CoreFeature<VelocityCore> {
         social = null;
         config = null;
         sessions.clear();
+        awaitingLocale.clear();
     }
 
     @Subscribe
@@ -124,16 +130,51 @@ public final class SocialServicesFeature implements CoreFeature<VelocityCore> {
         Player player = event.getPlayer();
         Instant now = Instant.now();
         sessions.put(player.getUniqueId(), now);
+        // Die Client-Sprache kommt erst mit den Client-Einstellungen (Konfigurationsphase), oft nach PostLogin.
+        // Unbekannt → vorerst Basis; die Sprache des ersten Joins setzt dann onSettings (Spec 01 §6.3 Nr. 4).
+        CompletableFuture<Profile> recorded = new CompletableFuture<>();
+        awaitingLocale.put(player.getUniqueId(), recorded);
+        Locale client = player.getEffectiveLocale();
         PlayerLogin login = new PlayerLogin(player.getUniqueId(), player.getUsername(),
                 settings.ip(player.getRemoteAddress().getAddress()).orElse(null),
-                player.getEffectiveLocale() == null ? "de_DE" : player.getEffectiveLocale().toString(),
-                helper.core().config().name(), now);
-        helper.log(helper.get(ProfileService.class).recordLogin(login), "Login von " + player.getUsername());
+                client == null ? null : client.toString(), helper.core().config().name(), now);
+        CompletableFuture<Profile> done = helper.get(ProfileService.class).recordLogin(login);
+        done.whenComplete((profile, error) -> {
+            if (error != null) {
+                recorded.completeExceptionally(error);
+            } else {
+                recorded.complete(profile);
+            }
+        });
+        helper.log(done, "Login von " + player.getUsername());
+        if (client != null) {
+            applyInitialLocale(helper, player.getUniqueId(), client);
+        }
+    }
+
+    /** Erste Client-Einstellungen der Sitzung: Sprache des ersten Joins nachtragen. */
+    @Subscribe
+    public void onSettings(PlayerSettingsChangedEvent event) {
+        Social helper = social;
+        Locale client = event.getPlayerSettings().getLocale();
+        if (helper != null && client != null) {
+            applyInitialLocale(helper, event.getPlayer().getUniqueId(), client);
+        }
+    }
+
+    /** Einmal je Sitzung, nach dem Login-Eintrag; wirkt nur in der ersten Sitzung des Spielers. */
+    private void applyInitialLocale(Social helper, UUID player, Locale client) {
+        CompletableFuture<Profile> recorded = awaitingLocale.remove(player);
+        if (recorded != null) {
+            helper.log(recorded.thenCompose(profile -> helper.get(SettingsService.class)
+                    .initialLocale(player, client.toString())), "Erst-Sprache von " + player);
+        }
     }
 
     @Subscribe
     public void onDisconnect(DisconnectEvent event) {
         Social helper = social;
+        awaitingLocale.remove(event.getPlayer().getUniqueId());
         Instant joined = sessions.remove(event.getPlayer().getUniqueId());
         if (helper == null || joined == null) {
             return;

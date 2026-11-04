@@ -156,6 +156,48 @@ class MessageRendererTest {
     }
 
     @Test
+    void zeilenAusAuswahlTagWerdenNachDemRendernGetrennt() {
+        // Fund aus dem Server-Test: <newline> innerhalb von <online:'…':'…'> wurde vor dem Auswerten getrennt, die
+        // Lore zeigte rohen MiniMessage-Code. Jetzt: erst rendern, dann an den Umbrüchen der Komponente teilen.
+        TagResolver role = Placeholder.unparsed("role", "Moderator");
+        TagResolver cw = Placeholder.unparsed("cw", "Ja");
+        List<Component> online = MessageRenderer.renderLines(DE, "gui.clan.member.lore", role, cw,
+                Formatter.booleanChoice("online", true));
+        assertEquals(3, online.size());
+        assertSameAsLegacy("§7Rolle: §eModerator", online.get(0));
+        assertSameAsLegacy("§7Status: §aOnline", online.get(1));
+        assertSameAsLegacy("§7ClanWar: §eJa", online.get(2));
+        List<Component> offline = MessageRenderer.renderLines(Locale.US, "gui.clan.member.lore", role, cw,
+                Formatter.booleanChoice("online", false));
+        assertEquals(3, offline.size());
+        assertSameAsLegacy("§7Status: §cOffline", offline.get(1));
+        for (Component line : offline) {
+            assertTrue(!CatalogHarness.plain(line).contains("<") && !CatalogHarness.plain(line).contains("\n"),
+                    CatalogHarness.plain(line));
+        }
+    }
+
+    @Test
+    void zeilenTrennungBehaeltFormatUndLeereZeilen() {
+        // Offene Tags gelten wie bei MiniMessage über den Umbruch hinweg; Klick bleibt an jedem Teil.
+        List<Component> lines = MessageRenderer.splitLines(MessageRenderer.deserialize(
+                "<red><bold>A</bold>B<br><click:run_command:'/x'>C<newline></click>D<newline>"));
+        assertEquals(4, lines.size());
+        assertSameAsLegacy("§c§lA§cB", lines.get(0));
+        assertSameAsLegacy("§cC", lines.get(1));
+        assertTrue(containsClick(lines.get(1), "/x"));
+        assertSameAsLegacy("§cD", lines.get(2));
+        assertEquals("", CatalogHarness.plain(lines.get(3)));
+        // Maskiertes \\<newline> bleibt Text, ein Platzhalter mit Umbruch teilt ebenfalls.
+        List<Component> escaped = MessageRenderer.splitLines(MessageRenderer.deserialize("a\\<newline>b<x>",
+                Placeholder.component("x", Component.text("1\n2", NamedTextColor.GOLD))));
+        assertEquals(2, escaped.size());
+        assertEquals("a<newline>b1", CatalogHarness.plain(escaped.get(0)));
+        assertSameAsLegacy("§62", escaped.get(1));
+        assertEquals(List.of(Component.empty()), MessageRenderer.splitLines(Component.empty()));
+    }
+
+    @Test
     void respawnTitelInEinzahl() {
         Component one = MessageRenderer.renderPlural(DE, "title.respawn", 1, Placeholder.unparsed("n", "1"));
         assertSameAsLegacy("§cRespawn in §e1 §cSekunde", one);

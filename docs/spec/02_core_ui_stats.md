@@ -88,7 +88,7 @@ Recht = Permission-Knoten (LuckPerms). Ohne Angabe darf jeder Spieler den Befehl
 
 | Syntax | Aliase | Recht/Rang | Verhalten | Ausgaben & Fehler |
 |---|---|---|---|---|
-| `/stats [Spieler\|#Platz]` | – | – | Modus = Modus des Servers (Lobby, Wartelobby oder Runde). Zeigt 30-Tage-Stats. Ohne Argument: eigene Stats. `#N` = Spieler auf Platz N (30 Tage). Auf Servern ohne Modus gilt `/stats <Modus> [Spieler\|#Platz]` (Annahme). | Block `stats.header`/`stats.line`/`stats.footer` (§4.7). Fehler: `stats.notfound`, `stats.hidden`, `stats.rank-empty`, `stats.need-mode`, `stats.cooldown`, `error.data` |
+| `/stats [Spieler\|#Platz]` | – | – | Modus = Modus des Servers (Lobby, Wartelobby oder Runde). Zeigt 30-Tage-Stats. Ohne Argument: eigene Stats. `#N` = Spieler auf Platz N (30 Tage). Auf Servern ohne Modus gilt `/stats <Modus> [Spieler\|#Platz]` (Annahme); `/stats` ohne Argument öffnet dort das Statistik-Profil §5.4 (Konsole: `stats.need-mode`). | Block `stats.header`/`stats.line`/`stats.footer` (§4.7). Fehler: `stats.notfound`, `stats.hidden`, `stats.rank-empty`, `stats.need-mode`, `stats.cooldown`, `error.data` |
 | `/statsall [Spieler\|#Platz]` | `/statsalltime` (Annahme) | – | wie `/stats`, Zeitraum gesamt | Kopf `({period}=insgesamt)`, sonst wie oben |
 | `/statsd <Tage> [Spieler]` | – | – | Fenster der letzten N Tage, N 1–30 (belegt sind 1/3/5/10/15/20, Grenze 30 ist eine Annahme). Zeile „Position im Ranking“ zeigt `-` (Annahme) | Fehler `stats.days-invalid` |
 | `/togglestats` | – | mind. 100 h Spielzeit (`playtime_s ≥ 360000`) | schaltet `stats.player_settings.hidden` um | `togglestats.hidden` / `togglestats.visible` / `togglestats.requirement` |

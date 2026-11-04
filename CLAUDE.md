@@ -22,7 +22,7 @@ sein) – das Repo ist **öffentlich**.
 | `core/` | `core-api` (Verträge/DTOs/Events), `core-data` (Postgres/Valkey, `ValkeyKeys`, Testhilfen), `core-messaging` (Bus, Envelope, RequestReply), `core-i18n` (Textkatalog de/en/bar/gsw), `core-stats` |
 | `platform/paper-core`, `platform/velocity-core` | Basis-Plugins RetroMCCore (Paper) und retromc-core (Velocity) |
 | `game/game-framework`, `game/bedwars` | Spiel-Rahmen (Spec 03) und BedWars (Spec 04); übrige `game/*`, `lobby/`, `citybuild/` noch Gerüste |
-| `db/migrations/` | Flyway: V1, V1_1, V1_2, V2_1, V2_2, V4_1, V8_1 (+ später V3_1, V5_1 … V7_1; `outOfOrder`) |
+| `db/migrations/` | Flyway: V1, V1_1, V1_2, V1_3, V2_1, V2_2, V4_1, V8_1 (+ später V3_1, V5_1 … V7_1; `outOfOrder`) |
 | `deploy/bedwars/` | Map-Setup-Anleitung (`/bwsetup`) und Beispiel-`map.json` |
 | `deploy/lobby/` | Lobby-Map-Einrichtung (Statuen, Kisten, Hologramme), `warps.yml` (Navigator-Ziele), Map-Credits |
 | `docker/` | Compose für Entwicklung (Postgres 18.6, Valkey 8.1.10, Velocity) |
@@ -39,8 +39,8 @@ sein) – das Repo ist **öffentlich**.
   ITs; platform-common `social` (Standard-Dienste `SocialServices`, `BusEventSink`, LuckPerms-Ränge,
   `ModerationTexts`); velocity-core Features Freunde, Party, JoinMe, Msg/Ignore, Clans, Reports/`/goto`, Strafen
   (`/ban /mute /kick /warn /unban /unmute /history`, Login-Sperre), Wartung, MOTD/`/netreload`, Nick, Präsenz;
-  paper-core `social` (GUIs §5.1–5.7 als testbare `GuiPlan`s, Chat-Schutz, Nick-Anwendung, AFK). Offen: Nick-Pool
-  (`core.nick_pool`) braucht signierte Skins als Betriebsdaten; Clan-/Party-Meldungen außer Chat nur auf dem Proxy
+  paper-core `social` (GUIs §5.1–5.7 als testbare `GuiPlan`s, Chat-Schutz, Nick-Anwendung, AFK). Offen:
+  Clan-/Party-Meldungen außer Chat nur auf dem Proxy
   des Auslösers; Login (`/l`, Lobby-Wahl), Ränge-Befehle, Global-Chat, `/tc` noch nicht gebaut.
 - **Paket 3 Kern-UI/Stats (`p3/ui-stats`, in `main`, Spec 02 §9 #1–22 abgehakt):** core-api `StatsStore`,
   `StatsMode`, `StatWindow`, `economy` (`WalletService`), `NetworkLevelService`, `DisplayAnchorStore`; core-stats
@@ -69,6 +69,21 @@ sein) – das Repo ist **öffentlich**.
   (`deploy/bedwars/README.md`, Beispiel `deploy/bedwars/maps/beispiel/map.json`). Offen: Ranked-Option,
   Achievements (brauchen Spec-05-Infrastruktur), `/pr kick|max|close`, Valkey-Caches `bw:qs`/`bw:ss`/`lvl`,
   Teamkameraden durch Wände, Party-Suffix im Tab, Wartelobby-Händler-NPC.
+- **Paket 5 Fixes + Nick-Pool (`p5/fixes-nick`, in `main`):** Fehler aus dem ersten Server-Test behoben
+  (Hikari `setDriverClassName`, Shadow behält `netty-resolver-dns`/`netty-codec-dns` für Lettuce,
+  `MessageRenderer.renderLines` trennt erst nach dem Rendern → `splitLines`). Erreichbar gemacht: `/friend`,
+  `/party`, `/p`, `/clan` ohne Argument öffnen ihr Menü über `OPEN_GUI` (Hilfe: `help`/`1`/`2`), `/stats` ohne
+  Modus öffnet das Statistik-Profil, News-Bossbar in Ära LEGACY (`NETWORK_UI_ERA`), `/npc create|list|remove`
+  (`retromc.npc.admin`, nicht dauerhaft). Keine Vanilla-Join/Quit-Meldungen; Erst-Sprache aus den
+  Client-Einstellungen (`SettingsService.initialLocale`, nur erste Sitzung); Freunde-GUI-Pfeile nur bei Bedarf.
+  Nick-Pool (Spec 01 §6.11 Nr. 7–8): core-data `nick` (`NickNameGenerator`, `NickNameFilter` über
+  `SpamFilter`/`SpamRules.BLOCKED_WORDS`, `MojangApi` Namens-API + Sessionserver `?unsigned=false`,
+  `MineSkinApi` optional, `RequestPacer` 1,1 s/429-Sperre, `NickPoolRepository`), Migration V1_3
+  (`core.nick_skin`), velocity-core `/nickpool fill|list|disable|stats` (`retromc.nick.pool`), Monitoring < 50
+  frei, `/nicks` fürs Team (eigene Zeile zuerst), Auto-Nick meldet `nick.auto.set`, Reports/Chatlog/`/goto` lösen
+  Nicks auf die echte UUID auf. Betrieb: `NETWORK_NICK_SKIN_UUIDS` (Quell-UUIDs) setzen, optional
+  `NETWORK_MINESKIN_KEY` (nur in `docker/.env`), dann `/nickpool fill 200`. Offen: echte Quell-UUIDs/Skins als
+  Betriebsdaten, LEGACY-Ära je Spieler (`ui.era`), Lobby-Plugin.
 - **Andocken:** Ränge, Profile, Texte und Datenbankzugang nur über die `ServiceRegistry` holen
   (`PaperCorePlugin.services()` / `VelocityCorePlugin.services()`); ein Adapter an ein bestehendes Kern-Plugin
   ersetzt sie per `register(...)`. Neue Teilsysteme = eine Zeile in `features()` der Plugin-Hauptklasse.

@@ -5,7 +5,10 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.proxy.Player;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -15,6 +18,7 @@ import net.retromc.core.api.server.ServerInfo;
 import net.retromc.core.api.server.ServerState;
 import net.retromc.core.api.social.Nick;
 import net.retromc.core.api.social.NickService;
+import net.retromc.core.api.social.PlayerRef;
 import net.retromc.core.api.social.PrivacySettings;
 import net.retromc.core.api.social.Profile;
 import net.retromc.core.api.social.ProfileService;
@@ -139,18 +143,46 @@ public final class NickFeature implements CoreFeature<VelocityCore> {
                 });
                 return;
             }
-            List<Player> sameServer = Social.serverName(player).flatMap(name -> helper.core().proxy().getServer(name))
-                    .map(server -> List.copyOf(server.getPlayersConnected())).orElse(List.of(player));
+            List<Player> sameServer = new ArrayList<>(Social.serverName(player)
+                    .flatMap(name -> helper.core().proxy().getServer(name))
+                    .map(server -> List.copyOf(server.getPlayersConnected())).orElse(List.of()));
+            if (sameServer.stream().noneMatch(other -> other.getUniqueId().equals(player.getUniqueId()))) {
+                sameServer.add(player);
+            }
             helper.then(player, nicks.nicks(sameServer.stream().map(Player::getUniqueId).toList()), map -> {
-                if (map.isEmpty()) {
-                    helper.send(player, "nick.err.none");
-                    return;
+                List<PlayerRef> refs = sameServer.stream().map(other -> new PlayerRef(other.getUniqueId(),
+                        other.getUsername())).toList();
+                for (NickLine line : teamLines(new PlayerRef(player.getUniqueId(), player.getUsername()), refs, map)) {
+                    helper.send(player, line.key(), Social.unparsed("original", line.original()),
+                            Social.unparsed("nick", line.nick()));
                 }
-                sameServer.stream().filter(other -> map.containsKey(other.getUniqueId())).forEach(other ->
-                        helper.send(player, "nick.list.line", Social.unparsed("original", other.getUsername()),
-                                Social.unparsed("nick", map.get(other.getUniqueId()).name())));
             });
         });
+    }
+
+    /** Eine Zeile von {@code /nicks}. */
+    record NickLine(String key, String original, String nick) {
+    }
+
+    /**
+     * {@code /nicks} für das Team (Spec 01 §6.11 Nr. 6, Recherche: „[NICK] Original: Nick“ für sich selbst, darunter
+     * „[NICK] - Original: Nick“ je genicktem Spieler des Servers): eigene Zeile zuerst, dann alphabetisch nach
+     * Originalnamen; ohne Nicks {@code nick.err.none}.
+     */
+    static List<NickLine> teamLines(PlayerRef viewer, List<PlayerRef> sameServer, Map<UUID, Nick> nicks) {
+        List<NickLine> lines = new ArrayList<>();
+        Nick own = nicks.get(viewer.uuid());
+        if (own != null) {
+            lines.add(new NickLine("nick.list.self", viewer.name(), own.name()));
+        }
+        sameServer.stream().filter(other -> !other.uuid().equals(viewer.uuid()) && nicks.containsKey(other.uuid()))
+                .sorted(Comparator.comparing(PlayerRef::name, String.CASE_INSENSITIVE_ORDER))
+                .forEach(other -> lines.add(new NickLine("nick.list.line", other.name(),
+                        nicks.get(other.uuid()).name())));
+        if (lines.isEmpty()) {
+            lines.add(new NickLine("nick.err.none", "", ""));
+        }
+        return List.copyOf(lines);
     }
 
     void keep(Player player) {
@@ -159,18 +191,26 @@ public final class NickFeature implements CoreFeature<VelocityCore> {
                 settings -> helper.send(player, settings.nickKeep() ? "nick.keep.on" : "nick.keep.off"));
     }
 
-    private void assign(Player player, String server, boolean reply) {
+    /**
+     * Nick aus dem Pool. {@code manual} ({@code /nick} in der Wartephase): Antwort {@code nick.current}, leerer Pool
+     * {@code nick.err.pool}; automatisch beim Rundenbeitritt ({@code nick_on_join}): {@code nick.auto.set}
+     * („Der automatische Nickname wurde auf … festgelegt“, Recherche N15/N17).
+     */
+    private void assign(Player player, String server, boolean manual) {
         Social helper = social();
         NickService nicks = helper.get(NickService.class);
         helper.then(player, nicks.assign(player.getUniqueId(), ServerCategory.GAME), nick -> {
             if (nick.isEmpty()) {
-                if (reply) {
+                if (manual) {
                     helper.send(player, "nick.err.pool");
+                } else {
+                    helper.core().log().warn("Nick-Pool leer: kein automatischer Nick für {}", player.getUsername());
                 }
                 return;
             }
             publish(player.getUniqueId(), nick.get().name(), server);
-            helper.send(player, "nick.current", Social.unparsed("nick", nick.get().name()));
+            helper.send(player, manual ? "nick.current" : "nick.auto.set", Social.unparsed("nick",
+                    nick.get().name()));
             helper.log(nicks.freeCount().thenAccept(free -> {
                 if (free < NickService.POOL_WARN_FREE) {
                     helper.core().log().warn("Nick-Pool: nur noch {} freie Namen", free);
@@ -236,6 +276,7 @@ public final class NickFeature implements CoreFeature<VelocityCore> {
         }
         if (current.nick().isPresent() && (keep || !fromOtherGame)) {
             publish(player.getUniqueId(), current.nick().get().name(), server);
+            social().send(player, "nick.current", Social.unparsed("nick", current.nick().get().name()));
             return;
         }
         Social helper = social();

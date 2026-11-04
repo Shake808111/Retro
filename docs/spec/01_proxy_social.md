@@ -200,7 +200,7 @@ Recht = LuckPerms-Node `retromc.<…>` (Präfix = `brandId`); „alle“ = ohne 
 
 | # | Syntax | Aliase | Recht/Rang | Verhalten | Ausgaben & Fehler |
 |---|---|---|---|---|---|
-| 1 | `/friend` | `/friends` (Annahme) | alle | Hilfe Seite 1 (klickbare Zeilen `suggest_command`) | `help.friend.1` |
+| 1 | `/friend` | `/friends` (Annahme) | alle | öffnet GUI „Freunde“ (§5.2, Hauptmenü, Entscheidung Server-Test 11/2026); ohne Paper-Server Hilfe Seite 1. `/friend help` bzw. `/friend 1` = Hilfe Seite 1 (klickbare Zeilen `suggest_command`) | `help.friend.1` |
 | 2 | `/friend 2` | – | alle | Hilfe Seite 2 | `help.friend.2` |
 | 3 | `/friend add <Spieler>` | – | alle | Anfrage, prüft Limits/Filter/Ignore; existiert Gegenanfrage → sofort befreundet | `friend.request.sent`, Empfänger `friend.request.received` + Klickzeile; Fehler `friend.err.self`, `.already`, `.pending`, `.limit.self`, `.limit.other`, `.blocked`, `error.player.unknown` |
 | 4 | `/friend accept <Spieler>` | – | alle | Anfrage annehmen | `friend.added` (beide) |
@@ -231,7 +231,7 @@ Recht = LuckPerms-Node `retromc.<…>` (Präfix = `brandId`); „alle“ = ohne 
 
 | # | Syntax | Aliase | Recht | Verhalten | Ausgaben & Fehler |
 |---|---|---|---|---|---|
-| 22 | `/party` / `/party 2` | – | alle | Hilfe 1/2 | `help.party.1/.2` |
+| 22 | `/party` / `/party 2` | – | alle | `/party` und `/p` ohne Argument öffnen das Partymenü §5.1 (ohne Paper-Server: Hilfe 1); `/party help` bzw. `/party 1` und `/party 2` = Hilfe 1/2 | `help.party.1/.2` |
 | 23 | `/party invite <Spieler>` | `/pi` | Leiter (oder Mitglied, wenn keine Party → erstellt) | lädt ein, erstellt Party bei Bedarf; prüft `party_from`, Ignore, Größe | Einlader `party.invite.sent`; Ziel `party.invite.received` + `click.line` [ANNEHMEN][ABLEHNEN]; Fehler `party.err.full`, `.notleader`, `.already.member`, `.invite.denied`, `.already.invited` |
 | 24 | `/party accept <Spieler>` | `/pa` | alle | Einladung von <Spieler> annehmen | an alle `party.joined`; `party.err.noinvite`, `.err.inparty` |
 | 25 | `/party deny <Spieler>` | – | alle | ablehnen | `party.invite.denied` |
@@ -254,7 +254,7 @@ Recht = LuckPerms-Node `retromc.<…>` (Präfix = `brandId`); „alle“ = ohne 
 
 | # | Syntax | Aliase | Recht | Verhalten | Ausgaben & Fehler |
 |---|---|---|---|---|---|
-| 40 | `/clan` / `/clan 2` | – | alle | Hilfe | `help.clan.1/.2` |
+| 40 | `/clan` / `/clan 2` | – | alle | `/clan` öffnet das Clan-Menü §5.4 (ohne Clan: „Clan erstellen“; ohne Paper-Server: Hilfe 1); `/clan help` bzw. `/clan 1` und `/clan 2` = Hilfe | `help.clan.1/.2` |
 | 41 | `/clan create <Name> <Tag>` | – | alle ohne Clan | Name 3–16, Tag 2–5 (§6.6) | `clan.created`; `clan.err.name`, `.tag`, `.name.taken`, `.tag.taken`, `.inclan` |
 | 42 | `/clan invite <Spieler>` | – | Moderator+ | Einladung (7 Tage gültig, Annahme) | `clan.invite.sent`, Ziel `clan.invite.received` + Klick; `clan.err.full` |
 | 43 | `/clan join <Clanname>` | – | alle ohne Clan | nimmt Einladung an | `clan.joined` (Clan) |
@@ -292,6 +292,7 @@ Recht = LuckPerms-Node `retromc.<…>` (Präfix = `brandId`); „alle“ = ohne 
 | 70 | `/unnick` | – | wie oben | Nick entfernen | `nick.removed` |
 | 71 | `/nicks` | – | wie oben | eigener Nick; Team: alle Nicks des Servers | `nick.list.self`, `nick.list.line` |
 | 72 | `/keepnick` | – | wie oben (Ära 18, Alias auf `nick_keep`) | Nick behalten an/aus | `nick.keep.on/.off` |
+| 72a | `/nickpool fill <Anzahl>` · `list [Seite]` · `disable <Name>` · `stats` | – | `retromc.nick.pool` (Admin) | Nick-Pool pflegen (§6.11 Nr. 7–8); ohne Argument = `stats` | `nickpool.*` |
 
 ### 3.6 Report, Chatlog, Strafen, Team
 
@@ -627,7 +628,8 @@ Kein GUI: `/language` sendet Chatliste (belegt N05 „Auswahl per Klick im Chat�
 4. Rundenende: `nick_keep=false` → Nick freigeben; `true` → gleicher Nick für nächste Runde (bis Logout).
 5. `/nick` in Wartephase: an/aus für diese Runde; während laufender Runde `nick.err.phase`.
 6. Stats/Reports intern immer auf echte UUID; Team sieht in `/nicks` Originalnamen.
-7. Pool-Größe ≥ 2× gleichzeitige Nicker (Monitoring-Warnung < 50 frei).
+7. Pool-Größe ≥ 2× gleichzeitige Nicker (Monitoring-Warnung < 50 frei: Proxy-Log alle 10 min, Meldung `nickpool.warn.low` an Admins beim Unterschreiten und nach `/nickpool fill|stats`).
+8. Füllen (`/nickpool fill <n>`, max. 500, Umsetzung 11/2026): Zufallsnamen 3–16 Zeichen `[A-Za-z0-9_]` aus Wortkombinationen, Vornamen und Zahlen; verworfen werden Wortfilter-Treffer (`SpamRules.BLOCKED_WORDS`, Werbung, Caps, Marke), Namen echter Spieler (online, `core.player`, Namenshistorie), Pool-Duplikate und – abschaltbar – bei Mojang vergebene Namen (Namens-API, Abstand 1,1 s, bei HTTP 429 Abbruch). Skins: Mojang-Sessionserver `?unsigned=false` für konfigurierte Quell-UUIDs, optional MineSkin (Schlüssel nur aus `NETWORK_MINESKIN_KEY`); Tabelle `core.nick_skin` (V1_3), jeder Name bekommt zufällig einen Skin.
 
 ### 6.12 AFK
 - Erkennung paper-core: keine Bewegung/Rotation/Chat/Interaktion **300 s** (Annahme) → `afk=1`, Spieler: `afk.on`; erste Aktivität → `afk.off`.

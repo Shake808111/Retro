@@ -36,6 +36,7 @@ import net.retromc.platform.common.feature.CoreFeature;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -279,6 +280,21 @@ public final class ServerFeature implements CoreFeature<PaperCore>, ServerLifecy
     }
 
     // ------------------------------------------------------------------------------------------ Spielerzahl
+
+    /**
+     * Keine Vanilla-Meldungen „… joined/left the game“: Lobbys begrüßen ohne Chatmeldung (Spec 03 §6.2), Runden
+     * melden {@code common.join}/{@code common.quit} selbst (Spec 03 §7.2), Freunde erfahren es über den Proxy
+     * ({@code FRIEND_ONLINE}, Spec 01). Frühe Priorität, damit Module eigene Meldungen setzen können.
+     */
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onJoinMessage(PlayerJoinEvent event) {
+        event.joinMessage(null);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onQuitMessage(PlayerQuitEvent event) {
+        event.quitMessage(null);
+    }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {

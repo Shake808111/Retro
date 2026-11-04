@@ -21,6 +21,7 @@ import net.retromc.core.data.AsyncDatabase;
 import net.retromc.core.data.EventSink;
 import net.retromc.core.data.Jdbc;
 import net.retromc.core.data.ValkeyKeys;
+import org.jspecify.annotations.Nullable;
 
 /**
  * {@link SettingsService} auf {@code social.privacy} (V1 + V1_1, Werte Spec 01 §6.13). Änderungen gehen sofort in
@@ -83,6 +84,22 @@ public final class PrivacyRepository implements SettingsService {
                 });
     }
 
+    @Override
+    public CompletableFuture<Boolean> initialLocale(UUID player, String clientLocale) {
+        String value = initialLocale(clientLocale);
+        return database.transaction(connection -> Jdbc.update(connection, "UPDATE core.player SET locale = ?"
+                + " WHERE uuid = ? AND first_join = last_join AND locale IS DISTINCT FROM ?", value, player, value))
+                .thenCompose(changed -> changed == 0 ? CompletableFuture.completedFuture(false)
+                        : Jdbc.future(valkey.exists(ValkeyKeys.profile(player)))
+                                .thenCompose(cached -> cached > 0
+                                        ? Jdbc.future(valkey.hset(ValkeyKeys.profile(player), Profile.LOCALE, value))
+                                        : CompletableFuture.completedFuture(false))
+                                .thenApply(ignored -> {
+                                    events.publish(new ProfileChanged(player, List.of(ProfileChanged.LOCALE)));
+                                    return true;
+                                }));
+    }
+
     private CompletableFuture<Void> mirrorHidden(UUID player, boolean hidden) {
         String key = ValkeyKeys.presence(player);
         return Jdbc.future(valkey.exists(key)).thenCompose(exists -> exists > 0
@@ -104,9 +121,16 @@ public final class PrivacyRepository implements SettingsService {
                 row.getBoolean("nick_keep"));
     }
 
-    /** Normalisiert Client-Sprachen ({@code de_at} → {@code de_DE}, sonst {@code en_US}, Spec 01 §6.3 Nr. 4). */
-    public static String initialLocale(String clientLocale) {
-        String lower = clientLocale.toLowerCase(Locale.ROOT);
+    /**
+     * Normalisiert Client-Sprachen ({@code de_at} → {@code de_DE}, sonst {@code en_US}, Spec 01 §6.3 Nr. 4); ist sie
+     * beim Login noch unbekannt ({@code null}/leer), gilt vorerst {@code de_DE} (Basis), bis der Client sie schickt
+     * ({@link #initialLocale(UUID, String)}).
+     */
+    public static String initialLocale(@Nullable String clientLocale) {
+        if (clientLocale == null || clientLocale.isBlank()) {
+            return "de_DE";
+        }
+        String lower = clientLocale.strip().toLowerCase(Locale.ROOT);
         return lower.startsWith("de") ? "de_DE" : "en_US";
     }
 }

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -92,6 +93,8 @@ class SocialGuiPlansTest {
         assertEquals("friend jump Mitglied", ((Click.Commands) head.left()).left());
         assertEquals(new Click.Open(SocialGuiPlans.FRIEND_OPTIONS, member.uuid().toString()), head.right());
         glass(plan, "RED_STAINED_GLASS_PANE", 46, 48, 50, 52);
+        // Server-Test: eine Seite → keine Pfeile, Rahmen statt „Nächste Seite“ (Spec 02 §5.1).
+        glass(plan, "RED_STAINED_GLASS_PANE", 45, 53);
         assertEquals(3, plan.slot(47).orElseThrow().amount());
         assertEquals(new Click.Open(SocialGuiPlans.FRIEND_REQUESTS, ""), plan.slot(47).orElseThrow().click());
         assertEquals(new Click.Open(SocialGuiPlans.SETTINGS, ""), plan.slot(49).orElseThrow().click());
@@ -107,6 +110,30 @@ class SocialGuiPlansTest {
         assertEquals("LIME_CONCRETE", remove.slot(11).orElseThrow().material());
         assertEquals("friend remove Mitglied", commands(remove, 11).left());
         assertEquals("RED_CONCRETE", remove.slot(15).orElseThrow().material());
+    }
+
+    @Test
+    void freundeBlaetternNurBeiBedarf() {
+        List<FriendView> many = new ArrayList<>();
+        for (int i = 0; i < SocialGuiPlans.LIST_HEADS + 1; i++) {
+            many.add(new FriendView(new Person(UUID.randomUUID(), "Freund" + i, "§a"), false, null, T, T));
+        }
+        SocialGuiPlans.FriendsView view = new SocialGuiPlans.FriendsView(many, 250, 0, false);
+        GuiPlan first = SocialGuiPlans.friends(view, 0);
+        glass(first, "RED_STAINED_GLASS_PANE", 45);
+        assertEquals(new Click.Action("next"), first.slot(53).orElseThrow().click());
+        GuiPlan second = SocialGuiPlans.friends(view, 1);
+        assertEquals(new Click.Action("prev"), second.slot(45).orElseThrow().click());
+        glass(second, "RED_STAINED_GLASS_PANE", 53);
+        assertTrue(second.slot(0).isPresent());
+        assertTrue(second.slot(1).isEmpty());
+        // Zu große Seite (z. B. nach Entfernen) zeigt die letzte.
+        GuiPlan beyond = SocialGuiPlans.friends(view, 7);
+        assertTrue(beyond.slot(0).isPresent());
+        assertTrue(beyond.slot(1).isEmpty());
+        glass(beyond, "RED_STAINED_GLASS_PANE", 53);
+        assertEquals(1, SocialGuiPlans.pages(0, SocialGuiPlans.LIST_HEADS));
+        assertEquals(2, SocialGuiPlans.pages(SocialGuiPlans.LIST_HEADS + 1, SocialGuiPlans.LIST_HEADS));
     }
 
     @Test

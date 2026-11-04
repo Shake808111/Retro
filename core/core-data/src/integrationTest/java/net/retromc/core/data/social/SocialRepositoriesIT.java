@@ -17,6 +17,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import net.retromc.core.api.event.PrivateMessage;
+import net.retromc.core.api.event.ProfileChanged;
 import net.retromc.core.api.event.ProfileInvalidate;
 import net.retromc.core.api.rank.Rank;
 import net.retromc.core.api.server.ServerCategory;
@@ -132,6 +133,25 @@ class SocialRepositoriesIT {
         await(players.recordQuit(uuid, at.plusSeconds(60), 60));
         assertEquals(Optional.of(at.plusSeconds(60)), await(players.lastQuit(uuid)));
         assertEquals(60, await(players.profile(uuid)).orElseThrow().playtimeS());
+    }
+
+    @Test
+    void ersteSpracheKommtMitDenClientEinstellungen() {
+        // Server-Test: Client-Sprache beim Login oft noch unbekannt → erst Basis, dann aus den Client-Einstellungen.
+        UUID uuid = UUID.randomUUID();
+        Instant at = Instant.parse("2026-11-03T18:39:00Z");
+        await(players.recordLogin(new PlayerLogin(uuid, "SpaetSprache", null, null, "proxy-1", at)));
+        assertEquals("de_DE", await(players.profile(uuid)).orElseThrow().locale());
+        assertTrue(await(privacy.initialLocale(uuid, "en_us")));
+        assertEquals("en_US", await(players.profile(uuid)).orElseThrow().locale());
+        assertTrue(data.events.of(ProfileChanged.class).stream().anyMatch(event -> event.uuid().equals(uuid)
+                && event.fields().contains(ProfileChanged.LOCALE)));
+        // Gleiche Sprache: nichts zu tun.
+        assertFalse(await(privacy.initialLocale(uuid, "en_GB")));
+        // Ab der zweiten Sitzung zählt nur noch die gewählte Sprache (/language), nicht der Client.
+        await(players.recordLogin(new PlayerLogin(uuid, "SpaetSprache", null, null, "proxy-1", at.plusSeconds(600))));
+        assertFalse(await(privacy.initialLocale(uuid, "de_de")));
+        assertEquals("en_US", await(players.profile(uuid)).orElseThrow().locale());
     }
 
     @Test

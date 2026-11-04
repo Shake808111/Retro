@@ -46,7 +46,7 @@ import org.jspecify.annotations.Nullable;
  * {@code maps/<id>/map.json}. Maps und Wartelobby kommen als fertige Welten; hier werden sie nur konfiguriert.
  *
  * <pre>
- * /bwsetup create &lt;id&gt;            Welt maps/&lt;id&gt; laden, Entwurf öffnen (bestehende map.json wird übernommen)
+ * /bwsetup create &lt;id&gt;            Welt maps/&lt;id&gt; laden, Entwurf öffnen (map.json wird übernommen)
  * /bwsetup name &lt;Anzeigename&gt;     /bwsetup builder &lt;Name&gt; | clear     /bwsetup variants 4x4,8x1
  * /bwsetup players &lt;min&gt; &lt;max&gt;   /bwsetup bounds 1|2     /bwsetup spectator     /bwsetup waiting
  * /bwsetup spawn|shop|upgrade &lt;team&gt;      /bwsetup bed|chest &lt;team&gt; (anvisierter Block)

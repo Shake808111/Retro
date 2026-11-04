@@ -66,7 +66,8 @@ class TextKeysTest {
         Properties de = properties("core/core-i18n/src/main/resources/i18n/messages.properties");
         Set<String> literals = literals();
         Set<String> unused = new TreeSet<>();
-        for (String key : properties("core/core-i18n/src/test/resources/spec/spec03.properties").stringPropertyNames()) {
+        Properties spec = properties("core/core-i18n/src/test/resources/spec/spec03.properties");
+        for (String key : spec.stringPropertyNames()) {
             assertTrue(de.containsKey(key), "de_DE fehlt " + key);
             if (!used(literals, key)) {
                 unused.add(key);

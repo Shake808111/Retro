@@ -19,6 +19,7 @@ import net.retromc.game.framework.CombatProfile;
 import net.retromc.game.framework.Game;
 import net.retromc.game.framework.GameState;
 import net.retromc.game.framework.GameTexts;
+import net.retromc.game.framework.TeamMode;
 import net.retromc.game.framework.event.PlayerJoinGameEvent;
 import net.retromc.game.framework.map.GameMap;
 import net.retromc.game.framework.map.MapGui;
@@ -323,7 +324,7 @@ public final class WaitingRoom {
     /** Spieler ohne Team verteilen (Spec 03 §6.6), Partys nach {@code PartyService}. */
     public void allocate() {
         allocated = true;
-        if (game.definition().teamMode() == net.retromc.game.framework.TeamMode.SOLO) {
+        if (game.definition().teamMode() == TeamMode.SOLO) {
             return;
         }
         List<UUID> unteamed = Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId)
@@ -441,7 +442,7 @@ public final class WaitingRoom {
         Component text;
         if (team != null && game.variant().teamPlay()) {
             text = texts.i18n().render(locale, "game.team.label", texts.team(locale, team));
-        } else if (game.variant().teamPlay() && game.definition().teamMode() != net.retromc.game.framework.TeamMode.SOLO) {
+        } else if (game.variant().teamPlay() && game.definition().teamMode() != TeamMode.SOLO) {
             text = texts.i18n().render(locale, "game.actionbar.choose");
         } else if (online() < game.minPlayers()) {
             text = texts.i18n().render(locale, "common.waiting", Placeholder.unparsed("n", Integer.toString(online())),
@@ -481,7 +482,7 @@ public final class WaitingRoom {
         GameTexts texts = game.texts();
         Locale locale = texts.locale(player);
         HotbarLayout layout = HotbarLayout.create();
-        if (game.variant().teamPlay() && game.definition().teamMode() != net.retromc.game.framework.TeamMode.SOLO) {
+        if (game.variant().teamPlay() && game.definition().teamMode() != TeamMode.SOLO) {
             layout.slot(0, SpectatorService.item(texts, locale, game.mode().teamItem(), "game.hotbar.team"),
                     (clicker, right) -> game.openTeamGui(clicker));
         }

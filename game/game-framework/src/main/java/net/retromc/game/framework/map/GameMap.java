@@ -63,7 +63,8 @@ public final class GameMap {
     public List<String> teams() {
         List<String> teams = new ArrayList<>();
         if (markers.has("teams") && markers.get("teams").isJsonArray()) {
-            markers.getAsJsonArray("teams").forEach(element -> teams.add(element.getAsString().toLowerCase(Locale.ROOT)));
+            markers.getAsJsonArray("teams").forEach(element -> teams.add(element.getAsString()
+                    .toLowerCase(Locale.ROOT)));
         }
         return teams;
     }

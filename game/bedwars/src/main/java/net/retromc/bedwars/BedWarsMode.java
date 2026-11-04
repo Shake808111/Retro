@@ -5,7 +5,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -243,7 +242,10 @@ public final class BedWarsMode implements GameMode {
         keys.put("common.kill", "bw.kill");
         keys.put("common.death", "bw.died");
         keys.put("common.killed_by", "bw.death.you");
-        keys.put("common.kill.self", "bw.kill.you");
+        if (!config.classic()) {
+            // Ära 26: "(+25 XP)"; Classic behält common.kill.self "(+5 Punkte)" (Spec 04 §10 #13)
+            keys.put("common.kill.self", "bw.kill.you");
+        }
         keys.put("common.team.eliminated", "bw.team.eliminated");
         keys.put("common.win.team", "bw.win");
         keys.put("common.restart", "bw.end.restart");
@@ -458,17 +460,20 @@ public final class BedWarsMode implements GameMode {
         game.player(uuid).ifPresent(GamePlayer::addDeath);
         if (team != null) {
             Bukkit.getPluginManager().callEvent(new FinalKillEvent(victim, killer, team.team()));
+            teamCheck(team, killer, uuid);
         }
         game.eliminate(victim, killer);
-        if (team != null) {
-            teamCheck(team, killer);
-        }
         board.refresh();
     }
 
-    /** Meldet „Team hat noch N Spieler“ bzw. „vernichtet“ und gibt die Team-Truhe an den Killer. */
-    void teamCheck(BwTeam team, @Nullable Player killer) {
-        int remaining = (int) team.team().members().stream().filter(game::alive).count();
+    /**
+     * Meldet „Team hat noch N Spieler“ bzw. „vernichtet“ und gibt die Team-Truhe an den Killer.
+     *
+     * @param leaving Spieler, der gerade ausscheidet (zählt nicht mehr mit) oder {@code null}
+     */
+    void teamCheck(BwTeam team, @Nullable Player killer, @Nullable UUID leaving) {
+        int remaining = (int) team.team().members().stream().filter(member -> !member.equals(leaving))
+                .filter(game::alive).count();
         if (remaining > 0) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 texts().send(player, "bw.team.remaining", texts().team(texts().locale(player), team.team()),
@@ -523,6 +528,7 @@ public final class BedWarsMode implements GameMode {
             victim.teleport(team != null ? team.spawn() : game.maps().spectatorSpawn());
             shop.giveKit(victim);
             game.decorate(victim);
+            board.show(victim);
         }, 20L, 20L);
         respawning.put(uuid, task);
     }
@@ -661,7 +667,7 @@ public final class BedWarsMode implements GameMode {
         }
         texts().broadcast("bw.leave.ingame", texts().name("name", player));
         if (last) {
-            Bukkit.getScheduler().runTask(plugin, () -> teamCheck(team, killer));
+            Bukkit.getScheduler().runTask(plugin, () -> teamCheck(team, killer, uuid));
         }
         Bukkit.getScheduler().runTask(plugin, board::refresh);
         return true;
@@ -762,10 +768,5 @@ public final class BedWarsMode implements GameMode {
             }
         }
         return count;
-    }
-
-    /** Kopie der Bestände je Spieler (Debug/Tests). */
-    Map<UUID, BwPlayer> players() {
-        return new HashMap<>(players);
     }
 }

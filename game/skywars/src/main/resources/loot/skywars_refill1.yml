@@ -1,0 +1,4 @@
+# Chestrefill Stufe 1 (Spec 04 §6.2.1 Nr. 6): alle Container neu, Inseln mit der Tier-1-Tabelle, Mitte mit Tier 2.
+# Ein Abschnitt ist entweder ein Verweis auf eine Tabellendatei (ohne .yml) oder eine eigene Tabelle.
+islands: skywars_t1
+mid: skywars_t2

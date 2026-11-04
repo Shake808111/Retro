@@ -1,0 +1,60 @@
+# SkyWars (Spec 04 §6.2) auf dem Spiel-Rahmen (Spec 03). Werte ohne Beleg sind Annahmen der Spec und hier änderbar.
+# Maps: fertige Welten im Map-Ordner (NETWORK_MAP_DIR, Standard <server>/maps/<id>/) mit map.json; einrichten mit
+# /swsetup (siehe deploy/skywars/README.md). Kataloge: kits/skywars.yml, loot/*.yml, events.yml, challenges.yml.
+
+# --- Spiel-Rahmen (Spec 03 §6.5) -----------------------------------------------------------------------------------
+game:
+  # Variante, wenn das Template keine nennt (Template skywars-8x1 → 8x1). Aktiv laut Spec 04 §10 #25: 8x1, 16x1,
+  # 8x2, 4x4; 4x3 aus.
+  variant: 8x1
+  variants:
+    16x1: {}
+    8x1: {}
+    8x2: {}
+    4x4: {}
+  countdown: 60
+  tip-interval: 30
+  replay: false
+  countdown-titles: false
+  # feste Map-ID (leer = Abstimmung im Map-Menü über bis zu 7 zufällige Maps der Variante)
+  map: ""
+
+# --- SkyWars (Spec 04 §6.2) ----------------------------------------------------------------------------------------
+skywars:
+  # modern = SkyWars (E26, Hit-Cooldown an, Kits mit Fähigkeiten, Events, Challenges)
+  # classic = Classic-Preset skywars_classic (1.8-Kampf, nur Item-Kits und frühere Kits, ohne Events/Challenges)
+  preset: modern
+  # Käfig-Countdown nach dem Teleport (3-2-1) und Aufbauphase/Schutzzeit (30 s belegt)
+  cage-seconds: 3
+  protection-seconds: 30
+  border:
+    # Start bei Kampf + 600 s (belegt) oder 60 s nach "nur noch 2 Teams" (belegt), was früher kommt
+    delay-seconds: 600
+    two-teams-seconds: 60
+    # Schrumpfen auf end-radius Blöcke um die Mitte in shrink-seconds, Schaden je Sekunde außerhalb (Annahme)
+    shrink-seconds: 180
+    end-radius: 10
+    damage: 1.0
+  # Sicherheitsnetz: nach so vielen Minuten Unentschieden (Annahme)
+  max-minutes: 30
+  # Board-Bezeichnungen mit Doppelpunkt (Map:, Kills:, Spieler:) – Option board.labelColon, Standard aus
+  board-label-colon: false
+  rewards:
+    # +20 XP je Kill (belegt); Sieg +50, 1 XP je 15 s Überleben (Annahme)
+    kill: 20
+    win: 50
+    survive-seconds: 15
+    # Coins = coin-factor × Runden-XP + coins-per-kill × Kills (Annahme)
+    coin-factor: 2
+    coins-per-kill: 10
+  # Farbe des Modus-Levels ab Level (Annahme); ab star-from mit ✪
+  level-colors:
+    1: "§7"
+    25: "§f"
+    50: "§a"
+    100: "§e"
+    150: "§6"
+    200: "§c"
+    250: "§d"
+    300: "§b"
+  star-from: 300

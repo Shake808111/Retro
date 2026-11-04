@@ -1,0 +1,12 @@
+# Globale Events (Spec 04 §6.2.1 Nr. 6): Sekunde nach Kampfbeginn (Ende der Schutzzeit).
+# Belegt ist "Chestrefill (Stufe 1)"; Zeitpunkte Stufe 1 = 5:00, Stufe 2 = 10:00 sind Annahmen (Spec 04 §10 #21).
+# /swdebug event <id> löst ein Event sofort aus. Im Classic-Preset gibt es keine Events.
+events:
+  - id: chestrefill1
+    type: chestrefill
+    stage: 1
+    at: 300
+  - id: chestrefill2
+    type: chestrefill
+    stage: 2
+    at: 600

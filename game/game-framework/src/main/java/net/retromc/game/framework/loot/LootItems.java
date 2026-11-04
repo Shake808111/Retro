@@ -46,13 +46,13 @@ public final class LootItems {
         });
     }
 
-    static java.util.Optional<Enchantment> enchantment(String key) {
+    public static java.util.Optional<Enchantment> enchantment(String key) {
         return java.util.Optional.ofNullable(RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT)
                 .get(NamespacedKey.minecraft(key.toLowerCase(Locale.ROOT))));
     }
 
     /** {@code typ:stufe[:sekunden]} → Wirkung (Sekunden 0 = sofort). */
-    static void applyPotion(PotionMeta meta, String spec) {
+    public static void applyPotion(PotionMeta meta, String spec) {
         String[] parts = spec.split(":");
         PotionEffectType type = Registry.EFFECT.get(NamespacedKey.minecraft(parts[0].toLowerCase(Locale.ROOT)));
         if (type == null) {

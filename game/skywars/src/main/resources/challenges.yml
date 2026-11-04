@@ -1,0 +1,8 @@
+# Rundenchallenges (Spec 04 §6.2.6): je Runde eine zufällige aus den aktiven. XP bei Erfolg (Annahme der Spec).
+# Im Classic-Preset gibt es keine Challenges.
+challenges:
+  no_sword: {enabled: true, xp: 50}
+  kills_3: {enabled: true, xp: 50}
+  no_armor: {enabled: true, xp: 50}
+  chests_10: {enabled: true, xp: 30}
+  no_mid: {enabled: true, xp: 50}

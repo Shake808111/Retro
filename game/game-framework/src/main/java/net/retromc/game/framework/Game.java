@@ -129,7 +129,7 @@ public final class Game {
         this.mode = Objects.requireNonNull(gameMode, "gameMode");
         this.teams = new TeamRegistry(definition.teamMode(), variant, gameMode.teamOrder());
         this.texts = new GameTexts(services, ModeKey.of(definition.modeId()), gameMode.keyOverrides(),
-                uuid -> teams().teamOf(uuid), definition.teamMode() != TeamMode.SOLO);
+                uuid -> teams().teamOf(uuid), definition.teamMode() == TeamMode.TEAMS);
         this.valkey = services.get(ValkeyConnector.class).connect();
         this.maps = new MapSelection(this);
         this.spectators = new SpectatorService(this);

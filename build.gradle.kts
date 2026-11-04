@@ -132,6 +132,7 @@ subprojects {
     // Plugin-Jars: das Shadow-Jar ist das Artefakt, das auf den Server kommt.
     // -----------------------------------------------------------------
     plugins.withId("com.gradleup.shadow") {
+        val nettyModulesToShade = setOf("netty-resolver-dns", "netty-codec-dns")
         tasks.named<Jar>("jar") {
             archiveClassifier = "plain"
         }
@@ -147,7 +148,9 @@ subprojects {
             dependencies {
                 // Netty, SLF4J und Gson liefern Paper und Velocity selbst mit
                 // (Gson: Spec 08 §6.18 "auf Paper/Velocity compileOnly").
-                exclude(dependency("io.netty:.*"))
+                // Ausnahme: den DNS-Resolver von Netty bringen weder Paper noch Velocity mit, Lettuce braucht ihn
+                // aber (sonst NoClassDefFoundError io/netty/resolver/dns/DnsCnameCache beim Verbinden mit Valkey).
+                exclude { it.moduleGroup == "io.netty" && it.moduleName !in nettyModulesToShade }
                 exclude(dependency("org.slf4j:.*"))
                 exclude(dependency("com.google.code.gson:.*"))
             }

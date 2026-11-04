@@ -301,6 +301,16 @@ public final class ValkeyKeys {
         return "ticket:" + token(ticketId);
     }
 
+    /** STRING offenes Ticket eines Spielers, TTL 60 s (Doppelklick-Schutz, Spec 03 §2.2). */
+    public static String playerTicket(UUID player) {
+        return "player:" + Objects.requireNonNull(player) + ":ticket";
+    }
+
+    /** STRING (INCR) Tageszähler {@code /forcemap} je Spieler, TTL 26 h (Spec 03 §2.2). */
+    public static String forcemapCount(UUID player, LocalDate day) {
+        return "cnt:forcemap:" + Objects.requireNonNull(player) + ":" + Objects.requireNonNull(day);
+    }
+
     /** ZSET der Tickets einer Spielvariante (bestehend, Spec 08 §2.2). */
     public static String queue(String variant) {
         return "queue:" + token(variant);

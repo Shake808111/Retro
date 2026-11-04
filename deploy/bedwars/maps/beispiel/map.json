@@ -1,0 +1,308 @@
+{
+  "id": "beispiel",
+  "displayName": "Beispiel",
+  "mode": "bedwars",
+  "variants": [
+    "4x2",
+    "4x3",
+    "4x4"
+  ],
+  "version": 1,
+  "builders": [
+    "RetroMC-Bauteam"
+  ],
+  "license": "own",
+  "minPlayers": 8,
+  "maxPlayers": 16,
+  "bounds": {
+    "min": {
+      "x": -120,
+      "y": 0,
+      "z": -120
+    },
+    "max": {
+      "x": 120,
+      "y": 160,
+      "z": 120
+    }
+  },
+  "spectatorSpawn": {
+    "x": 0.5,
+    "y": 110,
+    "z": 0.5,
+    "yaw": 0.0,
+    "pitch": 0.0
+  },
+  "waitingLobby": {
+    "x": 0.5,
+    "y": 140,
+    "z": 0.5,
+    "yaw": 0.0,
+    "pitch": 0.0
+  },
+  "markers": {
+    "buildMaxY": 110,
+    "voidY": 30,
+    "icon": "red_bed",
+    "spawns": {
+      "red": {
+        "x": 0.5,
+        "y": 65,
+        "z": -69.5,
+        "yaw": 0.0,
+        "pitch": 0.0
+      },
+      "blue": {
+        "x": 70.5,
+        "y": 65,
+        "z": 0.5,
+        "yaw": 90.0,
+        "pitch": 0.0
+      },
+      "yellow": {
+        "x": 0.5,
+        "y": 65,
+        "z": 70.5,
+        "yaw": 180.0,
+        "pitch": 0.0
+      },
+      "green": {
+        "x": -69.5,
+        "y": 65,
+        "z": 0.5,
+        "yaw": -90.0,
+        "pitch": 0.0
+      }
+    },
+    "beds": {
+      "red": {
+        "head": {
+          "x": 0,
+          "y": 65,
+          "z": -78
+        },
+        "foot": {
+          "x": 0,
+          "y": 65,
+          "z": -79
+        }
+      },
+      "blue": {
+        "head": {
+          "x": 78,
+          "y": 65,
+          "z": 0
+        },
+        "foot": {
+          "x": 79,
+          "y": 65,
+          "z": 0
+        }
+      },
+      "yellow": {
+        "head": {
+          "x": 0,
+          "y": 65,
+          "z": 78
+        },
+        "foot": {
+          "x": 0,
+          "y": 65,
+          "z": 79
+        }
+      },
+      "green": {
+        "head": {
+          "x": -78,
+          "y": 65,
+          "z": 0
+        },
+        "foot": {
+          "x": -79,
+          "y": 65,
+          "z": 0
+        }
+      }
+    },
+    "shops": {
+      "red": {
+        "x": 4.5,
+        "y": 65,
+        "z": -69.5,
+        "yaw": 0.0,
+        "pitch": 0.0
+      },
+      "blue": {
+        "x": 70.5,
+        "y": 65,
+        "z": 4.5,
+        "yaw": 90.0,
+        "pitch": 0.0
+      },
+      "yellow": {
+        "x": 4.5,
+        "y": 65,
+        "z": 70.5,
+        "yaw": 180.0,
+        "pitch": 0.0
+      },
+      "green": {
+        "x": -69.5,
+        "y": 65,
+        "z": 4.5,
+        "yaw": -90.0,
+        "pitch": 0.0
+      }
+    },
+    "upgrades": {
+      "red": {
+        "x": -3.5,
+        "y": 65,
+        "z": -69.5,
+        "yaw": 0.0,
+        "pitch": 0.0
+      },
+      "blue": {
+        "x": 70.5,
+        "y": 65,
+        "z": -3.5,
+        "yaw": 90.0,
+        "pitch": 0.0
+      },
+      "yellow": {
+        "x": -3.5,
+        "y": 65,
+        "z": 70.5,
+        "yaw": 180.0,
+        "pitch": 0.0
+      },
+      "green": {
+        "x": -69.5,
+        "y": 65,
+        "z": -3.5,
+        "yaw": -90.0,
+        "pitch": 0.0
+      }
+    },
+    "chests": {
+      "red": {
+        "x": 2,
+        "y": 65,
+        "z": -73
+      },
+      "blue": {
+        "x": 73,
+        "y": 65,
+        "z": 2
+      },
+      "yellow": {
+        "x": 2,
+        "y": 65,
+        "z": 73
+      },
+      "green": {
+        "x": -73,
+        "y": 65,
+        "z": 2
+      }
+    },
+    "spawners": [
+      {
+        "type": "copper",
+        "team": "red",
+        "x": 0.5,
+        "y": 65,
+        "z": -73.5
+      },
+      {
+        "type": "iron",
+        "team": "red",
+        "x": 0.5,
+        "y": 65,
+        "z": -73.5
+      },
+      {
+        "type": "copper",
+        "team": "blue",
+        "x": 74.5,
+        "y": 65,
+        "z": 0.5
+      },
+      {
+        "type": "iron",
+        "team": "blue",
+        "x": 74.5,
+        "y": 65,
+        "z": 1.5
+      },
+      {
+        "type": "copper",
+        "team": "yellow",
+        "x": 0.5,
+        "y": 65,
+        "z": 74.5
+      },
+      {
+        "type": "iron",
+        "team": "yellow",
+        "x": 0.5,
+        "y": 65,
+        "z": 74.5
+      },
+      {
+        "type": "copper",
+        "team": "green",
+        "x": -73.5,
+        "y": 65,
+        "z": 0.5
+      },
+      {
+        "type": "iron",
+        "team": "green",
+        "x": -73.5,
+        "y": 65,
+        "z": 1.5
+      },
+      {
+        "type": "diamond",
+        "x": 45.5,
+        "y": 66,
+        "z": -44.5
+      },
+      {
+        "type": "diamond",
+        "x": 45.5,
+        "y": 66,
+        "z": 45.5
+      },
+      {
+        "type": "diamond",
+        "x": -44.5,
+        "y": 66,
+        "z": 45.5
+      },
+      {
+        "type": "diamond",
+        "x": -44.5,
+        "y": 66,
+        "z": -44.5
+      },
+      {
+        "type": "gold",
+        "x": 2.5,
+        "y": 70,
+        "z": 0.5
+      },
+      {
+        "type": "gold",
+        "x": -1.5,
+        "y": 70,
+        "z": 0.5
+      }
+    ],
+    "npc": {
+      "shop": "VILLAGER",
+      "upgrade": "ZOMBIE_VILLAGER"
+    }
+  }
+}

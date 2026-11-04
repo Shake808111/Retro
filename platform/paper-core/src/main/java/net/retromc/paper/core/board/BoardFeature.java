@@ -176,7 +176,11 @@ public final class BoardFeature implements CoreFeature<PaperCore>, Listener, Boa
         } else {
             shown.board.updateLines(lines);
         }
-        if (shown.spec.showScores()) {
+        if (shown.spec.lines().stream().anyMatch(line -> line.score() != null)) {
+            for (int i = 0; i < lines.size(); i++) {
+                sendScore(shown, i);
+            }
+        } else if (shown.spec.showScores()) {
             for (int i = 0; i < lines.size(); i++) {
                 if (shown.board.getScore(i).isPresent()) {
                     shown.board.removeScore(i);
@@ -189,10 +193,25 @@ public final class BoardFeature implements CoreFeature<PaperCore>, Listener, Boa
 
     /** Sendet nur, wenn sich die Zeile ändert (kein Flackern, §9 #14). */
     private static void send(Shown shown, int index, Component value) {
-        if (index < shown.board.size() && Objects.equals(shown.board.getLine(index), value)) {
+        if (index >= shown.board.size() || !Objects.equals(shown.board.getLine(index), value)) {
+            shown.board.updateLine(index, value);
+        }
+        sendScore(shown, index);
+    }
+
+    /** Eigene Score-Anzeige einer Zeile (Spec 04 §4.2), nur bei Änderung. */
+    private static void sendScore(Shown shown, int index) {
+        if (index >= shown.spec.lines().size() || index >= shown.board.size()) {
             return;
         }
-        shown.board.updateLine(index, value);
+        java.util.function.Supplier<Component> score = shown.spec.lines().get(index).score();
+        if (score == null) {
+            return;
+        }
+        Component value = score.get();
+        if (!Objects.equals(shown.board.getScore(index).orElse(null), value)) {
+            shown.board.updateScore(index, value);
+        }
     }
 
     // ------------------------------------------------------------------------------------------ Lobby-Board

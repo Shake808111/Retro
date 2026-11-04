@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 import net.kyori.adventure.text.Component;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Bauplan einer Sidebar (Spec 02 §4.1, §8.1 {@code BoardSpec.builder().title().line(id, Supplier).blank()
@@ -48,12 +49,21 @@ public record BoardSpec(Supplier<Component> title, List<Line> lines, boolean sho
         return lines.stream().map(line -> line.value().get()).toList();
     }
 
-    /** Eine Zeile mit ID und Wert. */
-    public record Line(String id, Supplier<Component> value) {
+    /**
+     * Eine Zeile mit ID und Wert.
+     *
+     * @param score eigene Score-Anzeige rechts (z. B. BedWars: lebende Spieler eines Teams, Spec 04 §4.2) oder
+     *              {@code null} = Vanilla-Zahl {@code n−1 … 0}
+     */
+    public record Line(String id, Supplier<Component> value, @Nullable Supplier<Component> score) {
 
         public Line {
             Objects.requireNonNull(id, "id");
             Objects.requireNonNull(value, "value");
+        }
+
+        public Line(String id, Supplier<Component> value) {
+            this(id, value, null);
         }
     }
 
@@ -78,9 +88,21 @@ public record BoardSpec(Supplier<Component> title, List<Line> lines, boolean sho
             return this;
         }
 
+        /** Zeile mit eigener Score-Anzeige (Text rechts statt der Vanilla-Zahl). */
+        public Builder line(String id, Supplier<Component> value, Supplier<Component> score) {
+            lines.add(new Line(id, value, Objects.requireNonNull(score, "score")));
+            return this;
+        }
+
         /** Leerzeile (FastBoard hält gleiche Zeilen auseinander). */
         public Builder blank() {
             lines.add(new Line("blank" + ++blanks, Component::empty));
+            return this;
+        }
+
+        /** Leerzeile mit eigener Score-Anzeige. */
+        public Builder blank(Supplier<Component> score) {
+            lines.add(new Line("blank" + ++blanks, Component::empty, Objects.requireNonNull(score, "score")));
             return this;
         }
 

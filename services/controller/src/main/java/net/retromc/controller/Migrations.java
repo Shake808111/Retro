@@ -16,6 +16,8 @@ public final class Migrations {
         return Flyway.configure()
                 .dataSource(dataSource)
                 .locations(LOCATION)
+                // Versionen folgen der Spec-Nummer (V<Spec>_<n>): V3_1 … V7_1 kommen nach V8_1 hinzu.
+                .outOfOrder(true)
                 .load()
                 .migrate()
                 .migrationsExecuted;

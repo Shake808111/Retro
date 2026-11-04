@@ -337,7 +337,7 @@ class StatsRepositoryIT {
     @Test
     void katalogMitIcon() {
         List<StatsMode> modes = await(stats.modes());
-        assertEquals(14, modes.size());
+        assertEquals(15, modes.size());
         StatsMode bedwars = await(stats.mode(ModeKey.BEDWARS)).orElseThrow();
         assertEquals(Map.of("kills", 5L, "beds", 10L, "wins", 50L), bedwars.formula());
         assertEquals("RED_BED", bedwars.icon());

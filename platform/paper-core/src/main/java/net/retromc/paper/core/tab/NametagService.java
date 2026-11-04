@@ -2,7 +2,9 @@ package net.retromc.paper.core.tab;
 
 import java.util.Locale;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Nametag über dem Kopf (Spec 02 §8.1 {@code NametagService}, Scoreboard-Teams): Standard ist Rang-Präfix
@@ -15,7 +17,10 @@ public interface NametagService {
 
     void suffix(Player player, Component suffix);
 
-    /** Zurück zum Standard aus dem Profil. */
+    /** Namensfarbe statt der Rangfarbe (z. B. BedWars {@code §f}); {@code null} = Rangfarbe. */
+    void nameColor(Player player, @Nullable NamedTextColor color);
+
+    /** Zurück zum Standard aus dem Profil (Präfix, Suffix, Namensfarbe). */
     void reset(Player player);
 
     /** Teamname für die Sortierung älterer Clients: {@code "%04d%s"} mit {@code 9999 − Gewicht} und Name. */

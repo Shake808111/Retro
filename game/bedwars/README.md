@@ -1,27 +1,19 @@
 # game/bedwars – BedWars
 
-**Gradle-Pfad:** `:game:bedwars` · **Paket:** `net.retromc.bedwars` · **Einstieg:** `BedWarsPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
+**Gradle-Pfad:** `:game:bedwars` · **Paket:** `net.retromc.bedwars` · **Einstieg:** `BedWarsPlugin`
+(`${brandName}BedWars`), `BedWarsMode` · **Status:** Paket 4a (Spec 04 BedWars-Teil)
 
-## Verantwortung
+## Umfang
 
-Paper-Plugin für den Modus BedWars (BedWars: Teams, Betten, Ressourcen-Spawner, Shop, Upgrades). Baut auf `game/game-framework` auf (Rundenablauf, Teams, Karten, Zuschauer, Kits, Shops, Statistik-Senke) und läuft zusammen mit `platform/paper-core` auf einem Spielserver; laut Notiz 07 (Abschnitt 3) eine Runde pro Server/Pod.
+- Presets über `config.yml → bedwars.preset`: `modern` (Stats-Modus `bedwars`, Hit-Cooldown an) und `classic`
+  (`bedwars_classic`, 1.8-Kampf, Bronze, ein Händler, Gold-Vote `/goldvote [save]`).
+- Varianten 8x1, 4x2, 4x3, 4x4, 8x2, 8x4, 9x5 (Template `bedwars-<variante>` oder `game.variant`).
+- Betten, Respawn 5 s, Final Kills, Ressourcen-Übertragung (Kill/Verlassen), Team-Truhe, Rundenhöchstdauer.
+- Generatoren mit Stufenplan (Diamant II 05:00 / III 15:00, Gold II 10:00 / III 25:00), Hologramme.
+- Item-Shop (`shop.yml`, 9 Kategorien, Schnellkauf), Shop-Einstellungen, Schnellkauf-Editor, Upgrade-Shop,
+  Fallen, Sonder-Items, Board §4.2, Chat `@all`/Team/`[✗]`.
+- Map-Setup `/bwsetup` (siehe `deploy/bedwars/README.md`), Beispiel `deploy/bedwars/maps/beispiel/map.json`.
+- Daten: `BedWarsStore` (Schnellkauf, Shop-Einstellungen, Gold-Wahl) und `ModeLevelStore` (Modus-Level) aus
+  core-data, Migration `V4_1__bedwars_skywars.sql`; beide über die `ServiceRegistry` austauschbar.
 
-## Welches Vorbild-Feature wird nachgebaut?
-
-Vorbild betreibt zwei BedWars-Produkte (Notiz 02, Q1):
-- **„BedWars“ (BedWars 2.0)**, gestartet im Juli 2021: vier Ressourcen (Kupfer, Eisen, Gold, Diamanten),
-  zwei Villager (Item-Shop und Upgrade-Shop), Upgrades und Fallen gegen Diamanten,
-  moderne Minecraft-Version mit dem 1.9+-Angriffs-Cooldown.
-- **„Classic BedWars“**: der ursprüngliche Modus von 2014 mit Bronze/Eisen/Gold und einem Shop, bleibt bei 1.8-PvP.
-- Stand der Quellen: letzter gefundener offizieller Balance-Patch Mai 2025 (Notiz 02, Q1).
-
-Details für die Umsetzung: Spawner (Notiz 02, Q2), Shop und Preise (Q3), Regeln/Upgrades/Fallen (Q4),
-Kampf (Q8), Ranking und Statistik (Q9).
-
-## Kampfprofil
-
-Platzhalter `LEGACY_1_8` nach Notiz 07, Abschnitt 1. **Offen:** Vorbild-BedWars 2.0 nutzt modernen Kampf, Classic BedWars 1.8-Kampf (Notiz 02, Q1/Q8) – Kampfprofil pro Variante festlegen.
-
-
-Quellen: `research_notes/` (Notiz-Nummern wie angegeben). Keine Namen, Texte,
-Karten oder Grafiken vom Vorbild übernehmen (Notiz 07, Abschnitt 9 B).
+Keine Namen, Texte, Maps oder Grafiken vom Vorbild; alle Spielertexte als i18n-Schlüssel (`bw.*`).

@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 @Tag("integration")
 class MigrationsIT {
 
-    private static final List<String> EXPECTED_VERSIONS = List.of("1", "1.1", "1.2", "2.1", "2.2", "8.1");
+    private static final List<String> EXPECTED_VERSIONS = List.of("1", "1.1", "1.2", "2.1", "2.2", "4.1", "8.1");
 
     @Test
     void alleMigrationenLaufenInReihenfolge() {

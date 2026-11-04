@@ -21,8 +21,9 @@ sein) – das Repo ist **öffentlich**.
 | `docs/ARCHITEKTUR.md`, `docs/VERSIONEN.md` | Architektur, geprüfte Bibliotheksversionen |
 | `core/` | `core-api` (Verträge/DTOs/Events), `core-data` (Postgres/Valkey, `ValkeyKeys`, Testhilfen), `core-messaging` (Bus, Envelope, RequestReply), `core-i18n` (Textkatalog de/en/bar/gsw), `core-stats` |
 | `platform/paper-core`, `platform/velocity-core` | Basis-Plugins RetroMCCore (Paper) und retromc-core (Velocity) |
-| `game/*`, `lobby/`, `citybuild/` | Spielmodi, Lobby, CityBuild (noch Gerüste) |
-| `db/migrations/` | Flyway: V1, V1_1, V1_2, V2_1, V2_2, V8_1 (+ später V3_1 … V7_1) |
+| `game/game-framework`, `game/bedwars` | Spiel-Rahmen (Spec 03) und BedWars (Spec 04); übrige `game/*`, `lobby/`, `citybuild/` noch Gerüste |
+| `db/migrations/` | Flyway: V1, V1_1, V1_2, V2_1, V2_2, V4_1, V8_1 (+ später V3_1, V5_1 … V7_1; `outOfOrder`) |
+| `deploy/bedwars/` | Map-Setup-Anleitung (`/bwsetup`) und Beispiel-`map.json` |
 | `deploy/lobby/` | Lobby-Map-Einrichtung (Statuen, Kisten, Hologramme), `warps.yml` (Navigator-Ziele), Map-Credits |
 | `docker/` | Compose für Entwicklung (Postgres 18.6, Valkey 8.1.10, Velocity) |
 
@@ -53,6 +54,21 @@ sein) – das Repo ist **öffentlich**.
   Hologramme/Wände (`/statswall`), NPCs (Mannequin). Nick-Anzeige (Premium, ohne Clan-Tag/Level) über `ProfileView`.
   Offen: Party-Kennung im Tab je Betrachter (`[Party]`, braucht Pakete), LEGACY-Ära je Spieler (`ui.era`) nur in den
   Formatern, Spielzeit-Zwischenspeicherung alle 5 min (Proxy bucht die Sitzung beim Logout).
+- **Paket 4a Spielrahmen + BedWars (`p4/bedwars`, in `main`):** paper-core `server` (`ServerLifecycle` mit
+  Registrierung/Heartbeat 5 s/TTL 15 s/`SERVER_STATE`, `PlayerTransfer` → `SEND_LOBBY`/`CONNECT`, `QueueClient`
+  mit `player:{uuid}:ticket`), `map` (`MapService`/`MapFeature`: fertige Welten `maps/<id>/` + `map.json`,
+  `MapJson`), `BoardSpec`-Scores je Zeile, `NametagService.nameColor`; core-messaging `GAME_ENDED`; Flyway
+  `outOfOrder` (V3_1 … V7_1 nach V8_1). game-framework (Spec 03 §6.5–§6.13 ohne Hub-Lobby): `MiniGamePlugin`/
+  `GameMode`/`Game`, Wartelobby + Countdown (`CountdownPlan`, `PhaseTimer`), Teams (`TeamAllocator` BALANCE/
+  PREFER_FILLED, `TeamGui`), Map-Auswahl/`/forcemap`/Voting/`MapDraft`, Zuschauer, Kill-Feed, Rundenende
+  (`SubmitOnce`, Block → Restart → Coins, `SEND_LOBBY`, `GAME_ENDED`, Stopp), Server-Status, Privatrunden-Kontext,
+  Runden-Chat, `/start /fm /game /team /teleporter`. BedWars (Spec 04 BedWars-Teil): modern + Classic-Preset,
+  Betten/Respawn/Final Kills, Generatoren, Shop (`shop.yml`) + Schnellkauf + Shop-Einstellungen, Upgrades, Fallen,
+  Sonder-Items, Board §4.2, Gold-Vote, `/bwsetup` (Map-Setup), Migration `V4_1`, `BedWarsStore`/`ModeLevelStore`.
+  Texte `common.*`, `game.*`, `bw.*` (de/en/Soll spec03/spec04). Maps/Wartelobby kommen als fertige Welten
+  (`deploy/bedwars/README.md`, Beispiel `deploy/bedwars/maps/beispiel/map.json`). Offen: Ranked-Option,
+  Achievements (brauchen Spec-05-Infrastruktur), `/pr kick|max|close`, Valkey-Caches `bw:qs`/`bw:ss`/`lvl`,
+  Teamkameraden durch Wände, Party-Suffix im Tab, Wartelobby-Händler-NPC.
 - **Andocken:** Ränge, Profile, Texte und Datenbankzugang nur über die `ServiceRegistry` holen
   (`PaperCorePlugin.services()` / `VelocityCorePlugin.services()`); ein Adapter an ein bestehendes Kern-Plugin
   ersetzt sie per `register(...)`. Neue Teilsysteme = eine Zeile in `features()` der Plugin-Hauptklasse.
@@ -65,6 +81,8 @@ sein) – das Repo ist **öffentlich**.
     LobbyBalancer, /server /send /whereami /glist /cloud, infra-Repos).
   - **D** paper-core Social: erledigt in Paket 2 (GUIs §5, Mute/Spam/Ignore, Nick-Anwendung, AFK).
   - Grenzen: Chat-**Format**/Tab/Nametag = B; Chat-**Durchsetzung**, Social-Tab-Anteile, Nick-Anwendung = D.
+- **Paket 4b SkyWars** auf dem Spiel-Rahmen (`SpectatorService`, `KillFeed` mit Kit/Killer-Leben, `kit.Kit`,
+  Loot, Events, Challenges; Tabellen `games.sw_*` stehen schon in `V4_1`; Setup analog `/bwsetup` mit `MapDraft`).
 - **Danach:** Merge + voller Build + Abnahmeprüfung (Spec 01 §9 A1–A26, Spec 02 §9 #1–22, Spec 08 §9 #1–3,
   #6–7, #10, #14, #17–18, #21), Smoke-Test lokal (Velocity + Lobby + Postgres + Valkey: Login, /friend, /party,
   Tab, Scoreboard). Dann Phase 2 (Lobby-Plugin inkl. Navigator/Kompass mit `deploy/lobby/warps.yml`).

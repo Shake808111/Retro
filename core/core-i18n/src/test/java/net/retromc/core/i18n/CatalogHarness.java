@@ -38,7 +38,8 @@ final class CatalogHarness {
 
     /** Soll-Dateien je Spec: §7-Zeilen und Ergänzungen. */
     static final List<String> SPEC_FILES = List.of(
-            "spec01", "spec01-ergaenzungen", "spec02", "spec02-ergaenzungen", "spec08", "spec08-ergaenzungen");
+            "spec01", "spec01-ergaenzungen", "spec02", "spec02-ergaenzungen", "spec03", "spec03-ergaenzungen",
+            "spec04", "spec04-ergaenzungen", "spec08", "spec08-ergaenzungen");
 
     private static final Pattern MARKER = Pattern.compile("\\{([a-z0-9_]+(?::[a-z0-9_-]+)?)}");
     private static final TagResolver STANDARD = StandardTags.defaults();

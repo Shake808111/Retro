@@ -17,8 +17,10 @@ import net.retromc.paper.core.holo.HologramFeature;
 import net.retromc.paper.core.holo.StatsWallFeature;
 import net.retromc.paper.core.hotbar.HotbarFeature;
 import net.retromc.paper.core.lang.TextFeature;
+import net.retromc.paper.core.map.MapFeature;
 import net.retromc.paper.core.npc.NpcFeature;
 import net.retromc.paper.core.profile.ProfileFeature;
+import net.retromc.paper.core.server.ServerFeature;
 import net.retromc.paper.core.service.BukkitServiceMirror;
 import net.retromc.paper.core.social.SocialFeature;
 import net.retromc.paper.core.social.afk.AfkFeature;
@@ -74,6 +76,8 @@ public final class PaperCorePlugin extends JavaPlugin {
                 new TextFeature(),
                 new CommandFeature(),
                 new BridgeFeature(),
+                new ServerFeature(),
+                new MapFeature(),
                 new GuiFeature(),
                 new SocialFeature(),
                 new StatsServicesFeature(),

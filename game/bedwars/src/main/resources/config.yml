@@ -1,0 +1,69 @@
+# BedWars (Spec 04) auf dem Spiel-Rahmen (Spec 03). Werte ohne Beleg sind Annahmen der Spec und hier änderbar.
+# Maps: fertige Welten im Map-Ordner (NETWORK_MAP_DIR, Standard <server>/maps/<id>/) mit map.json; einrichten mit
+# /bwsetup (siehe deploy/bedwars/README.md).
+
+# --- Spiel-Rahmen (Spec 03 §6.5) -----------------------------------------------------------------------------------
+game:
+  # Variante, wenn das Template keine nennt (Template bedwars-4x4 → 4x4)
+  variant: 4x4
+  variants:
+    8x1: {}
+    4x2: {}
+    4x3: {}
+    4x4: {}
+    8x2: {}
+    8x4: {}
+    9x5: {}
+  countdown: 60
+  tip-interval: 30
+  # Replay-Hinweis am Rundenende (common.replay) – erst mit Replay-Dienst einschalten
+  replay: false
+  countdown-titles: false
+  # feste Map-ID (leer = Zufall aus allen gültigen Maps der Variante)
+  map: ""
+
+# --- BedWars (Spec 04 §6.1) ----------------------------------------------------------------------------------------
+bedwars:
+  # modern = BedWars (E26, Hit-Cooldown an) · classic = Classic-Preset (1.8-Kampf, Bronze, Gold-Vote, ein Händler)
+  preset: modern
+  respawn-seconds: 5
+  # Radius um den Team-Spawn ohne Blockplatzierung
+  spawn-protection: 3
+  # Rundenhöchstdauer: danach alle Betten weg, nach weiteren draw-minutes Unentschieden
+  max-minutes: 60
+  draw-minutes: 10
+  # Radius der Basis-Effekte und Fallen um das Bett
+  base-radius: 12
+  # Board-Zeile "Map: <map>" statt "Map <map>"
+  board-map-colon: false
+  rewards:
+    kill: 25
+    bed: 10
+    win: 50
+    survived: 20
+    per-seconds: 30
+    coin-factor: 2.5
+  # Takte in Sekunden (Gold/Diamant-Stufen: Spec 04 §6.1.3, fest)
+  generators:
+    copper: 1
+    iron: 8
+    bronze: 1
+    classic-iron: 10
+    classic-gold: 30
+  # Item-Abklingzeiten in Sekunden (Spec 04 §6.1.8)
+  cooldowns:
+    platform: 20
+    portal: 10
+    freezer: 15
+    wind_cannon: 2
+  items:
+    platform-seconds: 10
+    teleporter-seconds: 6
+    mobile-shop-seconds: 60
+    freezer-radius: 3
+    freezer-seconds: 3
+    sneaker-seconds: 30
+    bridge-length: 12
+    egg-bridge-length: 20
+    super-tnt-power: 6
+    wind-cannon-range: 10

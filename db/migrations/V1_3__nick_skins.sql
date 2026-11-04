@@ -24,3 +24,6 @@ ALTER TABLE core.nick_pool
 
 -- Namen sind wie Spielernamen case-insensitiv eindeutig (nick:name:{lower}).
 CREATE UNIQUE INDEX nick_pool_name_lower ON core.nick_pool (lower(name));
+
+-- Füllvorgang: erzeugte Namen dürfen keinem bekannten Spieler gehören, auch nicht früheren Namen.
+CREATE INDEX player_name_history_lower ON core.player_name_history (lower(name));

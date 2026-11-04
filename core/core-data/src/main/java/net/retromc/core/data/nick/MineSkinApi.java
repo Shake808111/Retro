@@ -58,7 +58,9 @@ public final class MineSkinApi {
     public List<SkinTexture> skins(List<String> ids, Set<String> known, int max) throws InterruptedException {
         Set<String> wanted = new LinkedHashSet<>();
         if (ids.isEmpty()) {
-            JsonObject list = getJson(base.resolve("?size=" + Math.clamp(max, 1, 64)));
+            String root = base.toString().endsWith("/") ? base.toString().substring(0, base.toString().length() - 1)
+                    : base.toString();
+            JsonObject list = getJson(URI.create(root + "?size=" + Math.clamp(max, 1, 64)));
             if (list != null && list.get("skins") instanceof JsonArray entries) {
                 List<SkinTexture> inline = new ArrayList<>();
                 for (JsonElement entry : entries) {

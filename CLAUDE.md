@@ -21,9 +21,10 @@ sein) – das Repo ist **öffentlich**.
 | `docs/ARCHITEKTUR.md`, `docs/VERSIONEN.md` | Architektur, geprüfte Bibliotheksversionen |
 | `core/` | `core-api` (Verträge/DTOs/Events), `core-data` (Postgres/Valkey, `ValkeyKeys`, Testhilfen), `core-messaging` (Bus, Envelope, RequestReply), `core-i18n` (Textkatalog de/en/bar/gsw), `core-stats` |
 | `platform/paper-core`, `platform/velocity-core` | Basis-Plugins RetroMCCore (Paper) und retromc-core (Velocity) |
-| `game/game-framework`, `game/bedwars` | Spiel-Rahmen (Spec 03) und BedWars (Spec 04); übrige `game/*`, `lobby/`, `citybuild/` noch Gerüste |
-| `db/migrations/` | Flyway: V1, V1_1, V1_2, V1_3, V2_1, V2_2, V4_1, V8_1 (+ später V3_1, V5_1 … V7_1; `outOfOrder`) |
-| `deploy/bedwars/` | Map-Setup-Anleitung (`/bwsetup`) und Beispiel-`map.json` |
+| `game/game-framework`, `game/bedwars`, `game/skywars` | Spiel-Rahmen (Spec 03), BedWars und SkyWars (Spec 04); übrige `game/*`, `citybuild/` noch Gerüste, `lobby/` bisher nur Profil-Item |
+| `db/migrations/` | Flyway: V1, V1_1, V1_2, V1_3, V2_1, V2_2, V2_3, V4_1, V4_2, V8_1 (+ später V3_1, V5_1 … V7_1; `outOfOrder`) |
+| `deploy/bedwars/` | Map-Setup-Anleitung (`/bwsetup`), Beispiel-`map.json`, 8 Maps (CC BY 4.0, `map.json` + `CREDITS.md`) |
+| `deploy/skywars/` | Map-Setup-Anleitung (`/swsetup`) und Beispiel-`map.json` (8 Inseln) |
 | `deploy/lobby/` | Lobby-Map-Einrichtung (Statuen, Kisten, Hologramme), `warps.yml` (Navigator-Ziele), Map-Credits |
 | `docker/` | Compose für Entwicklung (Postgres 18.6, Valkey 8.1.10, Velocity) |
 
@@ -71,10 +72,10 @@ sein) – das Repo ist **öffentlich**.
   Teamkameraden durch Wände, Party-Suffix im Tab, Wartelobby-Händler-NPC.
 - **Paket 5 Fixes + Nick-Pool (`p5/fixes-nick`, in `main`):** Fehler aus dem ersten Server-Test behoben
   (Hikari `setDriverClassName`, Shadow behält `netty-resolver-dns`/`netty-codec-dns` für Lettuce,
-  `MessageRenderer.renderLines` trennt erst nach dem Rendern → `splitLines`). Erreichbar gemacht: `/friend`,
-  `/party`, `/p`, `/clan` ohne Argument öffnen ihr Menü über `OPEN_GUI` (Hilfe: `help`/`1`/`2`), `/stats` ohne
-  Modus öffnet das Statistik-Profil, News-Bossbar in Ära LEGACY (`NETWORK_UI_ERA`), `/npc create|list|remove`
-  (`retromc.npc.admin`, nicht dauerhaft). Keine Vanilla-Join/Quit-Meldungen; Erst-Sprache aus den
+  `MessageRenderer.renderLines` trennt erst nach dem Rendern → `splitLines`). Erreichbar gemacht: `/stats` ohne
+  Modus öffnet das Statistik-Profil (`/friend`, `/party`, `/p`, `/clan` ohne Argument: in Paket 6 wieder Hilfe),
+  News-Bossbar in Ära LEGACY (`NETWORK_UI_ERA`), `/npc create|list|remove` (`retromc.npc.admin`, seit Paket 6
+  dauerhaft). Keine Vanilla-Join/Quit-Meldungen; Erst-Sprache aus den
   Client-Einstellungen (`SettingsService.initialLocale`, nur erste Sitzung); Freunde-GUI-Pfeile nur bei Bedarf.
   Nick-Pool (Spec 01 §6.11 Nr. 7–8): core-data `nick` (`NickNameGenerator`, `NickNameFilter` über
   `SpamFilter`/`SpamRules.BLOCKED_WORDS`, `MojangApi` Namens-API + Sessionserver `?unsigned=false`,
@@ -84,6 +85,25 @@ sein) – das Repo ist **öffentlich**.
   Nicks auf die echte UUID auf. Betrieb: `NETWORK_NICK_SKIN_UUIDS` (Quell-UUIDs) setzen, optional
   `NETWORK_MINESKIN_KEY` (nur in `docker/.env`), dann `/nickpool fill 200`. Offen: echte Quell-UUIDs/Skins als
   Betriebsdaten, LEGACY-Ära je Spieler (`ui.era`), Lobby-Plugin.
+- **Paket 6 SkyWars + Korrekturen (`p6/skywars`, in `main`):** SkyWars nach Spec 04 §6.2 auf dem Spiel-Rahmen
+  (`game/skywars`): Preset `modern`/`classic` (`skywars_classic`, 1.8-Kampf, nur Item-Kits, ohne Events/Challenges),
+  Solo = `TeamMode.SOLO`, Teams = `NUMBERED` (`Team #n`, Rangfarben, Tab wie Lobby), Glaskäfig 3-2-1, Schutzzeit 30 s
+  (`RoundPlan`), Kill-Feed Kit → getötet (XP nur Killer) → Leben → verbleibend, 27 Kits + 5 frühere
+  (`kits/skywars.yml`, Fähigkeiten mit `AbilityTracker`, Kit-Menü §5.9, Kit-Einstellungen §5.10, Kauf idempotent
+  über Coin-Journal `kit:{mode}:{kit}:{uuid}`), Loot `loot/skywars_t1/t2/refill1/refill2.yml` mit Garantien je Insel,
+  Chestrefill (`events.yml`, `/swdebug event`), Border (600 s / 60 s nach 2 Teams, 180 s auf 10), Challenges mit
+  Bossbar (`challenges.yml`), Map-Menü §5.11 (7 Maps, `vote:map:{server}`), Board §4.3, Modus-Level im Chat/Nametag,
+  Rundenblock mit Challenge-Zeile, `/kit`, `/swsetup`; Migration `V4_2` (`games.kit_owned/kit_selected`,
+  Modus `skywars_classic`), `KitStore`/`SkyWarsStore`; Texte `sw.*` (de/en/Soll). Rahmen: `loot`-Paket,
+  `KillFeed.plan`, `GameMode.teamTabEntries/voteOptions`, nummerierte Team-IDs `1…N`, `WaitingPlatform` (Wartelobby in
+  der Map-Welt wird beim Start entfernt, `waitingLobbyKeep`). Map-Lader: Lizenzen `own`, `cc-by-4.0`,
+  `cc-by-sa-4.0` (frei nur mit `CREDITS.md`), Weltformat 26.x (`dimensions/minecraft/overworld/region`, `players/`
+  wird nicht kopiert). Wallet: wiederholte Buchung mit gleichem `idem_key` = `DUPLICATE` vor Saldo-Prüfung.
+  Korrektur Paket 5: `/friend`, `/party`, `/p`, `/clan` ohne Argument wieder Hilfe (Spec 01 #1/#22/#40); Menüs
+  über das Profil-Item der Lobby (Slot 9, `lobby/ProfileItem`) → Profil-Menü (Freunde, Party, Clan, Statistiken,
+  Nicknamen, Einstellungen; „Zurück“ der Untermenüs führt dorthin). `/npc create` dauerhaft (`core.npc`, `V2_3`,
+  `NpcStore`). Offen: Ranked-Option, Achievements dauerhaft („Übermacht“ nur als Title), Valkey-Caches `sw:kit:*`/
+  `lvl:*`, Party-Suffix am Nametag, `mapschema/skywars.json` für den Map-Exporter, echte SkyWars-Maps.
 - **Andocken:** Ränge, Profile, Texte und Datenbankzugang nur über die `ServiceRegistry` holen
   (`PaperCorePlugin.services()` / `VelocityCorePlugin.services()`); ein Adapter an ein bestehendes Kern-Plugin
   ersetzt sie per `register(...)`. Neue Teilsysteme = eine Zeile in `features()` der Plugin-Hauptklasse.
@@ -96,8 +116,6 @@ sein) – das Repo ist **öffentlich**.
     LobbyBalancer, /server /send /whereami /glist /cloud, infra-Repos).
   - **D** paper-core Social: erledigt in Paket 2 (GUIs §5, Mute/Spam/Ignore, Nick-Anwendung, AFK).
   - Grenzen: Chat-**Format**/Tab/Nametag = B; Chat-**Durchsetzung**, Social-Tab-Anteile, Nick-Anwendung = D.
-- **Paket 4b SkyWars** auf dem Spiel-Rahmen (`SpectatorService`, `KillFeed` mit Kit/Killer-Leben, `kit.Kit`,
-  Loot, Events, Challenges; Tabellen `games.sw_*` stehen schon in `V4_1`; Setup analog `/bwsetup` mit `MapDraft`).
 - **Danach:** Merge + voller Build + Abnahmeprüfung (Spec 01 §9 A1–A26, Spec 02 §9 #1–22, Spec 08 §9 #1–3,
   #6–7, #10, #14, #17–18, #21), Smoke-Test lokal (Velocity + Lobby + Postgres + Valkey: Login, /friend, /party,
   Tab, Scoreboard). Dann Phase 2 (Lobby-Plugin inkl. Navigator/Kompass mit `deploy/lobby/warps.yml`).

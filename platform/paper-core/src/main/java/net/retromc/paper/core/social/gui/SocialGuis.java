@@ -53,6 +53,7 @@ import net.retromc.paper.core.social.gui.SocialGuiPlans.FriendView;
 import net.retromc.paper.core.social.gui.SocialGuiPlans.PartyMemberView;
 import net.retromc.paper.core.social.gui.SocialGuiPlans.Person;
 import net.retromc.paper.core.social.gui.SocialGuiPlans.RequestView;
+import net.retromc.paper.core.stats.StatsService;
 import net.retromc.platform.common.text.I18n;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -118,6 +119,7 @@ public final class SocialGuis implements SocialGuiService {
                     : get(ClanService.class).statsModes(clan.get().id())).thenApply(SocialGuiPlans::clanModes);
             case SocialGuiPlans.SETTINGS -> settingsView(player, locale).thenApply(view -> SocialGuiPlans.settings(view,
                     texts));
+            case SocialGuiPlans.PROFILE -> CompletableFuture.completedFuture(SocialGuiPlans.profile(viewer));
             case SocialGuiPlans.NICK -> get(SettingsService.class).settings(viewer)
                     .thenCombine(get(NickService.class).nickOf(viewer), (settings, nick) -> SocialGuiPlans.nick(
                             new SocialGuiPlans.NickView(viewer, settings.nickOnJoin(), settings.nickKeep(),
@@ -419,7 +421,10 @@ public final class SocialGuis implements SocialGuiService {
                         : clans.setShowRoles(uuid, !clan.get().showRoles())), "Ränge hervorheben",
                         result -> open(player, guiId, argument));
             }
-            case "back" -> player.closeInventory();
+            // „Zurück“ der Untermenüs führt ins Profil (Spec 01 §5.4, §5.6, §5.7)
+            case "back" -> open(player, SocialGuiPlans.PROFILE, SocialGuiPlans.BLANK);
+            case "stats" -> core.services().find(StatsService.class).ifPresent(stats -> stats.openProfile(player,
+                    uuid, null));
             default -> throw new IllegalArgumentException("Unbekannte GUI-Aktion " + id);
         }
     }

@@ -81,16 +81,16 @@ class KatalogTest {
     void schluesselzahlJeSpec() {
         // Spec 01 §7: 130 Tabellenzeilen; die Spec schätzt "≈ 215 Schlüssel" (Sammelzeilen einzeln gezählt).
         assertEquals(232, CatalogHarness.specKeys("spec01").size());
-        assertEquals(211, CatalogHarness.specKeys("spec01-ergaenzungen").size());
+        assertEquals(224, CatalogHarness.specKeys("spec01-ergaenzungen").size());
         assertEquals(124, CatalogHarness.specKeys("spec02").size());
         assertEquals(61, CatalogHarness.specKeys("spec02-ergaenzungen").size());
         assertEquals(53, CatalogHarness.specKeys("spec03").size());
-        assertEquals(79, CatalogHarness.specKeys("spec03-ergaenzungen").size());
+        assertEquals(80, CatalogHarness.specKeys("spec03-ergaenzungen").size());
         assertEquals(115, CatalogHarness.specKeys("spec04").size());
         assertEquals(417, CatalogHarness.specKeys("spec04-ergaenzungen").size());
         assertEquals(109, CatalogHarness.specKeys("spec08").size());
         assertEquals(9, CatalogHarness.specKeys("spec08-ergaenzungen").size());
-        assertEquals(232 + 211 + 124 + 61 + 53 + 79 + 115 + 417 + 109 + 9 + GERUEST.size(),
+        assertEquals(232 + 224 + 124 + 61 + 53 + 80 + 115 + 417 + 109 + 9 + GERUEST.size(),
                 catalog.keys(Language.DE_DE).size());
     }
 

@@ -375,7 +375,8 @@ public final class Abilities implements Listener {
         }
         SwPlayer sw = mode.sw(player.getUniqueId());
         KitDef kit = sw.kit();
-        if (kit == null || kit.ability() == null || kit.ability().type() != AbilityType.STOMPER) {
+        if (kit == null || kit.ability() == null || kit.ability().type() != AbilityType.STOMPER
+                || mode.protection()) {
             return;
         }
         if (!trigger(player, sw, kit, kit.ability())) {

@@ -40,6 +40,8 @@ public final class SocialGuiPlans {
     public static final String CLAN_REQUESTS = "clan.requests";
     public static final String SETTINGS = "settings";
     public static final String NICK = "nick";
+    /** Profil-Menü des Lobby-Profil-Items (Spec 01 §4.5, Spec 03 §4.9 Slot 9). */
+    public static final String PROFILE = "profile";
 
     /** Leere Lore-Zeile. */
     public static final String BLANK = "";
@@ -515,6 +517,31 @@ public final class SocialGuiPlans {
                     : "gui.value.nobody";
             default -> value == 1 ? "gui.value.on" : "gui.value.off";
         };
+    }
+
+    // ------------------------------------------------------------------ Profil (Lobby-Profil-Item)
+
+    /**
+     * Profil-Menü: Einstieg in die Untermenüs Freunde, Party, Clan, Statistiken, Nicknamen und Einstellungen (Spec 01
+     * §4.5 „Profil-Item öffnet Profil → Untermenüs“, Spec 02 §5.4, Spec 03 §4.9 Slot 9). Die „Zurück“-Knöpfe der
+     * Untermenüs führen hierher. Layout Annahme (Original unbelegt), Stil wie §5 mit Glas oben und unten.
+     */
+    public static GuiPlan profile(UUID viewer) {
+        return new GuiPlan.Builder("gui.profile.title", TagResolver.empty(), 3)
+                .glassRange(LIGHT_BLUE_GLASS, 0, 8).glassRange(LIGHT_BLUE_GLASS, 18, 26)
+                .slot(10, new Slot("PLAYER_HEAD", "gui.profile.friends", null, List.of("gui.profile.friends.lore"),
+                        TagResolver.empty(), viewer, null, 1, new Click.Open(FRIENDS, BLANK)))
+                .item(11, "CAKE", "gui.profile.party", List.of("gui.profile.party.lore"), TagResolver.empty(),
+                        new Click.Open(PARTY, BLANK))
+                .item(12, "WHITE_BANNER", "gui.profile.clan", List.of("gui.profile.clan.lore"), TagResolver.empty(),
+                        new Click.Open(CLAN, BLANK))
+                .item(14, "PAPER", "gui.profile.stats", List.of("gui.profile.stats.lore"), TagResolver.empty(),
+                        new Click.Action("stats"))
+                .item(15, "NAME_TAG", "gui.profile.nick", List.of("gui.profile.nick.lore"), TagResolver.empty(),
+                        new Click.Open(NICK, BLANK))
+                .item(16, "COMPARATOR", "gui.profile.settings", List.of("gui.profile.settings.lore"),
+                        TagResolver.empty(), new Click.Open(SETTINGS, BLANK))
+                .build();
     }
 
     // ------------------------------------------------------------------ 5.7 Nicknamen

@@ -175,7 +175,7 @@ public final class BedWarsSetup {
                 }
             };
             if (saved != null) {
-                send(player, "bw.setup.saved", Placeholder.unparsed("key", saved));
+                send(player, "bw.setup.saved", Placeholder.unparsed("entry", saved));
             }
         } catch (UnknownTeam e) {
             send(player, "bw.setup.team");
@@ -282,7 +282,7 @@ public final class BedWarsSetup {
             return;
         }
         maps.reload();
-        send(player, "bw.setup.saved", Placeholder.unparsed("key", file.toString()));
+        send(player, "bw.setup.saved", Placeholder.unparsed("entry", file.toString()));
         List<String> errors = errors(meta);
         if (!errors.isEmpty()) {
             send(player, "bw.setup.invalid", Placeholder.unparsed("errors", String.join(", ", errors)));

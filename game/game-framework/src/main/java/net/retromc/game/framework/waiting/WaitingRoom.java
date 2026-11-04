@@ -507,8 +507,12 @@ public final class WaitingRoom {
         for (int i = 1; texts.i18n().has(base + ".page." + i); i++) {
             pages.add(texts.i18n().render(locale, base + ".page." + i));
         }
-        player.openBook(Book.book(texts.i18n().render(locale, base + ".title"),
-                Component.text(BuildInfo.BRAND_NAME), pages));
+        String color = game.services().find(net.retromc.paper.core.stats.ModeCatalog.class)
+                .flatMap(catalog -> catalog.mode(net.retromc.core.api.stats.ModeKey.of(game.definition().modeId())))
+                .map(net.retromc.core.api.stats.StatsMode::color).orElse("white");
+        player.openBook(Book.book(texts.i18n().render(locale, base + ".title", Placeholder.unparsed("mode",
+                game.definition().displayName()), net.retromc.platform.common.text.ColorText.styling("mode_color",
+                        color)), Component.text(BuildInfo.BRAND_NAME), pages));
     }
 
     /** Öffnet die Team-Wahl. */

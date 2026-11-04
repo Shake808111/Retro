@@ -604,7 +604,11 @@ public final class BedWarsMode implements GameMode {
             list = list.append(texts().i18n().render(locale, entry.key(), Placeholder.unparsed("n",
                     Integer.toString(entry.amount()))));
         }
-        texts().send(receiver, "bw.resources.transfer", Placeholder.unparsed("n", ResourceList.verbSuffix(entries)),
+        String key = cause == ResourceTransferEvent.Cause.LEAVE ? "bw.leaver.transfer" : "bw.resources.transfer";
+        // Verb-Endung "wurde{n}" gibt es nur im Deutschen (Spec 04 §7.1)
+        String suffix = locale.getLanguage().equals(Locale.ENGLISH.getLanguage()) ? ""
+                : ResourceList.verbSuffix(entries);
+        texts().send(receiver, key, Placeholder.unparsed("n", suffix),
                 Placeholder.component("list", list));
         Bukkit.getPluginManager().callEvent(new ResourceTransferEvent(from, receiver.getUniqueId(), amounts, cause));
     }

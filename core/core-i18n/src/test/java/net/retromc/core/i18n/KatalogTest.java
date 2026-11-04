@@ -85,10 +85,12 @@ class KatalogTest {
         assertEquals(124, CatalogHarness.specKeys("spec02").size());
         assertEquals(55, CatalogHarness.specKeys("spec02-ergaenzungen").size());
         assertEquals(53, CatalogHarness.specKeys("spec03").size());
-        assertEquals(75, CatalogHarness.specKeys("spec03-ergaenzungen").size());
+        assertEquals(78, CatalogHarness.specKeys("spec03-ergaenzungen").size());
+        assertEquals(56, CatalogHarness.specKeys("spec04").size());
+        assertEquals(267, CatalogHarness.specKeys("spec04-ergaenzungen").size());
         assertEquals(109, CatalogHarness.specKeys("spec08").size());
         assertEquals(9, CatalogHarness.specKeys("spec08-ergaenzungen").size());
-        assertEquals(232 + 196 + 124 + 55 + 53 + 75 + 109 + 9 + GERUEST.size(),
+        assertEquals(232 + 196 + 124 + 55 + 53 + 78 + 56 + 267 + 109 + 9 + GERUEST.size(),
                 catalog.keys(Language.DE_DE).size());
     }
 

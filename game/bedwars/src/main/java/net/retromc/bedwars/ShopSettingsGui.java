@@ -55,9 +55,8 @@ final class ShopSettingsGui extends Gui {
             int index = position;
             String id = ShopCatalog.CATEGORIES.get(order.get(position));
             canvas.button(position, ItemBuilder.of(Material.valueOf(ShopCatalog.ICONS.get(order.get(position))))
-                    .texts(mode.texts().i18n(), locale).nameKey("bw.settings.category",
-                            Placeholder.component("category", mode.texts().i18n().render(locale,
-                                    "bw.shop.cat." + id + ".plain"))).loreKey("bw.settings.category.lore").hideAll()
+                    .texts(mode.texts().i18n(), locale).nameKey("bw.shop.cat." + id)
+                    .loreKey("bw.settings.category.lore").hideAll()
                     .build(), click -> {
                         int target = click.isLeft() ? index - 1 : index + 1;
                         if (target >= 0 && target < 9) {

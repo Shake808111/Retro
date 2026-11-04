@@ -216,7 +216,8 @@ public final class SpectatorService {
                                             click.player().teleport(target);
                                             game.texts().send(click.player(), "common.spectator.tp",
                                                     texts.name("name", target),
-                                                    Placeholder.unparsed("target", target.getName()));
+                                                    Placeholder.unparsed("target", target.getName()),
+                                                    Placeholder.unparsed("player", click.player().getName()));
                                         }
                                     });
                 }

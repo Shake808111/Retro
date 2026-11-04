@@ -102,10 +102,10 @@ public final class UpgradeGui extends Gui {
             if (i < queued.size()) {
                 stack = ItemBuilder.of(Material.valueOf(queued.get(i).icon())).texts(texts.i18n(), locale)
                         .nameKey(queued.get(i).nameKey() + ".item").loreKey("bw.trap.position",
-                                Placeholder.unparsed("i", Integer.toString(i + 1))).hideAll().build();
+                                Placeholder.unparsed("pos", Integer.toString(i + 1))).hideAll().build();
             } else {
                 stack = ItemBuilder.of(Material.LIGHT_GRAY_DYE).texts(texts.i18n(), locale).nameKey("bw.trap.free")
-                        .loreKey("bw.trap.position", Placeholder.unparsed("i", Integer.toString(i + 1))).build();
+                        .loreKey("bw.trap.position", Placeholder.unparsed("pos", Integer.toString(i + 1))).build();
             }
             canvas.set(QUEUE_SLOTS.get(i), stack);
         }

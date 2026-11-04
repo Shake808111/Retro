@@ -37,6 +37,21 @@ public final class SpamRules {
     /** Zählen nie als Wiederholung (Rundenende). */
     public static final Set<String> REPEAT_EXEMPT = Set.of("gg", "gege", "gl");
 
+    /**
+     * Wortliste des Filters (Wortstämme, Kleinschreibung, nach Leetspeak-Angleichung verglichen): Beleidigungen,
+     * Sexuelles, NS-Bezüge und Team-/Systembezeichnungen. Der Chat blockiert danach nicht (Spec 01 §6.16 kennt keinen
+     * Wortfilter); genutzt für erzeugte Namen (Nick-Pool, Spec 01 §6.11).
+     */
+    public static final Set<String> BLOCKED_WORDS = Set.of("fuck", "fick", "shit", "scheis", "bitch", "hure",
+            "nutte", "fotze", "wichs", "wixx", "arsch", "penis", "vagina", "porn", "sex", "cock", "dick", "cunt",
+            "pussy", "slut", "whore", "rape", "vergewalt", "nazi", "hitler", "adolf", "fuehrer", "fuhrer", "heil",
+            "kkk", "isis", "jihad", "terror", "nigg", "neger", "kanake", "kike", "spast", "behindert", "mongo",
+            "schwuchtel", "faggot", "retard", "admin", "owner", "moderator", "support", "staff", "developer",
+            "console", "official", "system", "server", "nick");
+
+    /** Zahlenfolgen mit NS-Bezug (im Original verglichen, ohne Leetspeak-Angleichung). */
+    public static final Set<String> BLOCKED_NUMBERS = Set.of("88", "1488", "18");
+
     private SpamRules() {
     }
 

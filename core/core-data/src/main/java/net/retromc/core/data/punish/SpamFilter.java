@@ -127,6 +127,48 @@ public final class SpamFilter {
         return text.strip().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
     }
 
+    /**
+     * Enthält der Text ein Wort aus {@link SpamRules#BLOCKED_WORDS} oder {@code extra} (Leetspeak angeglichen:
+     * {@code 0→o 1→i 3→e 4→a 5→s 7→t @→a $→s}, ohne {@code _ - .} und Leerzeichen) oder eine Zahlenfolge aus
+     * {@link SpamRules#BLOCKED_NUMBERS}?
+     */
+    public static boolean containsBlockedWord(String text, Set<String> extra) {
+        String raw = text.toLowerCase(Locale.ROOT);
+        for (String number : SpamRules.BLOCKED_NUMBERS) {
+            if (raw.contains(number)) {
+                return true;
+            }
+        }
+        StringBuilder folded = new StringBuilder(raw.length());
+        for (int i = 0; i < raw.length(); i++) {
+            char c = raw.charAt(i);
+            switch (c) {
+                case '0' -> folded.append('o');
+                case '1' -> folded.append('i');
+                case '3' -> folded.append('e');
+                case '4', '@' -> folded.append('a');
+                case '5', '$' -> folded.append('s');
+                case '7' -> folded.append('t');
+                case '_', '-', '.', ' ' -> {
+                }
+                default -> folded.append(c);
+            }
+        }
+        String plain = folded.toString();
+        for (String word : SpamRules.BLOCKED_WORDS) {
+            if (plain.contains(word)) {
+                return true;
+            }
+        }
+        for (String word : extra) {
+            String clean = word.strip().toLowerCase(Locale.ROOT);
+            if (!clean.isEmpty() && (plain.contains(clean) || raw.contains(clean))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** ≥ 6 Buchstaben und mehr als 50 % davon groß. */
     public static boolean tooManyCaps(String text) {
         int letters = 0;

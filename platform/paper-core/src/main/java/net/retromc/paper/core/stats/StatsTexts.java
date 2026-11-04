@@ -139,6 +139,11 @@ public final class StatsTexts {
         if (xp != null) {
             lines.add(i18n.render(locale, "round.xp", Placeholder.unparsed("xp", Formats.of(locale).integer(xp))));
         }
+        for (RoundSummary.Mark mark : summary.afterXp()) {
+            lines.add(i18n.render(locale, "stats.line", Placeholder.component("label",
+                    i18n.render(locale, mark.labelKey())), Placeholder.component("value", mark(i18n, locale,
+                            mark.yes()))));
+        }
         Boolean survived = summary.survived();
         Boolean won = summary.won();
         if (summary.blankBeforeMarks() && (survived != null || won != null)) {

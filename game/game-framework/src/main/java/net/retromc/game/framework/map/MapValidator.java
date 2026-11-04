@@ -47,7 +47,7 @@ public final class MapValidator {
         if (!map.teams().isEmpty() && map.teams().size() < variant.teams()) {
             errors.add("teams: " + map.teams().size() + " < " + variant.teams() + " Teams der Variante");
         }
-        for (String team : teamIds(map, variant, teamOrder)) {
+        for (String team : teamIds(map, variant, mode == TeamMode.NUMBERED ? List.of() : teamOrder)) {
             map.teamSpawn(team).ifPresentOrElse(spawn -> {
                 if (!meta.bounds().contains(spawn.position())) {
                     errors.add("spawns." + team + " außerhalb von bounds");
@@ -57,7 +57,10 @@ public final class MapValidator {
         return errors;
     }
 
-    /** IDs der Teams dieser Runde: explizite Liste der Map oder die ersten {@code teams} der Reihenfolge. */
+    /**
+     * IDs der Teams dieser Runde: explizite Liste der Map oder die ersten {@code teams} der Reihenfolge; ohne
+     * Reihenfolge (nummerierte Teams {@code Team #n}) {@code 1 … teams}.
+     */
     public static List<String> teamIds(GameMap map, GameVariant variant, List<TeamColor> teamOrder) {
         List<String> explicit = map.teams();
         if (!explicit.isEmpty()) {
@@ -65,7 +68,7 @@ public final class MapValidator {
         }
         List<String> ids = new ArrayList<>();
         for (int i = 0; i < variant.teams(); i++) {
-            ids.add(i < teamOrder.size() ? teamOrder.get(i).id() : "#" + (i + 1));
+            ids.add(i < teamOrder.size() ? teamOrder.get(i).id() : Integer.toString(i + 1));
         }
         return ids;
     }

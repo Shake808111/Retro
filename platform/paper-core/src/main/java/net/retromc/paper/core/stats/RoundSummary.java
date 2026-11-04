@@ -14,12 +14,34 @@ import org.jspecify.annotations.Nullable;
  * @param survived Überlebt oder {@code null} (Zeile entfällt)
  * @param won Gewonnen oder {@code null}
  * @param blankBeforeMarks Leerzeile vor Überlebt/Gewonnen
+ * @param afterXp Zeilen mit {@code §a✓}/{@code §c✗} direkt nach der Erfahrung (SkyWars {@code Challenge}, Spec 04
+ *                §6.2.3)
  */
 public record RoundSummary(List<Line> lines, @Nullable Integer xp, @Nullable Boolean survived, @Nullable Boolean won,
-        boolean blankBeforeMarks) {
+        boolean blankBeforeMarks, List<Mark> afterXp) {
 
     public RoundSummary {
         lines = List.copyOf(lines);
+        afterXp = List.copyOf(afterXp);
+    }
+
+    /** Ohne Zeilen nach der Erfahrung. */
+    public RoundSummary(List<Line> lines, @Nullable Integer xp, @Nullable Boolean survived, @Nullable Boolean won,
+            boolean blankBeforeMarks) {
+        this(lines, xp, survived, won, blankBeforeMarks, List.of());
+    }
+
+    /**
+     * Zeile {@code §7 {label}: §a✓|§c✗}.
+     *
+     * @param labelKey Textschlüssel des Labels
+     * @param yes ✓ oder ✗
+     */
+    public record Mark(String labelKey, boolean yes) {
+
+        public Mark {
+            Objects.requireNonNull(labelKey, "labelKey");
+        }
     }
 
     /**

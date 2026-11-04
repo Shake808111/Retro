@@ -41,6 +41,7 @@ import net.retromc.velocity.core.motd.MotdFeature;
 import net.retromc.velocity.core.motd.MotdSettings;
 import net.retromc.velocity.core.msg.MsgFeature;
 import net.retromc.velocity.core.nick.NickFeature;
+import net.retromc.velocity.core.nick.NickPoolFeature;
 import net.retromc.velocity.core.party.PartyFeature;
 import net.retromc.velocity.core.punish.PunishFeature;
 import net.retromc.velocity.core.report.ReportFeature;
@@ -53,7 +54,8 @@ class SocialProxyTest {
         List<CommandName> all = new ArrayList<>();
         Stream.of(FriendFeature.COMMANDS, PartyFeature.COMMANDS, MsgFeature.COMMANDS, ClanFeature.COMMANDS,
                 PunishFeature.COMMANDS, ReportFeature.COMMANDS, MaintenanceFeature.COMMANDS, MotdFeature.COMMANDS,
-                NickFeature.COMMANDS, JoinMeFeature.COMMANDS, LanguageFeature.COMMANDS).forEach(all::addAll);
+                NickFeature.COMMANDS, NickPoolFeature.COMMANDS, JoinMeFeature.COMMANDS, LanguageFeature.COMMANDS)
+                .forEach(all::addAll);
         return all;
     }
 
@@ -67,7 +69,7 @@ class SocialProxyTest {
         // Spec 01 §3.1–§3.6 und #67 /language (ohne /l /hub /gameteleport /rank /settings /tc: andere Pakete)
         Set<String> expected = Set.of("friend", "friends", "fr", "msg", "tell", "whisper", "r", "reply", "ignore",
                 "unignore", "party", "pi", "pa", "pl", "pk", "ppm", "pj", "pp", "p", "partytoggle", "clan", "cc",
-                "clc", "clanlvl", "clanstatsreset", "joinme", "nick", "unnick", "nicks", "keepnick", "report",
+                "clc", "clanlvl", "clanstatsreset", "joinme", "nick", "unnick", "nicks", "keepnick", "nickpool", "report",
                 "chatlog", "ban", "mute", "kick", "warn", "unban", "pardon", "unmute", "history", "reports", "goto",
                 "maintenance", "wartung", "netreload", "language", "sprache");
         assertEquals(new TreeSet<>(expected), names);

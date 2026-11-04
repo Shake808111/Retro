@@ -40,6 +40,19 @@ public final class EnvKeys {
      */
     public static final String UI_ERA = "NETWORK_UI_ERA";
 
+    /** Nick-Pool: Quell-UUIDs für Mojang-signierte Skins (Sessionserver), durch Komma oder Leerzeichen getrennt. */
+    public static final String NICK_SKIN_UUIDS = "NETWORK_NICK_SKIN_UUIDS";
+    /** Nick-Pool: erzeugte Namen bei der Mojang-Namens-API prüfen ({@code true|false}, Standard {@code true}). */
+    public static final String NICK_CHECK_MOJANG = "NETWORK_NICK_CHECK_MOJANG";
+    /** Nick-Pool: Mindestabstand der Mojang-Anfragen in ms (Standard 1100, Rate-Limit-Schonung). */
+    public static final String NICK_MOJANG_INTERVAL_MS = "NETWORK_NICK_MOJANG_INTERVAL_MS";
+    /** Nick-Pool: MineSkin-API-Schlüssel (optional, geheim; nie ins Repo, nie ins Log). */
+    public static final String MINESKIN_KEY = "NETWORK_MINESKIN_KEY";
+    /** Nick-Pool: feste MineSkin-Skin-IDs (optional; ohne sie die öffentliche Liste). */
+    public static final String NICK_MINESKIN_IDS = "NETWORK_NICK_MINESKIN_IDS";
+    /** Nick-Pool: zusätzliche gesperrte Wörter für Namen, durch Komma getrennt. */
+    public static final String NICK_BLOCKED_WORDS = "NETWORK_NICK_BLOCKED_WORDS";
+
     private EnvKeys() {
     }
 }

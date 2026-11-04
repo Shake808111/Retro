@@ -150,7 +150,7 @@ public final class ReportFeature implements CoreFeature<VelocityCore> {
             return;
         }
         String server = server(sender);
-        helper.then(sender, helper.resolve(name), target -> {
+        helper.then(sender, helper.resolveNickFirst(name), target -> {
             if (target.isEmpty()) {
                 helper.send(sender, "error.player.unknown", Social.player(name));
                 return;
@@ -235,7 +235,7 @@ public final class ReportFeature implements CoreFeature<VelocityCore> {
         Optional<Player> local = helper.online(name);
         CompletableFuture<Optional<String>> server = local.isPresent()
                 ? CompletableFuture.completedFuture(Social.serverName(local.get()))
-                : helper.resolve(name).thenCompose(target -> target.isEmpty()
+                : helper.resolveNickFirst(name).thenCompose(target -> target.isEmpty()
                         || helper.services().find(PresenceService.class).isEmpty()
                         ? CompletableFuture.completedFuture(Optional.<String>empty())
                         : helper.get(PresenceService.class).serverOf(target.get().uuid()));
@@ -255,7 +255,7 @@ public final class ReportFeature implements CoreFeature<VelocityCore> {
     void chatlog(Player sender, String name) {
         Social helper = social();
         SocialConfig settings = config;
-        helper.then(sender, helper.resolve(name), target -> {
+        helper.then(sender, helper.resolveNickFirst(name), target -> {
             if (target.isEmpty()) {
                 helper.send(sender, "error.player.unknown", Social.player(name));
                 return;

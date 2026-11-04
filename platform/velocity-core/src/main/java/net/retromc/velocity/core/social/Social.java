@@ -23,6 +23,7 @@ import net.retromc.core.api.rank.RankService;
 import net.retromc.core.api.server.ServerCategory;
 import net.retromc.core.api.server.ServerInfo;
 import net.retromc.core.api.server.ServerRegistry;
+import net.retromc.core.api.social.NickService;
 import net.retromc.core.api.social.PlayerRef;
 import net.retromc.core.api.social.ProfileService;
 import net.retromc.core.i18n.Messages;
@@ -152,6 +153,20 @@ public final class Social {
                 ? CompletableFuture.completedFuture(Optional.<PlayerRef>empty())
                 : profiles.nameOf(uuid.get()).thenApply(known -> Optional.of(new PlayerRef(uuid.get(),
                         known.orElse(name)))));
+    }
+
+    /**
+     * Wie {@link #resolve(String)}, aber ein aktiver Nick hat Vorrang: Ergebnis ist die echte UUID mit dem Nick als
+     * Namen, damit Reports, Chatlogs und {@code /goto} den echten Spieler treffen, ohne den Originalnamen zu verraten
+     * (Spec 01 §6.11 Nr. 6).
+     */
+    public CompletableFuture<Optional<PlayerRef>> resolveNickFirst(String name) {
+        CompletableFuture<Optional<UUID>> nicked = services().find(NickService.class)
+                .map(nicks -> nicks.resolve(name).exceptionally(error -> Optional.empty()))
+                .orElseGet(() -> CompletableFuture.completedFuture(Optional.empty()));
+        return nicked.thenCompose(real -> real.isPresent()
+                ? CompletableFuture.completedFuture(Optional.of(new PlayerRef(real.get(), name)))
+                : resolve(name));
     }
 
     /** Zuletzt bekannter Name (online oder {@link ProfileService}), sonst die UUID. */

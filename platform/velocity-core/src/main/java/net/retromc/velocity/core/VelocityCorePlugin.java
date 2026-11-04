@@ -32,6 +32,7 @@ import net.retromc.velocity.core.maintenance.MaintenanceFeature;
 import net.retromc.velocity.core.motd.MotdFeature;
 import net.retromc.velocity.core.msg.MsgFeature;
 import net.retromc.velocity.core.nick.NickFeature;
+import net.retromc.velocity.core.nick.NickPoolFeature;
 import net.retromc.velocity.core.party.PartyFeature;
 import net.retromc.velocity.core.punish.PunishFeature;
 import net.retromc.velocity.core.report.ReportFeature;
@@ -95,6 +96,7 @@ public final class VelocityCorePlugin {
                 new ClanFeature(),
                 new ReportFeature(),
                 new NickFeature(),
+                new NickPoolFeature(),
                 new LanguageFeature());
     }
 

@@ -22,7 +22,9 @@ public interface NickPoolService {
     /** Pool-Namen alphabetisch, ab {@code offset}, höchstens {@code limit}. */
     CompletableFuture<List<Entry>> list(int offset, int limit);
 
-    /** Name sperren (wird nicht mehr vergeben; ein laufender Nick bleibt bis zur Freigabe); {@code false} = unbekannt. */
+    /**
+     * Name sperren (wird nicht mehr vergeben; ein laufender Nick bleibt bis zur Freigabe); {@code false} = unbekannt.
+     */
     CompletableFuture<Boolean> disable(String name);
 
     CompletableFuture<Stats> stats();

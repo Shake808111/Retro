@@ -69,7 +69,8 @@ class SocialProxyTest {
         // Spec 01 §3.1–§3.6 und #67 /language (ohne /l /hub /gameteleport /rank /settings /tc: andere Pakete)
         Set<String> expected = Set.of("friend", "friends", "fr", "msg", "tell", "whisper", "r", "reply", "ignore",
                 "unignore", "party", "pi", "pa", "pl", "pk", "ppm", "pj", "pp", "p", "partytoggle", "clan", "cc",
-                "clc", "clanlvl", "clanstatsreset", "joinme", "nick", "unnick", "nicks", "keepnick", "nickpool", "report",
+                "clc", "clanlvl", "clanstatsreset", "joinme", "nick", "unnick", "nicks", "keepnick", "nickpool",
+                "report",
                 "chatlog", "ban", "mute", "kick", "warn", "unban", "pardon", "unmute", "history", "reports", "goto",
                 "maintenance", "wartung", "netreload", "language", "sprache");
         assertEquals(new TreeSet<>(expected), names);

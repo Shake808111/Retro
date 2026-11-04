@@ -18,7 +18,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Offizielle Mojang-Schnittstellen für den Nick-Pool:
  * <ul>
- *   <li>Namens-API {@code GET …/minecraft/profile/lookup/name/{name}}: 200 = Name vergeben, 404 (früher 204) = frei</li>
+ *   <li>Namens-API {@code GET …/minecraft/profile/lookup/name/{name}}: 200 = vergeben, 404 (früher 204) = frei</li>
  *   <li>Sessionserver {@code GET …/session/minecraft/profile/{uuid}?unsigned=false}: Profil mit signierter
  *       Eigenschaft {@code textures}</li>
  * </ul>
@@ -27,7 +27,8 @@ import org.jspecify.annotations.Nullable;
 public final class MojangApi {
 
     /** Namens-API (Minecraft-Services). */
-    public static final URI NAME_LOOKUP = URI.create("https://api.minecraftservices.com/minecraft/profile/lookup/name/");
+    public static final URI NAME_LOOKUP =
+            URI.create("https://api.minecraftservices.com/minecraft/profile/lookup/name/");
     /** Sessionserver-Profile. */
     public static final URI SESSION_PROFILE = URI.create("https://sessionserver.mojang.com/session/minecraft/profile/");
 

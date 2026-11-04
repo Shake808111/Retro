@@ -18,7 +18,7 @@ import org.jspecify.annotations.Nullable;
  * Ein Füllvorgang des Nick-Pools (Spec 01 §6.11, {@code /nickpool fill <anzahl>}), blockierend auf einem
  * Hintergrund-Thread:
  * <ol>
- *   <li>Skins nachholen: Mojang-Sessionserver für jede konfigurierte Quell-UUID, die noch fehlt, optional MineSkin.</li>
+ *   <li>Skins nachholen: Mojang-Sessionserver je konfigurierter, noch fehlender Quell-UUID, optional MineSkin.</li>
  *   <li>Namen erzeugen ({@link NickNameGenerator}) und verwerfen, was der Wortfilter sperrt, was ein echter Spieler
  *       trägt (online, {@code core.player}, Namenshistorie) oder schon im Pool steht.</li>
  *   <li>Optional bei Mojang prüfen, ob der Name vergeben ist (nur freie Namen kommen in den Pool); HTTP 429 beendet

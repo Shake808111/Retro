@@ -292,6 +292,7 @@ Recht = LuckPerms-Node `retromc.<…>` (Präfix = `brandId`); „alle“ = ohne 
 | 70 | `/unnick` | – | wie oben | Nick entfernen | `nick.removed` |
 | 71 | `/nicks` | – | wie oben | eigener Nick; Team: alle Nicks des Servers | `nick.list.self`, `nick.list.line` |
 | 72 | `/keepnick` | – | wie oben (Ära 18, Alias auf `nick_keep`) | Nick behalten an/aus | `nick.keep.on/.off` |
+| 72a | `/nickpool fill <Anzahl>` · `list [Seite]` · `disable <Name>` · `stats` | – | `retromc.nick.pool` (Admin) | Nick-Pool pflegen (§6.11 Nr. 7–8); ohne Argument = `stats` | `nickpool.*` |
 
 ### 3.6 Report, Chatlog, Strafen, Team
 
@@ -627,7 +628,8 @@ Kein GUI: `/language` sendet Chatliste (belegt N05 „Auswahl per Klick im Chat�
 4. Rundenende: `nick_keep=false` → Nick freigeben; `true` → gleicher Nick für nächste Runde (bis Logout).
 5. `/nick` in Wartephase: an/aus für diese Runde; während laufender Runde `nick.err.phase`.
 6. Stats/Reports intern immer auf echte UUID; Team sieht in `/nicks` Originalnamen.
-7. Pool-Größe ≥ 2× gleichzeitige Nicker (Monitoring-Warnung < 50 frei).
+7. Pool-Größe ≥ 2× gleichzeitige Nicker (Monitoring-Warnung < 50 frei: Proxy-Log alle 10 min, Meldung `nickpool.warn.low` an Admins beim Unterschreiten und nach `/nickpool fill|stats`).
+8. Füllen (`/nickpool fill <n>`, max. 500, Umsetzung 11/2026): Zufallsnamen 3–16 Zeichen `[A-Za-z0-9_]` aus Wortkombinationen, Vornamen und Zahlen; verworfen werden Wortfilter-Treffer (`SpamRules.BLOCKED_WORDS`, Werbung, Caps, Marke), Namen echter Spieler (online, `core.player`, Namenshistorie), Pool-Duplikate und – abschaltbar – bei Mojang vergebene Namen (Namens-API, Abstand 1,1 s, bei HTTP 429 Abbruch). Skins: Mojang-Sessionserver `?unsigned=false` für konfigurierte Quell-UUIDs, optional MineSkin (Schlüssel nur aus `NETWORK_MINESKIN_KEY`); Tabelle `core.nick_skin` (V1_3), jeder Name bekommt zufällig einen Skin.
 
 ### 6.12 AFK
 - Erkennung paper-core: keine Bewegung/Rotation/Chat/Interaktion **300 s** (Annahme) → `afk=1`, Spieler: `afk.on`; erste Aktivität → `afk.off`.

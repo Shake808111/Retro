@@ -68,6 +68,13 @@ services:
       NETWORK_DB_USER: network
       NETWORK_DB_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD in docker/.env setzen}
       NETWORK_VALKEY_URL: redis://valkey:6379
+      # Nick-Pool (/nickpool fill), Werte aus docker/.env; der MineSkin-Schlüssel bleibt außerhalb des Repos.
+      NETWORK_NICK_SKIN_UUIDS: ${NETWORK_NICK_SKIN_UUIDS:-}
+      NETWORK_NICK_CHECK_MOJANG: ${NETWORK_NICK_CHECK_MOJANG:-true}
+      NETWORK_NICK_MOJANG_INTERVAL_MS: ${NETWORK_NICK_MOJANG_INTERVAL_MS:-1100}
+      NETWORK_MINESKIN_KEY: ${NETWORK_MINESKIN_KEY:-}
+      NETWORK_NICK_MINESKIN_IDS: ${NETWORK_NICK_MINESKIN_IDS:-}
+      NETWORK_NICK_BLOCKED_WORDS: ${NETWORK_NICK_BLOCKED_WORDS:-}
     ports:
       - "25565:25565"
     volumes:

@@ -698,8 +698,7 @@ public final class SkyWarsMode implements GameMode {
         String kitName = kit == null ? null : PlainTextComponentSerializer.plainText().serialize(texts().i18n()
                 .render(Messages.DEFAULT_LOCALE, kit.nameKey()));
         int remaining = Math.max(0, game.alivePlayers().size() - 1);
-        game.killFeed().kill(victim, killer, new KillOptions(0, killer == null ? 0 : killXp, null, false, false,
-                remaining, true, true, kitName));
+        game.killFeed().kill(victim, killer, killOptions(killer == null ? 0 : killXp, kitName, remaining));
         if (!voidDeath) {
             Location at = victim.getLocation();
             for (ItemStack item : victim.getInventory().getContents()) {
@@ -719,6 +718,15 @@ public final class SkyWarsMode implements GameMode {
         game.eliminate(victim, killer);
         checkTwoTeams();
         board.refresh();
+    }
+
+    /**
+     * Bausteine der Kill-Meldung (Spec 04 §7.2): Kit des Opfers an alle ({@code sw.kill.kit}), Rundsendung mit
+     * XP-Suffix nur in der Ansicht des Killers ({@code sw.kill}), Leben des Killers an das Opfer ({@code sw.life}),
+     * verbleibende Spieler ({@code sw.remaining}).
+     */
+    static KillOptions killOptions(int xp, @Nullable String victimKit, int remaining) {
+        return new KillOptions(0, xp, null, false, false, remaining, true, true, victimKit);
     }
 
     /** Kill gutschreiben: Zähler, XP, passive Fähigkeiten, Challenge. */

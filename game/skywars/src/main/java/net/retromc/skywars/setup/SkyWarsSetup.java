@@ -290,7 +290,7 @@ public final class SkyWarsSetup {
     }
 
     /** Rahmen-Marker aus den Inseln: {@code teams = ["1" …]}, {@code spawns.{n}} und {@code spawns.solo}. */
-    static void deriveSpawns(JsonObject markers) {
+    public static void deriveSpawns(JsonObject markers) {
         JsonArray teams = new JsonArray();
         JsonObject spawns = new JsonObject();
         JsonArray solo = new JsonArray();

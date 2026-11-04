@@ -1,23 +1,24 @@
 # game/skywars – SkyWars
 
-**Gradle-Pfad:** `:game:skywars` · **Paket:** `net.retromc.skywars` · **Einstieg:** `SkyWarsPlugin` (Paper-Plugin, `paper-plugin.yml`) · **Status:** Gerüst (Stub)
+**Gradle-Pfad:** `:game:skywars` · **Paket:** `net.retromc.skywars` · **Einstieg:** `SkyWarsPlugin` (Paper-Plugin
+`${brandName}SkyWars`) · **Status:** umgesetzt nach Spec 04 (SkyWars-Teil) auf dem Spiel-Rahmen (Spec 03)
 
-## Verantwortung
+## Aufbau
 
-Paper-Plugin für den Modus SkyWars (SkyWars: Inseln, Truhen, Mittelinsel, Kits). Baut auf `game/game-framework` auf (Rundenablauf, Teams, Karten, Zuschauer, Kits, Shops, Statistik-Senke) und läuft zusammen mit `platform/paper-core` auf einem Spielserver; laut Notiz 07 (Abschnitt 3) eine Runde pro Server/Pod.
+| Paket | Inhalt |
+|---|---|
+| `skywars` | `SkyWarsPlugin` (Preset `modern`/`classic`, Solo = `TeamMode.SOLO`, Teams = `NUMBERED`), `SkyWarsMode` (Ablauf, Käfig, Tod, Rundenende), `SkyWarsConfig`, Kampf-/Welt-Listener, Wartelobby-Chat mit Level, `/kit`, `/swdebug` |
+| `phase` | `RoundPlan`: Käfig 3-2-1, Schutzzeit 30 s, Kampf, Border-Start (Kampf + 600 s bzw. 60 s nach 2 Teams) |
+| `kit` | `KitCatalog` (`kits/skywars.yml`), `KitService` (Besitz/Kauf/Auswahl über `KitStore`, Einstellungen über `SkyWarsStore`), `AbilityTracker`, `Abilities`, Kit-Menü (§5.9), Kit-Einstellungen (§5.10) |
+| `chest` | `LootTables` (`loot/skywars_t1/t2/refill1/refill2.yml`), `ChestService` (Erstfüllung mit Garantien, Chestrefill) |
+| `event` | `KitAbilityUseEvent`, `ChestRefillEvent`, `BorderStartEvent`, `ChallengeResultEvent`, `GlobalEventSchedule` (`events.yml`) |
+| `border` | `BorderService` (Vanilla-Weltgrenze, 1 Schaden/s außerhalb) |
+| `challenge` | `Challenge`, `ChallengeTracker`, `ChallengeSet` (`challenges.yml`), `ChallengeService` (Bossbar) |
+| `board` | Ingame-Board (§4.3), Map-Menü (§5.11), `LevelTag` (Modus-Level) |
+| `map`, `setup` | `SkyWarsMap` (Inseln, Mitte, Border, Void), `/swsetup` |
 
-## Welches Vorbild-Feature wird nachgebaut?
+Daten: `games.kit_owned`, `games.kit_selected` (Migration `V4_2`), `games.sw_kit_settings`, `games.mode_level`
+(`V4_1`); Kauf über das Coin-Journal mit Idempotenz-Schlüssel `kit:{mode}:{kit}:{uuid}`.
 
-Laut Quellen im Oktober 2026 noch aktiv (nicht auf der Abschaltliste vom Juni 2024), Notiz 02, Q5:
-- moderne Variante (1.20-Rework vom 01.12.2023, 1.21.1 seit 10.10.2024) und separates „Classic SkyWars“;
-- Solo oder Teams zu 2, 3 oder 4; jedes Team startet auf einer eigenen Insel mit zufällig gefüllten Truhen,
-  bessere „Tier-2“-Truhen auf der Mittelinsel;
-- Kits werden gegen Coins in der Wartelobby gewählt.
-
-## Kampfprofil
-
-Platzhalter `LEGACY_1_8` nach Notiz 07, Abschnitt 1. **Offen:** modernes SkyWars vs. Classic SkyWars (Notiz 02, Q5/Q8).
-
-
-Quellen: `research_notes/` (Notiz-Nummern wie angegeben). Keine Namen, Texte,
-Karten oder Grafiken vom Vorbild übernehmen (Notiz 07, Abschnitt 9 B).
+Einrichtung der Maps: `deploy/skywars/README.md`. Tests: `src/test` (Spec 04 §9 #11–#16, #18 ohne Server;
+#15 zusätzlich als Integrationstest `SkyWarsRepositoryIT` in core-data).

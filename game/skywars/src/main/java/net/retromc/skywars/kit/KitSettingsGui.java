@@ -43,8 +43,8 @@ public final class KitSettingsGui extends Gui {
         Locale locale = canvas.locale();
         UUID uuid = canvas.viewer().getUniqueId();
         KitSettings settings = kits.profile(uuid).settings();
-        canvas.button(11, ItemBuilder.of(Material.CLOCK).texts(texts.i18n(), locale).nameKey("sw.kitsettings.legacy")
-                .loreKey("sw.kitsettings.legacy.lore", Placeholder.component("status", texts.i18n().render(locale,
+        canvas.button(11, ItemBuilder.of(Material.CLOCK).texts(texts.i18n(), locale).nameKey("sw.kitsettings.former")
+                .loreKey("sw.kitsettings.former.lore", Placeholder.component("status", texts.i18n().render(locale,
                         settings.legacyEnabled() ? "sw.kitsettings.on" : "sw.kitsettings.off"))).hideAll().build(),
                 click -> {
                     kits.settings(click.player(), settings.withLegacy(!settings.legacyEnabled()));

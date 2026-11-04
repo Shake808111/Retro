@@ -1,6 +1,5 @@
 package net.retromc.game.framework;
 
-import java.util.Objects;
 import net.retromc.core.api.BuildInfo;
 import net.retromc.game.framework.server.PrivateRoundContext;
 import net.retromc.paper.core.PaperCorePlugin;
@@ -24,8 +23,13 @@ public abstract class MiniGamePlugin extends JavaPlugin {
     /** Beschreibung des Modus, den dieses Plugin umsetzt. */
     protected abstract GameDefinition definition();
 
-    /** Modus-Logik; wird nach dem Aufbau des Rahmens erzeugt. */
-    protected abstract GameMode createMode(Game game);
+    /**
+     * Modus-Logik; wird nach dem Aufbau des Rahmens erzeugt. {@code null} (Standard) = Gerüst ohne Spiellogik:
+     * der Rahmen startet dann keine Runde.
+     */
+    protected @Nullable GameMode createMode(Game game) {
+        return null;
+    }
 
     /** Laufende Runde. */
     public final Game game() {
@@ -42,7 +46,9 @@ public abstract class MiniGamePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
+        if (getResource("config.yml") != null) {
+            saveDefaultConfig();
+        }
         ServiceRegistry services = PaperCorePlugin.services();
         GameDefinition definition = definition();
         String variantKey = services.find(ServerLifecycle.class).map(lifecycle -> lifecycle.self().variant())
@@ -52,8 +58,14 @@ public abstract class MiniGamePlugin extends JavaPlugin {
         GameVariant variant = settings.variant(variantKey);
         Game created = new Game(this, definition, settings, services, variant,
                 PrivateRoundContext.fromEnv(System::getenv));
+        GameMode mode = createMode(created);
+        if (mode == null) {
+            getSLF4JLogger().info("{} {} ist ein Gerüst ohne Spiellogik – keine Runde.", BuildInfo.BRAND_NAME,
+                    definition.displayName());
+            return;
+        }
         game = created;
-        created.enable(Objects.requireNonNull(createMode(created), "createMode"));
+        created.enable(mode);
         getSLF4JLogger().info("{} {} bereit: Variante {}, Kampfprofil {}", BuildInfo.BRAND_NAME,
                 definition.displayName(), variant.key(), definition.defaultCombat());
     }

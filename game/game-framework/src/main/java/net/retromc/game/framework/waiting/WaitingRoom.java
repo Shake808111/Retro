@@ -303,9 +303,8 @@ public final class WaitingRoom {
     }
 
     private void begin() {
-        if (!allocated) {
-            allocate();
-        }
+        // erneut: verteilt auch Spieler, die nach der Zuteilung bei 10 s noch beigetreten sind
+        allocate();
         close();
         game.beginRound();
     }

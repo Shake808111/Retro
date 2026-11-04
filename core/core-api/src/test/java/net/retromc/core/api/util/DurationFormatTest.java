@@ -26,6 +26,9 @@ class DurationFormatTest {
         assertEquals("0s", DurationFormat.format(Duration.ZERO));
         assertEquals("0s", DurationFormat.format(Duration.ofSeconds(-5)));
         assertEquals("1d 0h 0m 0s", DurationFormat.format(Duration.ofDays(1)));
+        // Server-Test /ban … 30d: Dauer und Restzeit im selben Format, Nullen unterhalb der größten Einheit bleiben.
+        assertEquals("30d 0h 0m 0s", DurationFormat.format(Duration.ofDays(30)));
+        assertEquals("1h 0m 0s", DurationFormat.format(Duration.ofHours(1)));
         assertEquals("1m 0s", DurationFormat.format(Duration.ofSeconds(60)));
         assertEquals("1s", DurationFormat.format(Duration.ofMillis(1999)));
     }

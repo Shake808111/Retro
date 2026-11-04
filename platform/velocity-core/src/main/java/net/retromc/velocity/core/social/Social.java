@@ -30,6 +30,7 @@ import net.retromc.platform.common.config.ServerNames;
 import net.retromc.platform.common.service.ServiceRegistry;
 import net.retromc.platform.common.text.I18n;
 import net.retromc.velocity.core.VelocityCore;
+import net.retromc.velocity.core.bridge.ServerBridge;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.suggestion.SuggestionProvider;
 import org.jspecify.annotations.Nullable;
@@ -78,6 +79,16 @@ public final class Social {
 
     public void send(CommandSource source, String key, TagResolver... placeholders) {
         source.sendMessage(text(source, key, placeholders));
+    }
+
+    /**
+     * Öffnet ein Social-GUI (Spec 01 §5) über {@code OPEN_GUI} auf dem Paper-Server des Spielers; ist dort keins
+     * erreichbar (kein Server, Bridge zu), kommt stattdessen der Hilfetext {@code helpKey}.
+     */
+    public void openGuiOrHelp(Player player, String guiId, String helpKey) {
+        if (!get(ServerBridge.class).openGui(player, guiId, "")) {
+            send(player, helpKey);
+        }
     }
 
     /** Text an einen Spieler auf diesem Proxy (sonst nichts). */

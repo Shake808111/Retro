@@ -199,6 +199,10 @@ public final class StatsFeature implements CoreFeature<PaperCore>, Listener, Sta
     }
 
     private void handle(CommandSender sender, StatsArgs.Parsed parsed) {
+        if (parsed.profile() && sender instanceof Player player) {
+            openProfile(player, player.getUniqueId(), null);
+            return;
+        }
         StatsArgs.Request request = parsed.request();
         if (request == null) {
             String error = parsed.error() == null ? "error.data" : parsed.error();

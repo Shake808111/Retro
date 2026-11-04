@@ -33,6 +33,13 @@ public final class EnvKeys {
     /** Öffentliche Web-Adresse, z. B. {@code https://retromc.net} (Chatlog, Entbannung). */
     public static final String WEB_ORIGIN = "NETWORK_WEB_ORIGIN";
 
+    /**
+     * Darstellungs-Ära des Servers {@code modern|legacy} (Standard {@code modern}; {@code legacy} = Option
+     * {@code legacyStyle}, Spec 00 E7, Spec 01/03 „Ära 18“). Auf Lobbys mit {@code legacy} läuft der Newsticker als
+     * Bossbar {@code §e§l{TITLE}} statt in der Actionbar (Spec 02 §4.5, Spec 03 §4.4).
+     */
+    public static final String UI_ERA = "NETWORK_UI_ERA";
+
     private EnvKeys() {
     }
 }

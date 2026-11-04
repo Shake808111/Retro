@@ -181,7 +181,14 @@ class StatsOutputTest {
         assertEquals(new StatsArgs.Request(ModeKey.BEDWARS, StatWindow.THIRTY_DAYS, ""), own.request());
         StatsArgs.Parsed rank = StatsArgs.stats("#3", StatWindow.ALL, Optional.of(ModeKey.BEDWARS), catalog::find);
         assertEquals(3, rank.request().rank().orElseThrow());
-        assertEquals("stats.need-mode", StatsArgs.stats("", StatWindow.ALL, Optional.empty(), catalog::find).error());
+        // Ohne Server-Modus und ohne Argument: Profil-GUI (Spieler), Konsole bekommt stats.need-mode.
+        StatsArgs.Parsed profile = StatsArgs.stats("", StatWindow.ALL, Optional.empty(), catalog::find);
+        assertTrue(profile.profile());
+        assertNull(profile.request());
+        assertEquals("stats.need-mode", profile.error());
+        assertFalse(own.profile());
+        assertTrue(StatsArgs.days("", Optional.empty(), catalog::find).error().equals("stats.need-mode"));
+        assertFalse(StatsArgs.days("", Optional.empty(), catalog::find).profile());
         StatsArgs.Parsed unknown = StatsArgs.stats("quake Alpha", StatWindow.ALL, Optional.empty(), catalog::find);
         assertEquals("stats.unknown-mode", unknown.error());
         assertEquals("quake", unknown.argument());

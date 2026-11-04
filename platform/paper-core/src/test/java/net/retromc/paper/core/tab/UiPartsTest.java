@@ -33,8 +33,10 @@ import net.retromc.core.api.server.TemplateId;
 import net.retromc.core.api.stats.ModeKey;
 import net.retromc.core.api.stats.StatsMode;
 import net.retromc.core.i18n.Messages;
+import net.retromc.core.i18n.UiEra;
 import net.retromc.paper.core.bar.ActionbarQueue;
 import net.retromc.paper.core.bar.ActionbarService;
+import net.retromc.paper.core.bar.BarFeature;
 import net.retromc.paper.core.bar.BossBarSpec;
 import net.retromc.paper.core.bar.BossbarService;
 import net.retromc.paper.core.bar.NewsItem;
@@ -164,6 +166,9 @@ class UiPartsTest {
         assertEquals(BossBar.Color.GREEN, tutorial.color());
         assertEquals("§e§l2 NEW CORES MAPS", legacy(BossBarSpec.news(I18N, Locale.GERMANY, "2 new cores maps")
                 .title()));
+        // Spec 03 §4.4: Lobby Ära 18 zeigt die News als Bossbar, Ära 26 in der Actionbar.
+        assertTrue(BarFeature.newsInBossbar(UiEra.LEGACY));
+        assertFalse(BarFeature.newsInBossbar(UiEra.MODERN));
     }
 
     @Test

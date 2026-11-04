@@ -200,7 +200,7 @@ Recht = LuckPerms-Node `retromc.<…>` (Präfix = `brandId`); „alle“ = ohne 
 
 | # | Syntax | Aliase | Recht/Rang | Verhalten | Ausgaben & Fehler |
 |---|---|---|---|---|---|
-| 1 | `/friend` | `/friends` (Annahme) | alle | Hilfe Seite 1 (klickbare Zeilen `suggest_command`) | `help.friend.1` |
+| 1 | `/friend` | `/friends` (Annahme) | alle | öffnet GUI „Freunde“ (§5.2, Hauptmenü, Entscheidung Server-Test 11/2026); ohne Paper-Server Hilfe Seite 1. `/friend help` bzw. `/friend 1` = Hilfe Seite 1 (klickbare Zeilen `suggest_command`) | `help.friend.1` |
 | 2 | `/friend 2` | – | alle | Hilfe Seite 2 | `help.friend.2` |
 | 3 | `/friend add <Spieler>` | – | alle | Anfrage, prüft Limits/Filter/Ignore; existiert Gegenanfrage → sofort befreundet | `friend.request.sent`, Empfänger `friend.request.received` + Klickzeile; Fehler `friend.err.self`, `.already`, `.pending`, `.limit.self`, `.limit.other`, `.blocked`, `error.player.unknown` |
 | 4 | `/friend accept <Spieler>` | – | alle | Anfrage annehmen | `friend.added` (beide) |
@@ -231,7 +231,7 @@ Recht = LuckPerms-Node `retromc.<…>` (Präfix = `brandId`); „alle“ = ohne 
 
 | # | Syntax | Aliase | Recht | Verhalten | Ausgaben & Fehler |
 |---|---|---|---|---|---|
-| 22 | `/party` / `/party 2` | – | alle | Hilfe 1/2 | `help.party.1/.2` |
+| 22 | `/party` / `/party 2` | – | alle | `/party` und `/p` ohne Argument öffnen das Partymenü §5.1 (ohne Paper-Server: Hilfe 1); `/party help` bzw. `/party 1` und `/party 2` = Hilfe 1/2 | `help.party.1/.2` |
 | 23 | `/party invite <Spieler>` | `/pi` | Leiter (oder Mitglied, wenn keine Party → erstellt) | lädt ein, erstellt Party bei Bedarf; prüft `party_from`, Ignore, Größe | Einlader `party.invite.sent`; Ziel `party.invite.received` + `click.line` [ANNEHMEN][ABLEHNEN]; Fehler `party.err.full`, `.notleader`, `.already.member`, `.invite.denied`, `.already.invited` |
 | 24 | `/party accept <Spieler>` | `/pa` | alle | Einladung von <Spieler> annehmen | an alle `party.joined`; `party.err.noinvite`, `.err.inparty` |
 | 25 | `/party deny <Spieler>` | – | alle | ablehnen | `party.invite.denied` |
@@ -254,7 +254,7 @@ Recht = LuckPerms-Node `retromc.<…>` (Präfix = `brandId`); „alle“ = ohne 
 
 | # | Syntax | Aliase | Recht | Verhalten | Ausgaben & Fehler |
 |---|---|---|---|---|---|
-| 40 | `/clan` / `/clan 2` | – | alle | Hilfe | `help.clan.1/.2` |
+| 40 | `/clan` / `/clan 2` | – | alle | `/clan` öffnet das Clan-Menü §5.4 (ohne Clan: „Clan erstellen“; ohne Paper-Server: Hilfe 1); `/clan help` bzw. `/clan 1` und `/clan 2` = Hilfe | `help.clan.1/.2` |
 | 41 | `/clan create <Name> <Tag>` | – | alle ohne Clan | Name 3–16, Tag 2–5 (§6.6) | `clan.created`; `clan.err.name`, `.tag`, `.name.taken`, `.tag.taken`, `.inclan` |
 | 42 | `/clan invite <Spieler>` | – | Moderator+ | Einladung (7 Tage gültig, Annahme) | `clan.invite.sent`, Ziel `clan.invite.received` + Klick; `clan.err.full` |
 | 43 | `/clan join <Clanname>` | – | alle ohne Clan | nimmt Einladung an | `clan.joined` (Clan) |

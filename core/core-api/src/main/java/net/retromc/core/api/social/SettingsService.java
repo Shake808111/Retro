@@ -32,4 +32,14 @@ public interface SettingsService {
      * → {@code PROFILE_CHANGED} mit Feld {@code locale} (Spec 02 §6.13 Nr. 3).
      */
     CompletableFuture<Void> setLocale(UUID player, String locale);
+
+    /**
+     * Sprache aus der Client-Sprache beim ersten Join (Spec 01 §6.3 Nr. 4: {@code de*} → {@code de_DE}, sonst
+     * {@code en_US}). Wirkt nur in der ersten Sitzung ({@code first_join = last_join}) und nur, wenn sich die Sprache
+     * ändert; dann wie {@link #setLocale(UUID, String)}. Der Proxy ruft das auf, sobald der Client seine Einstellungen
+     * schickt – beim Login ist die Client-Sprache oft noch unbekannt.
+     *
+     * @return {@code true}, wenn die Sprache gesetzt wurde
+     */
+    CompletableFuture<Boolean> initialLocale(UUID player, String clientLocale);
 }

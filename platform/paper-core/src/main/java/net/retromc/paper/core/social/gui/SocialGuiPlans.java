@@ -129,8 +129,10 @@ public final class SocialGuiPlans {
                 Placeholder.unparsed("n", Integer.toString(view.members().size())),
                 Placeholder.unparsed("max", Integer.toString(view.max())),
                 Formatter.booleanChoice("public", view.publicParty())), Click.NONE);
-        List<PartyMemberView> shown = view.members().stream().skip((long) page * PARTY_HEADS).limit(PARTY_HEADS)
-                .toList();
+        // Blättern über Slot 40 läuft im Kreis (nach der letzten Seite wieder die erste).
+        int partyPage = Math.floorMod(page, pages(view.members().size(), PARTY_HEADS));
+        List<PartyMemberView> shown = view.members().stream().skip((long) partyPage * PARTY_HEADS)
+                .limit(PARTY_HEADS).toList();
         for (int i = 0; i < shown.size(); i++) {
             PartyMemberView member = shown.get(i);
             boolean manageable = leads && !member.leader();
@@ -197,7 +199,9 @@ public final class SocialGuiPlans {
         GuiPlan.Builder plan = new GuiPlan.Builder("gui.friends.title", TagResolver.resolver(
                 Placeholder.unparsed("n", Integer.toString(view.friends().size())),
                 Placeholder.unparsed("max", Integer.toString(view.max()))), 6);
-        List<FriendView> shown = visible.stream().skip((long) page * LIST_HEADS).limit(LIST_HEADS).toList();
+        int lastPage = pages(visible.size(), LIST_HEADS) - 1;
+        int friendsPage = Math.clamp(page, 0, lastPage);
+        List<FriendView> shown = visible.stream().skip((long) friendsPage * LIST_HEADS).limit(LIST_HEADS).toList();
         for (int i = 0; i < shown.size(); i++) {
             FriendView friend = shown.get(i);
             Component name = friend.favorite()
@@ -213,7 +217,12 @@ public final class SocialGuiPlans {
                             new Click.Open(FRIEND_OPTIONS, friend.person().uuid().toString()))));
         }
         plan.glass(RED_GLASS, 46, 48, 50, 52);
-        plan.item(45, "ARROW", "gui.social.prev", List.of(), TagResolver.empty(), new Click.Action("prev"));
+        // Pfeile nur bei Bedarf, sonst Rahmen (Spec 02 §5.1 „Blättern“).
+        if (friendsPage > 0) {
+            plan.item(45, "ARROW", "gui.social.prev", List.of(), TagResolver.empty(), new Click.Action("prev"));
+        } else {
+            plan.glass(RED_GLASS, 45);
+        }
         plan.slot(47, new Slot("BOOK", "gui.friends.requests", null, List.of("gui.friends.requests.lore"),
                 Placeholder.unparsed("n", Integer.toString(view.openRequests())), null, null,
                 Math.max(1, Math.min(64, view.openRequests())), new Click.Open(FRIEND_REQUESTS, "")));
@@ -221,8 +230,17 @@ public final class SocialGuiPlans {
                 new Click.Open(SETTINGS, ""));
         plan.item(51, "NETHER_STAR", "gui.friends.favorites", List.of("gui.status.lore"),
                 Formatter.booleanChoice("enabled", view.favoritesOnly()), new Click.Action("favorites"));
-        plan.item(53, "ARROW", "gui.social.next", List.of(), TagResolver.empty(), new Click.Action("next"));
+        if (friendsPage < lastPage) {
+            plan.item(53, "ARROW", "gui.social.next", List.of(), TagResolver.empty(), new Click.Action("next"));
+        } else {
+            plan.glass(RED_GLASS, 53);
+        }
         return plan.build();
+    }
+
+    /** Seitenzahl einer Liste, mindestens 1. */
+    static int pages(int entries, int perPage) {
+        return Math.max(1, (entries + perPage - 1) / perPage);
     }
 
     public static GuiPlan friendOptions(Person friend, boolean favorite) {

@@ -75,6 +75,8 @@ public final class PartyFeature implements CoreFeature<VelocityCore> {
     public static final CommandName P = CommandName.of("p");
     public static final CommandName PARTYTOGGLE = CommandName.of("partytoggle");
     public static final List<CommandName> COMMANDS = List.of(PARTY, PI, PA, PL, PK, PPM, PJ, PP, P, PARTYTOGGLE);
+    /** GUI-ID des Partymenüs auf paper-core (§5.1). */
+    public static final String GUI_PARTY = "party";
 
     private final List<Registration> subscriptions = new ArrayList<>();
     private @Nullable Social social;
@@ -92,7 +94,9 @@ public final class PartyFeature implements CoreFeature<VelocityCore> {
         chat = new ProxyChat(helper);
         VelocityCommandManager<CommandSource> manager = core.services().get(CommandService.class).manager();
         var party = PARTY.builder(manager).senderType(Player.class);
-        manager.command(party.handler(ctx -> helper.send(ctx.sender(), "help.party.1")));
+        // Ohne Argument: Partymenü §5.1, Hilfe über /party help bzw. /party 1 und 2.
+        manager.command(party.handler(ctx -> helper.openGuiOrHelp(ctx.sender(), GUI_PARTY, "help.party.1")));
+        manager.command(party.literal("help", "1").handler(ctx -> helper.send(ctx.sender(), "help.party.1")));
         manager.command(party.literal("2").handler(ctx -> helper.send(ctx.sender(), "help.party.2")));
         registerPlayerCommand(manager, party.literal("invite"), PI, this::invite, helper);
         registerPlayerCommand(manager, party.literal("accept"), PA, this::accept, helper);
@@ -109,6 +113,8 @@ public final class PartyFeature implements CoreFeature<VelocityCore> {
                 .handler(ctx -> partyChat(ctx.sender(), ctx.get("text"))));
         manager.command(P.builder(manager).senderType(Player.class).required("text", greedyStringParser())
                 .handler(ctx -> partyChat(ctx.sender(), ctx.get("text"))));
+        manager.command(P.builder(manager).senderType(Player.class)
+                .handler(ctx -> helper.openGuiOrHelp(ctx.sender(), GUI_PARTY, "help.party.1")));
         manager.command(party.literal("list").handler(ctx -> list(ctx.sender())));
         manager.command(party.literal("public").handler(ctx -> togglePublic(ctx.sender())));
         manager.command(PP.builder(manager).senderType(Player.class).handler(ctx -> togglePublic(ctx.sender())));

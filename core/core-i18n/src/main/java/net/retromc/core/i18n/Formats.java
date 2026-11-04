@@ -12,6 +12,7 @@ import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import net.retromc.core.api.util.DurationFormat;
 
 /**
  * Zahl-, Dauer- und Datumsformate je Sprache (Spec 02 §6.8, Spec 01 §6.10, Spec 00 §4.4).
@@ -156,24 +157,11 @@ public final class Formats {
 
     /**
      * Restzeit absteigend ab der größten Einheit ≠ 0 bis Sekunden (Spec 01 §6.10): {@code 29d 13h 42m 34s},
-     * {@code 13h 0m 5s}, {@code 45s}. Bruchteile von Sekunden fallen weg, negative Dauern gelten als 0.
+     * {@code 30d 0h 0m 0s}, {@code 13h 0m 5s}, {@code 45s}. Bruchteile von Sekunden fallen weg, negative Dauern gelten
+     * als 0. Einzige Umsetzung ist {@link DurationFormat#format(Duration)} (auch Strafen auf dem Proxy).
      */
     public String duration(Duration duration) {
-        long total = Math.max(0, Objects.requireNonNull(duration, "duration").getSeconds());
-        long days = total / 86_400;
-        long hours = total % 86_400 / 3_600;
-        long minutes = total % 3_600 / 60;
-        long seconds = total % 60;
-        if (days > 0) {
-            return days + "d " + hours + "h " + minutes + "m " + seconds + "s";
-        }
-        if (hours > 0) {
-            return hours + "h " + minutes + "m " + seconds + "s";
-        }
-        if (minutes > 0) {
-            return minutes + "m " + seconds + "s";
-        }
-        return seconds + "s";
+        return DurationFormat.format(duration);
     }
 
     /** Countdown {@code mm:ss}, ab einer Stunde {@code hh:mm:ss} (Spec 02 §6.8); negative Werte gelten als 0. */

@@ -23,5 +23,8 @@ class NpcAdminCommandTest {
         assertEquals(Optional.empty(), NpcAdminCommand.nearest(List.of("x"), name -> Double.POSITIVE_INFINITY,
                 NpcAdminCommand.REMOVE_RANGE));
         assertEquals(BuildInfo.BRAND_ID + ".npc.admin", NpcAdminCommand.PERMISSION);
+        // gespeicherte NPCs zeigen ihre Datenbank-ID, vorläufige (ohne Datenbank) ihre Zählnummer
+        assertEquals("12", NpcAdminCommand.display(12));
+        assertEquals("3", NpcAdminCommand.display(-3));
     }
 }

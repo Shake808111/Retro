@@ -21,8 +21,8 @@ import org.junit.jupiter.api.Test;
 @Tag("integration")
 class MigrationsIT {
 
-    private static final List<String> EXPECTED_VERSIONS = List.of("1", "1.1", "1.2", "1.3", "2.1", "2.2", "4.1",
-            "4.2", "8.1");
+    private static final List<String> EXPECTED_VERSIONS = List.of("1", "1.1", "1.2", "1.3", "2.1", "2.2", "2.3",
+            "4.1", "4.2", "8.1");
 
     @Test
     void alleMigrationenLaufenInReihenfolge() {
@@ -50,7 +50,7 @@ class MigrationsIT {
             for (String table : List.of("social.ignore", "moderation.reason", "core.network_setting",
                     "stats.daily", "stats.alltime", "core.display_anchor", "infra.server_instance",
                     "infra.map_version", "integ.api_token", "core.nick_skin", "games.kit_owned",
-                    "games.kit_selected")) {
+                    "games.kit_selected", "core.npc")) {
                 assertTrue(TestTransactions.exists(dataSource, table), table + " fehlt");
             }
             assertEquals(11, TestTransactions.count(dataSource, "SELECT count(*) FROM moderation.reason"));

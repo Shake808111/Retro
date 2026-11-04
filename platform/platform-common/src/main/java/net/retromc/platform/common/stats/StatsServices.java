@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.retromc.core.api.economy.WalletService;
+import net.retromc.core.api.npc.NpcStore;
 import net.retromc.core.api.rank.RankService;
 import net.retromc.core.api.stats.DisplayAnchorStore;
 import net.retromc.core.api.stats.NetworkLevelService;
@@ -16,6 +17,7 @@ import net.retromc.core.data.AsyncDatabase;
 import net.retromc.core.data.EventSink;
 import net.retromc.core.data.ValkeyConnector;
 import net.retromc.core.data.economy.WalletRepository;
+import net.retromc.core.data.npc.NpcRepository;
 import net.retromc.core.data.stats.DisplayAnchorRepository;
 import net.retromc.core.data.stats.NetworkLevelRepository;
 import net.retromc.core.data.stats.StatsRepository;
@@ -60,6 +62,7 @@ public final class StatsServices implements AutoCloseable {
                     events, clock)));
             registrations.add(services.registerDefault(DisplayAnchorStore.class,
                     new DisplayAnchorRepository(database)));
+            registrations.add(services.registerDefault(NpcStore.class, new NpcRepository(database)));
             registrations.add(services.registerDefault(NetworkLevelService.class,
                     new NetworkLevelRepository(database, events, clock)));
         } catch (RuntimeException e) {

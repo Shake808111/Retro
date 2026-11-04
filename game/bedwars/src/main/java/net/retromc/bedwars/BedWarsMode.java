@@ -184,15 +184,21 @@ public final class BedWarsMode implements GameMode {
 
     /** Von Spielern gesetzter Block (abbaubar). */
     public boolean placed(Block block) {
-        return placed.contains(block.getBlockKey());
+        return placed.contains(key(block));
     }
 
     public void markPlaced(Block block, boolean value) {
         if (value) {
-            placed.add(block.getBlockKey());
+            placed.add(key(block));
         } else {
-            placed.remove(block.getBlockKey());
+            placed.remove(key(block));
         }
+    }
+
+    /** Blockposition als Zahl (x, z je 27 Bit, y 10 Bit). */
+    static long key(Block block) {
+        return ((long) block.getX() & 0x7FFFFFFL) | (((long) block.getZ() & 0x7FFFFFFL) << 27)
+                | (((long) block.getY() & 0x3FFL) << 54);
     }
 
     public boolean suddenDeath() {

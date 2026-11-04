@@ -1,5 +1,7 @@
 package net.retromc.bedwars.shop;
 
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 import java.util.Locale;
 import java.util.Optional;
 import net.kyori.adventure.text.Component;
@@ -104,7 +106,8 @@ public final class ShopItems {
     }
 
     public static Optional<Enchantment> enchantment(String key) {
-        return Optional.ofNullable(Registry.ENCHANTMENT.get(NamespacedKey.minecraft(key.toLowerCase(Locale.ROOT))));
+        return Optional.ofNullable(RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT)
+                .get(NamespacedKey.minecraft(key.toLowerCase(Locale.ROOT))));
     }
 
     /** {@code type:stufe:sekunden} → Trankwirkung (Sekunden 0 = sofort). */

@@ -197,7 +197,7 @@ final class BuildListener implements Listener {
     @EventHandler
     public void onGameJoin(PlayerJoinGameEvent event) {
         if (event.asSpectator() && mode.game().state() == GameState.INGAME) {
-            mode.board().show(event.getPlayer());
+            mode.board().show(event.player());
         }
     }
 }

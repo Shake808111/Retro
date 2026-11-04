@@ -131,6 +131,35 @@ class ShopUndMapTest {
         assertEquals(110, bedwars.buildMaxY());
     }
 
+    /** Alle mitgelieferten BedWars-Maps (CC BY 4.0) sind für jede ihrer Varianten spielbar. */
+    @Test
+    void mitgelieferteMapsSindGueltig() throws IOException {
+        List<Path> files;
+        try (java.util.stream.Stream<Path> folders = Files.list(Path.of("../../deploy/bedwars/maps"))) {
+            files = folders.map(folder -> folder.resolve("map.json")).filter(Files::isRegularFile).sorted().toList();
+        }
+        assertTrue(files.size() >= 9, "Beispiel + 8 Maps: " + files.size());
+        for (Path file : files) {
+            MapMeta meta = MapJson.parse(Files.readString(file, StandardCharsets.UTF_8));
+            GameMap map = new GameMap(meta);
+            assertFalse(meta.variants().isEmpty(), file.toString());
+            for (String key : meta.variants()) {
+                GameVariant variant = GameVariant.parse(key);
+                String where = meta.id() + " " + key;
+                assertEquals(List.of(), MapValidator.validate(map, TeamMode.TEAMS, variant, TeamColor.BEDWARS_ORDER,
+                        map.markers().has("waitingWorld")), where);
+                assertEquals(List.of(), new BedWarsMap(map).validate(MapValidator.teamIds(map, variant,
+                        TeamColor.BEDWARS_ORDER), false), where);
+            }
+            if (!meta.id().equals("beispiel")) {
+                assertEquals("cc-by-4.0", meta.license(), meta.id());
+                assertTrue(Files.isRegularFile(file.resolveSibling("CREDITS.md")), meta.id());
+                MapMeta.Spawn waiting = java.util.Objects.requireNonNull(meta.waitingLobby(), meta.id());
+                assertTrue(waiting.y() > new BedWarsMap(map).buildMaxY(), meta.id() + ": Wartelobby über buildMaxY");
+            }
+        }
+    }
+
     @Test
     void setupEntwurfBautMapJson() {
         MapDraft draft = new MapDraft("insel", "bedwars");

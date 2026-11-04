@@ -37,6 +37,7 @@ import net.retromc.game.framework.kill.DamageTracker;
 import net.retromc.game.framework.kill.KillFeed;
 import net.retromc.game.framework.map.GameMap;
 import net.retromc.game.framework.map.MapSelection;
+import net.retromc.game.framework.map.WaitingPlatform;
 import net.retromc.game.framework.server.PrivateRoundContext;
 import net.retromc.game.framework.server.ServerStatePublisher;
 import net.retromc.game.framework.spectate.SpectatorReason;
@@ -472,6 +473,10 @@ public final class Game {
             player.teleport(spawn);
         }
         lifecycle.transitionTo(GameState.INGAME);
+        int removed = WaitingPlatform.remove(map, maps().world(), log());
+        if (removed > 0) {
+            log().info("Wartelobby auf {} entfernt ({} Blöcke)", map.id(), removed);
+        }
         for (Player player : late) {
             player.teleport(maps().spectatorSpawn());
             spectators().makeSpectator(player, SpectatorReason.LATE_JOIN, true);
@@ -663,7 +668,7 @@ public final class Game {
                     Placeholder.unparsed("name", name)), 0));
         }
         GameTeam team = teams().teamOf(player.getUniqueId());
-        if (team == null || definition.teamMode() == TeamMode.SOLO) {
+        if (team == null || definition.teamMode() == TeamMode.SOLO || !mode().teamTabEntries()) {
             return Optional.empty();
         }
         Component entry = texts().i18n().render(locale, "tab.entry.team", texts().team(locale, team),

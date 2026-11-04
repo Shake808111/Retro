@@ -7,6 +7,7 @@ import java.util.Set;
 import net.kyori.adventure.text.Component;
 import net.retromc.game.framework.end.GameResult;
 import net.retromc.game.framework.map.GameMap;
+import net.retromc.game.framework.map.MapSelection;
 import net.retromc.game.framework.phase.CountdownPlan;
 import net.retromc.game.framework.team.TeamAllocator;
 import net.retromc.game.framework.team.TeamColor;
@@ -97,6 +98,19 @@ public interface GameMode {
     /** Party-Leiter zieht die Party bei der Teamwahl mit (BedWars Spec 04 §5.3). */
     default boolean partyFollowsLeader() {
         return false;
+    }
+
+    /**
+     * Tab-Einträge im Teamformat {@code {teamColor}{team} §7| §f{name}} (Spec 03 §4.3); {@code false} = Tab wie in
+     * der Lobby mit Rang-Präfix (SkyWars, Spec 04 §4.4).
+     */
+    default boolean teamTabEntries() {
+        return true;
+    }
+
+    /** Höchstzahl der Maps in der Abstimmung (Spec 03 §5.11: 5; SkyWars-Map-Menü Spec 04 §5.11: 7). */
+    default int voteOptions() {
+        return MapSelection.VOTE_OPTIONS;
     }
 
     /** Darstellung der Team-Wahl. */

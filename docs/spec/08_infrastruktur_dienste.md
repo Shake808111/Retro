@@ -409,7 +409,7 @@ Globale Grenze: höchstens **200** dynamische Server insgesamt (Dev **12**), Ann
 | `variants` | Liste von Varianten-IDs; leer = alle |
 | **`version`** | Ganzzahl ≥ 1, steigt mit jeder Änderung |
 | **`builders`** | ≥ 1 Name (eigenes Bauteam) |
-| **`license`** | muss `"own"` sein. Fremde Maps sind gesperrt (§6.19) |
+| **`license`** | `"own"` oder freie Lizenz `"cc-by-4.0"` / `"cc-by-sa-4.0"` mit `CREDITS.md` im Map-Ordner (Nutzer-Entscheidung 11/2026). Sonstige fremde Maps sind gesperrt (§6.19) |
 | **`minPlayers`, `maxPlayers`** | 1 ≤ min ≤ max ≤ 200 |
 | **`bounds`** | `{min:{x,y,z}, max:{x,y,z}}`, min < max je Achse |
 | **`spectatorSpawn`** | `{x,y,z,yaw,pitch}` innerhalb `bounds` |
@@ -417,7 +417,7 @@ Globale Grenze: höchstens **200** dynamische Server insgesamt (Dev **12**), Ann
 | **`markers`** | modusspezifisch, geprüft gegen `mapschema/<mode>.json` aus dem Modus-Plugin-Jar (Teams, Betten, Spawner, Kisten …; Inhalt in der Modus-Spec) |
 
 Ablauf:
-1. **Validieren** (`MapValidator`, vorhanden: `map.json`, `region/`). Neu dazu: `level.dat` vorhanden, JSON gültig, Pflichtfelder, `id`==Ordner, `license=="own"`, alle Marker-Koordinaten in `bounds`, Schema des Modus erfüllt.
+1. **Validieren** (`MapValidator`, vorhanden: `map.json`, `region/`). Neu dazu: `level.dat` vorhanden, JSON gültig, Pflichtfelder, `id`==Ordner, `license` ∈ {`own`, `cc-by-4.0`, `cc-by-sa-4.0`} (frei nur mit `CREDITS.md`), Regionen in `region/` oder `dimensions/minecraft/overworld/region/` (Weltformat 26.x), alle Marker-Koordinaten in `bounds`, Schema des Modus erfüllt.
 2. **Bereinigen** beim Packen: `playerdata/`, `stats/`, `advancements/`, `session.lock`, `uid.dat`, `datapacks/` werden ausgelassen.
 3. **Größe**: ZIP höchstens **200 MB** (Annahme). Bei Überschreitung bricht der Vorgang ab.
 4. **Packen** deterministisch: Einträge sortiert, Zeitstempel fest `1980-01-01T00:00:00Z`, Kompression DEFLATE 9. Daraus `sha256` (gleicher Inhalt → gleicher Hash, Unit-Test).
@@ -531,7 +531,7 @@ Beim Controller-Start werden verwaiste Container mit Label `network.server` ohne
 | Regel | Umsetzung | Quelle |
 |---|---|---|
 | eigene Marke, keine fremden Namen | Marke nur über `brandName`. CI-Job: `git grep -niE 'g[o]mme\|g[o]mmehd\|cheetah\|octopus'` außerhalb `docs/` → Fehler | N07 §9 B, N08 |
-| keine fremden Maps | `map.json.license == "own"` (Pflicht), `builders` nur eigenes Team. Map-Repo mit Herkunftsnachweis je Map (Commit-Autor) | N07 §9 B |
+| keine fremden Maps | `map.json.license == "own"` oder frei lizenziert (`cc-by-4.0`, `cc-by-sa-4.0`) mit `CREDITS.md` (Autor, Quelle, Lizenz, Änderungen; Nutzer-Entscheidung 11/2026); `builders` = eigenes Team bzw. Original-Autor. Map-Repo mit Herkunftsnachweis je Map (Commit-Autor) | N07 §9 B |
 | keine fremden Logos/Texte | Texte nur in `core-i18n`, eigene Formulierungen. Status- und Wartungstexte selbst schreiben (nicht die N08-Vorlage übernehmen) | N07 §9 B, N08 §8 |
 | keine Mojang-Logos, Disclaimer | Bot-Embed-Footer und API-`/v1/status` enthalten `disclaimer` (Text in §7) | N07 §9 A |
 | IP-Datenschutz | Velocity-IP-Logging aus, Paper-Log4j-Filter maskiert IPv4/IPv6, IP nur als HMAC (`NETWORK_HMAC_SECRET`), Aufbewahrung §6.10 | N07 §9 E, N08 §2.3 Nr. 3 |
@@ -683,7 +683,7 @@ Präfixe (Annahme): `prefix.cloud` = `§7[§bCloud§7] `, `prefix.discord` = `§
 9. Queue (Integrationstest): Party aus 3 Spielern, Server A (online 2, max 4) und B (online 0, max 4) → Zuteilung B (A hat nur 2 freie Plätze). Bei A (online 1, max 8) → A (meiste Spieler zuerst). Ohne passenden Server → `QUEUE_FAILED TIMEOUT` nach 60 s ± 1 s.
 10. Reservierung: Ein Spieler ohne Reservierung wird auf einem GAME-Server (ohne `publicJoin`) mit `connect.notreserved` abgewiesen. Mit Reservierung kommt er rein, danach ist der ZSET-Eintrag entfernt.
 11. Leader-Wahl (Integrationstest): Zwei Controller → genau einer startet Server. Wird der Leader beendet, übernimmt der andere in ≤ 10 s.
-12. `map-exporter validate`: Eine Map ohne `license:"own"`, mit Marker außerhalb `bounds` oder ohne `level.dat` ergibt je 1 Problem und Exit 1. Zweimal `pack` desselben Ordners → identischer SHA-256.
+12. `map-exporter validate`: Eine Map mit unzulässiger `license` (nicht `own`/`cc-by-4.0`/`cc-by-sa-4.0`), mit Marker außerhalb `bounds` oder ohne `level.dat` ergibt je 1 Problem und Exit 1. Zweimal `pack` desselben Ordners → identischer SHA-256.
 13. `MapService.prepare` lädt eine Map mit falschem Hash neu (Test mit manipuliertem Cache) und speichert die Welt nicht (`autoSave=false`).
 14. Envelope-Codec: Rundlauf aller Typen aus §8.3. Unbekannter Typ wird ohne Exception ignoriert. Eine Nachricht über 64 KiB wird beim Senden abgelehnt.
 15. `/cloud list` ohne laufenden Controller → nach 3 s `cloud.err.timeout`.

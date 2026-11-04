@@ -25,6 +25,7 @@ public final class MapDraft {
     private final Set<String> builders = new LinkedHashSet<>();
     private final Set<String> variants = new LinkedHashSet<>();
     private int version = 1;
+    private String license = MapMeta.LICENSE_OWN;
     private int minPlayers = 2;
     private int maxPlayers = 16;
     private MapMeta.@Nullable Position corner1;
@@ -49,6 +50,7 @@ public final class MapDraft {
         draft.builders.addAll(meta.builders());
         draft.variants.addAll(meta.variants());
         draft.version = meta.version() + 1;
+        draft.license = meta.license();
         draft.minPlayers = meta.minPlayers();
         draft.maxPlayers = meta.maxPlayers();
         draft.corner1 = meta.bounds().min();
@@ -165,7 +167,12 @@ public final class MapDraft {
         return missing;
     }
 
-    /** Baut {@link MapMeta} (Lizenz immer {@code own}). */
+    /** Lizenz: neue Entwürfe {@code own}, übernommene Maps behalten ihre (z. B. {@code cc-by-4.0}). */
+    public String license() {
+        return license;
+    }
+
+    /** Baut {@link MapMeta}. */
     public MapMeta build() {
         List<String> missing = missing();
         if (!missing.isEmpty()) {
@@ -177,7 +184,7 @@ public final class MapDraft {
                 new MapMeta.Position(Math.min(a.x(), b.x()), Math.min(a.y(), b.y()), Math.min(a.z(), b.z())),
                 new MapMeta.Position(Math.max(a.x(), b.x()), Math.max(a.y(), b.y()), Math.max(a.z(), b.z())));
         return new MapMeta(id, displayName, mode, List.copyOf(variants), version, List.copyOf(builders),
-                MapMeta.LICENSE_OWN, minPlayers, maxPlayers, bounds, Objects.requireNonNull(spectator), waiting,
+                license, minPlayers, maxPlayers, bounds, Objects.requireNonNull(spectator), waiting,
                 markers.toString());
     }
 

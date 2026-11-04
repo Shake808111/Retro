@@ -81,6 +81,7 @@ class ValkeyKeysTest {
         assertEquals("cnt:forcemap:" + PLAYER + ":2026-10-27", ValkeyKeys.forcemapCount(PLAYER, DAY));
         assertEquals("queue:bedwars-test", ValkeyKeys.queue("bedwars-test"));
         assertEquals("maps:bedwars", ValkeyKeys.maps("bedwars"));
+        assertEquals("vote:map:skywars-1", ValkeyKeys.mapVote("skywars-1"));
         assertEquals("restart:cb-plot-1", ValkeyKeys.restart("cb-plot-1"));
         assertEquals("discord:code:ABC234", ValkeyKeys.discordCode("ABC234"));
         assertEquals("discord:pending:" + PLAYER, ValkeyKeys.discordPending(PLAYER));

@@ -11,7 +11,7 @@
   "builders": [
     "iPyro15"
   ],
-  "license": "own",
+  "license": "cc-by-4.0",
   "minPlayers": 8,
   "maxPlayers": 16,
   "bounds": {

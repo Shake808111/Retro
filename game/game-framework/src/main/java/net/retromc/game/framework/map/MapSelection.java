@@ -1,6 +1,7 @@
 package net.retromc.game.framework.map;
 
 import io.lettuce.core.api.async.RedisAsyncCommands;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -41,6 +42,8 @@ public final class MapSelection {
 
     /** Höchstzahl der Maps in der Abstimmung (Spec 03 §5.11). */
     public static final int VOTE_OPTIONS = 5;
+    /** Lebensdauer von {@code vote:map:{server}} (Spec 04 §2.2). */
+    static final Duration VOTE_TTL = Duration.ofMinutes(30);
 
     private final Game game;
     private final Random random = new Random();
@@ -91,7 +94,8 @@ public final class MapSelection {
         if (game.definition().voting()) {
             List<GameMap> shuffled = new ArrayList<>(valid);
             Collections.shuffle(shuffled, random);
-            voteOptions = List.copyOf(shuffled.subList(0, Math.min(VOTE_OPTIONS, shuffled.size())));
+            int options = Math.max(1, game.mode().voteOptions());
+            voteOptions = List.copyOf(shuffled.subList(0, Math.min(options, shuffled.size())));
         }
         return load(first).thenApply(world -> first);
     }
@@ -210,6 +214,20 @@ public final class MapSelection {
     public void vote(Player player, GameMap map) {
         votes.put(player.getUniqueId(), map.id());
         game.texts().send(player, "common.vote.done", Placeholder.unparsed("map", map.displayName()));
+        try {
+            // Spiegel in Valkey vote:map:{server} (Spec 04 §2.2), 30 min; die Wertung bleibt rundenlokal
+            String key = ValkeyKeys.mapVote(game.serverName());
+            RedisAsyncCommands<String, String> redis = game.redis();
+            redis.hset(key, player.getUniqueId().toString(), map.id())
+                    .thenAccept(ignored -> redis.expire(key, VOTE_TTL.toSeconds()));
+        } catch (RuntimeException e) {
+            game.log().debug("Map-Stimme nicht in Valkey gespiegelt: {}", e.getMessage());
+        }
+    }
+
+    /** Eigene Stimme eines Spielers (Map-ID) oder leer. */
+    public Optional<String> voteOf(UUID player) {
+        return Optional.ofNullable(votes.get(player));
     }
 
     /** Wertet die Abstimmung einmal je Runde aus (ab Rest ≤ 10 s). */

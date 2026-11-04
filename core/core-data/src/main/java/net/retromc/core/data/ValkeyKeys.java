@@ -311,6 +311,11 @@ public final class ValkeyKeys {
         return "cnt:forcemap:" + Objects.requireNonNull(player) + ":" + Objects.requireNonNull(day);
     }
 
+    /** HASH uuid → mapId: Map-Stimmen der Wartelobby, TTL 30 min (Spec 04 §2.2). */
+    public static String mapVote(String serverName) {
+        return "vote:map:" + serverName(serverName);
+    }
+
     /** ZSET der Tickets einer Spielvariante (bestehend, Spec 08 §2.2). */
     public static String queue(String variant) {
         return "queue:" + token(variant);

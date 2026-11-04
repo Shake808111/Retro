@@ -49,6 +49,8 @@ Stand 2026-10-21. Quellen: Notiz 14 (komplett), Notiz 02 Q6–Q9 (SG-Teile), Not
 
 ### 2.1 PostgreSQL (neue Migration `V5_1__klassiker.sql`, neues Schema `games`)
 
+> Integration 11/2026: `games.kit_owned` und `games.kit_selected` legt bereits `V4_2__skywars_kits.sql` an (SkyWars, Spec 04 §5.9); `V5_1` legt sie nicht erneut an. Standard-Dienst `KitStore` (core-api) / `KitRepository` (core-data).
+
 Mitbenutzt: `stats.match`, `stats.match_player`, `stats.daily`, `stats.alltime` (Spec 02 – `stats.total`/`stats.monthly` aus V1 werden von `V2_1` gelöscht), `economy.wallet`, `economy.ledger`, `social.clan`, `social.clan_member`, `social.clan_elo`, `social.clan_war` (Spec 01; Clan-Elo **je Modus** in `social.clan_elo`, die V1-Spalte `social.clan.elo` ist deprecated). Schema `games` teilen sich Spec 03/04/05 (`CREATE SCHEMA IF NOT EXISTS games`).
 
 | Tabelle | Spalten (Typ) | Schlüssel / Indizes | Zweck |

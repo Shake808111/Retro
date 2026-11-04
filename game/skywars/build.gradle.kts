@@ -13,4 +13,9 @@ dependencies {
     compileOnly(project(":platform:paper-core"))
     // game-framework wird in das Plugin-Jar eingebettet.
     implementation(project(":game:game-framework"))
+
+    // Reine Logik (Zeitplan, Loot, Kits, Challenges, Map-Prüfung) ohne Server; Katalogprüfung gegen core-i18n.
+    testImplementation(libs.paper.api)
+    testImplementation(project(":platform:paper-core"))
+    testImplementation(libs.gson)
 }

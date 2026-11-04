@@ -1,0 +1,47 @@
+# Tier 2: Truhen der Mitte (Spec 04 §6.2.4). Je Container 6–9 Stapel; Schneebälle und Eier nur hier.
+stacks: 6-9
+entries:
+  blocks_stone:
+    materials: [STONE, COBBLESTONE, STONE_BRICKS, POLISHED_DEEPSLATE]
+    amount: 16-48
+    weight: 6
+    category: blocks
+  blocks_wood:
+    materials: [OAK_PLANKS, PINK_WOOL, BRICKS]
+    amount: 16-32
+    weight: 6
+    category: blocks
+  stone_sword: {material: STONE_SWORD, weight: 2, category: sword}
+  iron_sword: {material: IRON_SWORD, weight: 4, category: sword}
+  diamond_sword:
+    material: DIAMOND_SWORD
+    weight: 5
+    category: sword
+    enchantments: {sharpness: 1-2}
+    chances: {vanishing_curse: 0.25}
+  netherite_sword: {material: NETHERITE_SWORD, weight: 1, category: sword}
+  iron_helmet: {material: IRON_HELMET, weight: 3, category: armor, enchantments: {protection: 1, unbreaking: 1}}
+  iron_chestplate: {material: IRON_CHESTPLATE, weight: 3, category: armor, enchantments: {protection: 1, unbreaking: 1}}
+  iron_leggings: {material: IRON_LEGGINGS, weight: 3, category: armor, enchantments: {protection: 1, unbreaking: 1}}
+  iron_boots: {material: IRON_BOOTS, weight: 3, category: armor, enchantments: {protection: 1, unbreaking: 1}}
+  diamond_helmet: {material: DIAMOND_HELMET, weight: 4, category: armor, enchantments: {protection: 0-2}}
+  diamond_chestplate: {material: DIAMOND_CHESTPLATE, weight: 4, category: armor, enchantments: {protection: 0-2}}
+  diamond_leggings: {material: DIAMOND_LEGGINGS, weight: 4, category: armor, enchantments: {protection: 0-2}}
+  diamond_boots: {material: DIAMOND_BOOTS, weight: 4, category: armor, enchantments: {protection: 0-2}}
+  axe: {materials: [IRON_AXE, DIAMOND_AXE], weight: 3}
+  pickaxe: {materials: [IRON_PICKAXE, DIAMOND_PICKAXE], weight: 2}
+  bow: {material: BOW, weight: 4}
+  arrows: {material: ARROW, amount: 8-16, weight: 4}
+  golden_apple: {material: GOLDEN_APPLE, amount: 1-3, weight: 5, category: food}
+  food: {materials: [GOLDEN_CARROT, BREAD, COOKED_BEEF], amount: 3-16, weight: 4, category: food}
+  water_bucket: {material: WATER_BUCKET, weight: 2}
+  lava_bucket: {material: LAVA_BUCKET, weight: 3}
+  cobweb: {material: COBWEB, amount: 2-5, weight: 4}
+  tnt: {material: TNT, amount: 2-5, weight: 3}
+  ender_pearl: {material: ENDER_PEARL, weight: 4}
+  healing_potion: {material: SPLASH_POTION, weight: 4, potion: "instant_health:2"}
+  snowball_egg: {materials: [SNOWBALL, EGG], amount: 8-16, weight: 5}
+  resources: {materials: [DIAMOND, IRON_INGOT, STICK], amount: 2-7, weight: 3}
+  crafting_table: {material: CRAFTING_TABLE, amount: 1-17, weight: 1}
+  compass: {material: COMPASS, weight: 1}
+  experience: {material: EXPERIENCE_BOTTLE, amount: 4-8, weight: 3}

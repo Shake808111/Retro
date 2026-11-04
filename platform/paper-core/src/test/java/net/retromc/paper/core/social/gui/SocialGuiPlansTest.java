@@ -210,4 +210,27 @@ class SocialGuiPlansTest {
         assertEquals(new Click.Toggle(Setting.NICK_KEEP), nick.slot(15).orElseThrow().click());
         assertNull(nick.slot(9).orElse(null));
     }
+
+    /** Lobby-Profil-Item → Profil → Untermenüs (Spec 01 §4.5); „Zurück“ der Untermenüs führt ins Profil. */
+    @Test
+    void profilMenueFuehrtZuDenUntermenues() {
+        UUID viewer = UUID.randomUUID();
+        GuiPlan plan = SocialGuiPlans.profile(viewer);
+        assertEquals("gui.profile.title", plan.titleKey());
+        assertEquals(3, plan.rows());
+        glass(plan, "LIGHT_BLUE_STAINED_GLASS_PANE", 0, 8, 18, 26);
+        assertEquals(new Click.Open(SocialGuiPlans.FRIENDS, ""), plan.slot(10).orElseThrow().click());
+        assertEquals(viewer, plan.slot(10).orElseThrow().head());
+        assertEquals(new Click.Open(SocialGuiPlans.PARTY, ""), plan.slot(11).orElseThrow().click());
+        assertEquals(new Click.Open(SocialGuiPlans.CLAN, ""), plan.slot(12).orElseThrow().click());
+        assertEquals(new Click.Action("stats"), plan.slot(14).orElseThrow().click());
+        assertEquals(new Click.Open(SocialGuiPlans.NICK, ""), plan.slot(15).orElseThrow().click());
+        assertEquals(new Click.Open(SocialGuiPlans.SETTINGS, ""), plan.slot(16).orElseThrow().click());
+        Person person = new Person(viewer, "Ich", "§a");
+        GuiPlan settings = SocialGuiPlans.settings(new SocialGuiPlans.SettingsView(person, PrivacySettings.DEFAULTS,
+                "Deutsch"), TEXTS);
+        assertEquals(new Click.Action("back"), settings.slot(45).orElseThrow().click());
+        assertEquals(new Click.Action("back"), SocialGuiPlans.nick(new SocialGuiPlans.NickView(viewer, false, false,
+                null)).slot(8).orElseThrow().click());
+    }
 }

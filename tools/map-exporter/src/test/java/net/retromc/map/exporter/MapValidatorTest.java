@@ -22,4 +22,11 @@ class MapValidatorTest {
         Files.createDirectory(dir.resolve(MapValidator.REGION_DIR));
         assertTrue(MapValidator.validate(dir).isEmpty());
     }
+
+    @Test
+    void weltformat26IstGueltig(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve(MapValidator.MAP_CONFIG), "{}");
+        Files.createDirectories(dir.resolve(MapValidator.REGION_DIR_26));
+        assertTrue(MapValidator.validate(dir).isEmpty());
+    }
 }

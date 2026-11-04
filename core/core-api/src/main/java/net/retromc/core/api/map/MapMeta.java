@@ -2,6 +2,7 @@ package net.retromc.core.api.map;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Pattern;
 import org.jspecify.annotations.Nullable;
 
@@ -11,7 +12,8 @@ import org.jspecify.annotations.Nullable;
  * gegen sein eigenes {@code mapschema/<mode>.json} liest.
  *
  * @param variants Varianten-IDs; leer = alle Varianten
- * @param license muss {@code "own"} sein (Spec 08 §6.19), geprüft vom Map-Exporter
+ * @param license {@code "own"} oder eine freie Lizenz aus {@link #LICENSES} (Spec 08 §6.19; freie Lizenzen nur mit
+ *                {@code CREDITS.md} im Map-Ordner), geprüft beim Laden und vom Map-Exporter
  * @param waitingLobby Spawn der Wartelobby, falls auf der Map, sonst {@code null}
  * @param markersJson JSON-Objekt {@code markers}
  */
@@ -33,8 +35,10 @@ public record MapMeta(
     /** {@code ^[a-z0-9_]{2,32}$}, gleich dem Ordnernamen. */
     public static final Pattern ID = Pattern.compile("[a-z0-9_]{2,32}");
 
-    /** Einzige zulässige Lizenz (eigene Maps). */
+    /** Lizenz eigener Maps. */
     public static final String LICENSE_OWN = "own";
+    /** Zulässige Lizenzen: eigene Maps sowie Creative Commons BY/BY-SA 4.0 (Namensnennung über CREDITS.md). */
+    public static final Set<String> LICENSES = Set.of(LICENSE_OWN, "cc-by-4.0", "cc-by-sa-4.0");
 
     public MapMeta {
         Objects.requireNonNull(id, "id");
@@ -55,6 +59,11 @@ public record MapMeta(
         if (minPlayers < 1 || minPlayers > maxPlayers || maxPlayers > 200) {
             throw new IllegalArgumentException("Es gilt 1 ≤ minPlayers ≤ maxPlayers ≤ 200");
         }
+    }
+
+    /** Ob die Lizenz eine Namensnennung verlangt (alles außer {@code own}). */
+    public boolean attribution() {
+        return !LICENSE_OWN.equals(license);
     }
 
     /** Ob die Map für die Variante gilt (leere Liste = alle). */

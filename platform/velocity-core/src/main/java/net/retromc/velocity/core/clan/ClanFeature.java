@@ -70,8 +70,6 @@ public final class ClanFeature implements CoreFeature<VelocityCore> {
     public static final CommandName CLANSTATSRESET = CommandName.of("clanstatsreset");
     public static final List<CommandName> COMMANDS = List.of(CLAN, CC, CLC, CLANLVL, CLANSTATSRESET);
 
-    /** GUI-ID des Clan-Menüs auf paper-core (§5.4). */
-    public static final String GUI_CLAN = "clan";
     /** GUI-ID der Clan-Einstellungen auf paper-core (§5.5). */
     public static final String GUI_SETTINGS = "clan.settings";
 
@@ -123,9 +121,8 @@ public final class ClanFeature implements CoreFeature<VelocityCore> {
 
     private void registerCommands(VelocityCommandManager<CommandSource> manager, Social helper) {
         var clan = CLAN.builder(manager).senderType(Player.class);
-        // Ohne Argument: Clan-Menü §5.4 (ohne Clan mit „Clan erstellen“), Hilfe über /clan help bzw. /clan 1 und 2.
-        manager.command(clan.handler(ctx -> helper.openGuiOrHelp(ctx.sender(), GUI_CLAN, "help.clan.1")));
-        manager.command(clan.literal("help", "1").handler(ctx -> helper.send(ctx.sender(), "help.clan.1")));
+        // Ohne Argument: Hilfe (Spec 01 #40); das Clan-Menü öffnet das Profil-Item der Lobby (§4.5).
+        manager.command(clan.handler(ctx -> helper.send(ctx.sender(), "help.clan.1")));
         manager.command(clan.literal("2").handler(ctx -> helper.send(ctx.sender(), "help.clan.2")));
         manager.command(clan.literal("create").required("name", stringParser()).required("tag", stringParser())
                 .handler(ctx -> create(ctx.sender(), ctx.get("name"), ctx.get("tag"))));

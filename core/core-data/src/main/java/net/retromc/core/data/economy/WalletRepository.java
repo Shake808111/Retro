@@ -82,6 +82,12 @@ public final class WalletRepository implements WalletService {
 
     private Booking apply(Connection connection, UUID player, Currency currency, long old, long delta,
             LedgerReason reason, @Nullable String idemKey) throws SQLException {
+        // Schon verbuchter Schlüssel zuerst: eine wiederholte Abbuchung (Doppelklick, Wiederholung) ist ein
+        // Duplikat, auch wenn der Stand nach der ersten Buchung nicht mehr reicht. Die Wallet-Zeile ist gesperrt.
+        if (idemKey != null && Jdbc.one(connection, "SELECT 1 FROM economy.ledger WHERE idem_key = ?",
+                row -> row.getInt(1), idemKey).isPresent()) {
+            return new Booking(player, currency, Booking.Status.DUPLICATE, old, old, 0);
+        }
         if (old + delta < 0) {
             return new Booking(player, currency, Booking.Status.INSUFFICIENT, old, old, 0);
         }

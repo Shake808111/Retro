@@ -6,10 +6,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import net.retromc.core.api.map.MapMeta;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -74,7 +80,13 @@ class MapJsonTest {
         assertEquals(List.of(), MapFeature.check(meta, "beispiel"));
         assertEquals(List.of("id 'beispiel' ≠ Ordner 'anders'"), MapFeature.check(meta, "anders"));
         MapMeta foreign = MapJson.parse(JSON.replace("\"own\"", "\"cc-by\""));
-        assertEquals(List.of("license muss \"own\" sein"), MapFeature.check(foreign, "beispiel"));
+        assertEquals(List.of("license muss own, cc-by-4.0 oder cc-by-sa-4.0 sein"),
+                MapFeature.check(foreign, "beispiel"));
+        for (String free : List.of("cc-by-4.0", "cc-by-sa-4.0")) {
+            MapMeta licensed = MapJson.parse(JSON.replace("\"own\"", "\"" + free + "\""));
+            assertEquals(List.of(), MapFeature.check(licensed, "beispiel"), free);
+            assertTrue(licensed.attribution());
+        }
     }
 
     @Test
@@ -96,5 +108,87 @@ class MapJsonTest {
         assertTrue(Files.notExists(target.resolve("playerdata")));
         assertTrue(Files.notExists(target.resolve("map.json")));
         assertTrue(Files.notExists(target.resolve("alt.txt")));
+    }
+
+    @Test
+    void weltKopieImFormat26(@TempDir Path dir) throws IOException {
+        Path source = dir.resolve("quelle");
+        Path region = source.resolve("dimensions/minecraft/overworld/region");
+        Files.createDirectories(region);
+        Files.createDirectories(source.resolve("players/data"));
+        Files.writeString(source.resolve("level.dat"), "x");
+        Files.writeString(region.resolve("r.0.0.mca"), "r");
+        Files.writeString(source.resolve("dimensions/minecraft/overworld/paper-world.yml"), "w");
+        Files.writeString(source.resolve("players/data/a.dat"), "p");
+        Files.writeString(source.resolve(MapFeature.CREDITS_FILE), "c");
+        Path target = dir.resolve("ziel");
+        MapFeature.copyWorld(source, target);
+        assertTrue(Files.exists(target.resolve("dimensions/minecraft/overworld/region/r.0.0.mca")));
+        assertTrue(Files.exists(target.resolve("dimensions/minecraft/overworld/paper-world.yml")));
+        assertTrue(Files.notExists(target.resolve("players")));
+        assertTrue(Files.notExists(target.resolve(MapFeature.CREDITS_FILE)));
+    }
+
+    @Test
+    void freieLizenzBrauchtCredits(@TempDir Path dir) throws IOException {
+        MapMeta licensed = MapJson.parse(JSON.replace("\"own\"", "\"cc-by-4.0\""));
+        Path folder = Files.createDirectories(dir.resolve("beispiel"));
+        assertEquals(List.of("CREDITS.md fehlt (Namensnennung für cc-by-4.0)"), MapFeature.check(licensed, folder));
+        Files.writeString(folder.resolve(MapFeature.CREDITS_FILE), "Autor");
+        assertEquals(List.of(), MapFeature.check(licensed, folder));
+        assertEquals(List.of(), MapFeature.check(MapJson.parse(JSON), dir.resolve("beispiel")));
+    }
+
+    /** Alle mitgelieferten Maps unter {@code deploy/*}/maps laden ohne Fehler (Ladeprüfung, Credits, JSON). */
+    @Test
+    void mitgelieferteMapsSindLadbar() throws IOException {
+        Path deploy = Path.of("../../deploy");
+        int checked = 0;
+        try (Stream<Path> files = Files.walk(deploy)) {
+            for (Path file : files.filter(path -> path.getFileName().toString().equals(MapFeature.MAP_FILE)
+                    && path.getParent().getParent().getFileName().toString().equals("maps")).toList()) {
+                MapMeta meta = MapJson.parse(Files.readString(file, StandardCharsets.UTF_8));
+                assertEquals(List.of(), MapFeature.check(meta, file.getParent()), file.toString());
+                checked++;
+            }
+        }
+        assertTrue(checked >= 9, "BedWars-Beispiel und 8 BedWars-Maps erwartet: " + checked);
+    }
+
+    /**
+     * Echte Map aus einem Archiv (Weltformat 26.x): {@code RETROMC_MAP_ZIP=/pfad/kirschbluete.zip}. Entpacken, Kopie
+     * wie beim Rundenstart, Ladeprüfung der {@code map.json}.
+     */
+    @Test
+    void echteMapAusArchiv(@TempDir Path dir) throws IOException {
+        String archive = System.getenv("RETROMC_MAP_ZIP");
+        Assumptions.assumeTrue(archive != null && Files.isRegularFile(Path.of(archive)), "RETROMC_MAP_ZIP fehlt");
+        Path maps = Files.createDirectories(dir.resolve("maps"));
+        try (InputStream in = Files.newInputStream(Path.of(archive)); ZipInputStream zip = new ZipInputStream(in)) {
+            for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+                Path out = maps.resolve(entry.getName()).normalize();
+                assertTrue(out.startsWith(maps), entry.getName());
+                if (entry.isDirectory()) {
+                    Files.createDirectories(out);
+                } else {
+                    Files.createDirectories(out.getParent());
+                    Files.copy(zip, out);
+                }
+            }
+        }
+        try (Stream<Path> folders = Files.list(maps)) {
+            for (Path folder : folders.filter(Files::isDirectory).toList()) {
+                MapMeta meta = MapJson.parse(Files.readString(folder.resolve(MapFeature.MAP_FILE),
+                        StandardCharsets.UTF_8));
+                assertEquals(List.of(), MapFeature.check(meta, folder));
+                Path target = dir.resolve(MapFeature.WORLD_PREFIX + meta.id());
+                MapFeature.copyWorld(folder, target);
+                assertTrue(Files.isRegularFile(target.resolve("level.dat")));
+                try (Stream<Path> regions = Files.list(target.resolve("dimensions/minecraft/overworld/region"))) {
+                    assertTrue(regions.anyMatch(path -> path.toString().endsWith(".mca")));
+                }
+                assertTrue(Files.notExists(target.resolve(MapFeature.MAP_FILE)));
+            }
+        }
     }
 }

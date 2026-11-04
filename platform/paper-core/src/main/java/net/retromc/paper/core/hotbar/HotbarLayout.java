@@ -48,6 +48,15 @@ public final class HotbarLayout {
         return this;
     }
 
+    /** Leert Slot 0–8 (Modus-Override einer Rahmen-Belegung, z. B. SkyWars Spec 04 §4.11). */
+    public HotbarLayout remove(int index) {
+        if (index < 0 || index > 8) {
+            throw new IllegalArgumentException("Hotbar-Slot 0–8: " + index);
+        }
+        slots.remove(index);
+        return this;
+    }
+
     public Map<Integer, Slot> slots() {
         return Map.copyOf(slots);
     }

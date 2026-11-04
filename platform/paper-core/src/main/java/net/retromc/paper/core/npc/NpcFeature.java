@@ -31,7 +31,8 @@ import org.jspecify.annotations.Nullable;
 /**
  * Standard-{@link NpcService} auf der Vanilla-Entity {@link Mannequin} (Spielerfigur mit Skin, ohne KI): nicht
  * persistent, unverwundbar, unbeweglich; Rechts-/Linksklick lösen die Handler aus, alle 5 Ticks dreht sich der Kopf
- * zum nächsten Spieler. Admins legen NPCs mit {@code /npc} an ({@link NpcAdminCommand}).
+ * zum nächsten Spieler. Admins legen NPCs mit {@code /npc} an ({@link NpcAdminCommand}); diese werden über
+ * {@code NpcStore} ({@code core.npc}) dauerhaft gespeichert und beim Start wieder angelegt.
  */
 public final class NpcFeature implements CoreFeature<PaperCore>, Listener, NpcService {
 
@@ -54,14 +55,21 @@ public final class NpcFeature implements CoreFeature<PaperCore>, Listener, NpcSe
         context.plugin().getServer().getPluginManager().registerEvents(this, context.plugin());
         look = Bukkit.getScheduler().runTaskTimer(context.plugin(), this::lookAtPlayers, LOOK_TICKS, LOOK_TICKS);
         registration = context.services().registerDefault(NpcService.class, this);
-        NpcAdminCommand command = new NpcAdminCommand(this, new Texts(context.services().supplier(I18n.class)));
+        NpcAdminCommand command = new NpcAdminCommand(this, new Texts(context.services().supplier(I18n.class)),
+                context.services(), context.mainThread(), context.log(), context.config().template().value());
         command.register(context.services().get(CommandService.class).manager());
+        context.plugin().getServer().getPluginManager().registerEvents(command, context.plugin());
         admin = command;
+        command.load();
     }
 
     @Override
     public void disable(PaperCore context) {
         HandlerList.unregisterAll(this);
+        NpcAdminCommand listener = admin;
+        if (listener != null) {
+            HandlerList.unregisterAll(listener);
+        }
         BukkitTask task = look;
         if (task != null) {
             task.cancel();

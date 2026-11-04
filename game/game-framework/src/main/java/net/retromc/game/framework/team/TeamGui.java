@@ -94,7 +94,8 @@ public final class TeamGui extends Gui {
             String last = own && style.ownKey() != null ? style.ownKey()
                     : team.full() && !own ? style.fullKey() : style.joinKey();
             lore.add(texts.i18n().render(locale, last));
-            Material wool = team.color() == null ? Material.WHITE_WOOL
+            // nummerierte Teams: Icon des Modus (SkyWars WHITE_BANNER, Spec 04 §5.12)
+            Material wool = team.color() == null ? game.mode().teamItem()
                     : Material.matchMaterial(team.color().wool());
             ItemBuilder item = ItemBuilder.of(wool == null ? Material.WHITE_WOOL : wool)
                     .name(texts.i18n().render(locale, style.nameKey(), texts.team(locale, team),

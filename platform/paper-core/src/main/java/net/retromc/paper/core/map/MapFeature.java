@@ -42,8 +42,16 @@ public final class MapFeature implements CoreFeature<PaperCore>, MapService {
     /** Präfix der geladenen Kopien im Welt-Container. */
     public static final String WORLD_PREFIX = "map_";
 
-    private static final Set<String> SKIPPED = Set.of(MAP_FILE, "uid.dat", "session.lock", "playerdata", "stats",
-            "advancements", "datapacks");
+    /** Namensnennung für Maps unter freier Lizenz (Spec 08 §6.19). */
+    public static final String CREDITS_FILE = "CREDITS.md";
+
+    /**
+     * Nicht kopiert: Map-Dateien, Sitzung und Spielerdaten – alte Ordner ({@code playerdata}, {@code stats},
+     * {@code advancements}) und das 26.x-Layout ({@code players/}); Welt-Daten in {@code region/} bzw.
+     * {@code dimensions/minecraft/overworld/region/} werden vollständig übernommen.
+     */
+    private static final Set<String> SKIPPED = Set.of(MAP_FILE, CREDITS_FILE, "uid.dat", "session.lock",
+            "playerdata", "players", "stats", "advancements", "datapacks");
 
     private final Map<String, MapMeta> maps = new ConcurrentHashMap<>();
     private final Map<String, CompletableFuture<World>> loading = new ConcurrentHashMap<>();
@@ -151,7 +159,7 @@ public final class MapFeature implements CoreFeature<PaperCore>, MapService {
                 String id = folder.getFileName().toString();
                 try {
                     MapMeta meta = MapJson.parse(Files.readString(file, StandardCharsets.UTF_8));
-                    List<String> errors = check(meta, id);
+                    List<String> errors = check(meta, folder);
                     if (errors.isEmpty()) {
                         found.put(meta.id(), meta);
                     } else {
@@ -169,14 +177,24 @@ public final class MapFeature implements CoreFeature<PaperCore>, MapService {
         context().log().info("{} Map(s) aus {} geladen", found.size(), directory());
     }
 
+    /** Prüfungen des Ladevorgangs mit Ordner: zusätzlich {@code CREDITS.md} bei freier Lizenz (Spec 08 §6.19). */
+    static List<String> check(MapMeta meta, Path folder) {
+        List<String> errors = new ArrayList<>(check(meta, folder.getFileName().toString()));
+        if (meta.attribution() && MapMeta.LICENSES.contains(meta.license())
+                && !Files.isRegularFile(folder.resolve(CREDITS_FILE))) {
+            errors.add(CREDITS_FILE + " fehlt (Namensnennung für " + meta.license() + ")");
+        }
+        return errors;
+    }
+
     /** Formale Prüfungen des Ladevorgangs (Spec 08 §6.11 Nr. 1, §6.19). */
     static List<String> check(MapMeta meta, String folder) {
         List<String> errors = new ArrayList<>();
         if (!meta.id().equals(folder)) {
             errors.add("id '" + meta.id() + "' ≠ Ordner '" + folder + "'");
         }
-        if (!MapMeta.LICENSE_OWN.equals(meta.license())) {
-            errors.add("license muss \"own\" sein");
+        if (!MapMeta.LICENSES.contains(meta.license())) {
+            errors.add("license muss own, cc-by-4.0 oder cc-by-sa-4.0 sein");
         }
         if (meta.builders().isEmpty()) {
             errors.add("builders ist leer");

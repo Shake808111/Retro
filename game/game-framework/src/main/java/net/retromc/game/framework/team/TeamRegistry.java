@@ -50,8 +50,7 @@ public final class TeamRegistry {
             for (int i = 0; i < ids.size(); i++) {
                 String id = ids.get(i);
                 TeamColor color = mode == TeamMode.NUMBERED ? null : TeamColor.byId(id).orElse(null);
-                built.add(new GameTeam(i, mode == TeamMode.NUMBERED ? Integer.toString(i + 1) : id, color,
-                        variant.teamSize()));
+                built.add(new GameTeam(i, id, color, variant.teamSize()));
             }
         }
         for (GameTeam team : built) {

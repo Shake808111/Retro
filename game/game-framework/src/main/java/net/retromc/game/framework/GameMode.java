@@ -132,8 +132,16 @@ public interface GameMode {
     /** Basis-Coins für {@code CoinService.payoutRound}. */
     long baseCoins(GamePlayer player, GameResult result);
 
-    /** Nach der Statistik-Buchung (z. B. Modus-Level). */
-    default void onEnd(GameResult result) {
+    /** Rundenende vor dem Umwandeln in Zuschauer und vor der Statistik (z. B. End-XP gutschreiben). */
+    default void onFinish(GameResult result) {
+    }
+
+    /**
+     * Nach der Statistik-Buchung (z. B. Modus-Level).
+     *
+     * @param counted {@code true}, wenn die Runde neu verbucht wurde (nicht doppelt, keine Privatrunde)
+     */
+    default void onEnd(GameResult result, boolean counted) {
     }
 
     /** Server fährt herunter. */

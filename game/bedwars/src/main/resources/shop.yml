@@ -1,0 +1,393 @@
+# Item-Shop BedWars (Spec 04 §6.1.6). Preise "<Menge> <Währung>" (copper, iron, gold, diamond; Classic: bronze),
+# Stapelgröße = gekaufte Menge, {TEAM} = Blockfarbe des Teams. quick = Standard-Schnellkauf-Feld 0–20.
+# Kategorien: 1 Blöcke, 2 Rüstung, 3 Werkzeuge, 4 Waffen, 5 Tränke, 6 Spezial, 7 Explosives, 8 Sonstiges.
+# Namen/Beschreibungen: Textschlüssel bw.item.<id> und bw.item.<id>.lore (core-i18n).
+# Classic (Spec 04 §6.1.9): Kupfer wird Bronze; "classic:" überschreibt Preis/Menge, "classic: false" blendet aus,
+# "modern: false" gibt es nur im Classic-Shop.
+items:
+  # --- Blöcke ---------------------------------------------------------------------------------------------------
+  clay:
+    category: 1
+    material: "{TEAM}_TERRACOTTA"
+    amount: 16
+    price: 8 copper
+    quick: 0
+    lore: true
+    classic: {amount: 1, price: 1 bronze}
+  wool:
+    category: 1
+    material: "{TEAM}_WOOL"
+    amount: 16
+    price: 4 copper
+    lore: true
+  glass:
+    category: 1
+    material: "{TEAM}_STAINED_GLASS"
+    amount: 4
+    price: 2 copper
+    quick: 6
+    lore: true
+  end_stone:
+    category: 1
+    material: END_STONE
+    amount: 3
+    price: 12 copper
+    quick: 3
+    lore: true
+    classic: {amount: 1, price: 7 bronze}
+  stairs:
+    category: 1
+    material: CUT_SANDSTONE_STAIRS
+    amount: 4
+    price: 3 copper
+    lore: true
+  ladder:
+    category: 1
+    material: LADDER
+    amount: 8
+    price: 4 copper
+    lore: true
+  planks:
+    category: 1
+    material: OAK_PLANKS
+    amount: 16
+    price: 4 iron
+    lore: true
+  obsidian:
+    category: 1
+    material: OBSIDIAN
+    amount: 4
+    price: 4 gold
+    lore: true
+  slime:
+    category: 1
+    material: SLIME_BLOCK
+    amount: 1
+    price: 2 iron
+    quick: 14
+    lore: true
+  sandstone:
+    category: 1
+    material: SANDSTONE
+    amount: 2
+    price: 1 bronze
+    modern: false
+  # --- Rüstung (ersetzt nur den Brustpanzer) --------------------------------------------------------------------
+  chain_armor:
+    category: 2
+    material: CHAINMAIL_CHESTPLATE
+    price: 32 copper
+    permanent: true
+    group: armor
+    tier: 1
+    quick: 2
+    lore: true
+  iron_armor:
+    category: 2
+    material: IRON_CHESTPLATE
+    price: 12 iron
+    permanent: true
+    group: armor
+    tier: 2
+    quick: 9
+    lore: true
+  diamond_armor:
+    category: 2
+    material: DIAMOND_CHESTPLATE
+    price: 16 gold
+    permanent: true
+    group: armor
+    tier: 3
+    lore: true
+  # --- Werkzeuge -------------------------------------------------------------------------------------------------
+  wooden_pickaxe:
+    category: 3
+    material: WOODEN_PICKAXE
+    price: start
+    permanent: true
+    group: pickaxe
+    tier: 1
+  iron_pickaxe:
+    category: 3
+    material: IRON_PICKAXE
+    price: 10 copper
+    permanent: true
+    group: pickaxe
+    tier: 2
+    quick: 10
+    lore: true
+  golden_pickaxe:
+    category: 3
+    material: GOLDEN_PICKAXE
+    price: 3 gold
+    permanent: true
+    group: pickaxe
+    tier: 3
+    enchants: {efficiency: 2}
+    lore: true
+  diamond_pickaxe:
+    category: 3
+    material: DIAMOND_PICKAXE
+    price: 6 gold
+    permanent: true
+    group: pickaxe
+    tier: 4
+    enchants: {efficiency: 3}
+    lore: true
+  axe:
+    category: 3
+    material: IRON_AXE
+    price: 8 iron
+    permanent: true
+    group: axe
+    tier: 1
+    lore: true
+  shears:
+    category: 3
+    material: SHEARS
+    price: 20 copper
+    permanent: true
+    group: shears
+    tier: 1
+    quick: 4
+    lore: true
+  # --- Waffen ----------------------------------------------------------------------------------------------------
+  stick:
+    category: 4
+    material: STICK
+    price: 7 iron
+    enchants: {knockback: 1}
+    lore: true
+    classic: {price: 8 bronze}
+  stone_sword:
+    category: 4
+    material: STONE_SWORD
+    price: 24 copper
+    group: sword
+    tier: 1
+    quick: 1
+  iron_sword:
+    category: 4
+    material: IRON_SWORD
+    price: 15 iron
+    group: sword
+    tier: 2
+    classic: {price: 5 gold}
+  diamond_sword:
+    category: 4
+    material: DIAMOND_SWORD
+    price: 5 gold
+    group: sword
+    tier: 3
+    quick: 7
+  bow:
+    category: 4
+    material: BOW
+    price: 12 iron
+    quick: 11
+  bow2:
+    category: 4
+    material: BOW
+    price: 3 gold
+    enchants: {power: 1}
+  bow3:
+    category: 4
+    material: BOW
+    price: 6 gold
+    enchants: {power: 2, punch: 1}
+  crossbow:
+    category: 4
+    material: CROSSBOW
+    price: 8 iron
+    classic: false
+  crossbow_multishot:
+    category: 4
+    material: CROSSBOW
+    price: 3 gold
+    enchants: {multishot: 1}
+    classic: false
+  crossbow_piercing:
+    category: 4
+    material: CROSSBOW
+    price: 3 gold
+    enchants: {piercing: 1}
+    classic: false
+  crossbow_quick:
+    category: 4
+    material: CROSSBOW
+    price: 3 gold
+    enchants: {quick_charge: 1}
+    classic: false
+  arrows:
+    category: 4
+    material: ARROW
+    amount: 8
+    price: 2 gold
+    quick: 12
+  wind_charge:
+    category: 4
+    material: WIND_CHARGE
+    amount: 2
+    price: 4 iron
+    lore: true
+    classic: false
+  wind_cannon:
+    category: 4
+    material: BREEZE_ROD
+    price: 6 gold
+    special: wind_cannon
+    lore: true
+    classic: false
+  # --- Tränke (Typ:Stufe:Sekunden) -------------------------------------------------------------------------------
+  heal_potion:
+    category: 5
+    material: POTION
+    price: 3 iron
+    potion: "instant_health:2:0"
+    quick: 15
+  speed_potion:
+    category: 5
+    material: POTION
+    price: 1 gold
+    potion: "speed:2:45"
+  jump_potion:
+    category: 5
+    material: POTION
+    price: 1 gold
+    potion: "jump_boost:5:45"
+  strength_potion:
+    category: 5
+    material: POTION
+    price: 3 gold
+    potion: "strength:1:30"
+  # --- Spezial ---------------------------------------------------------------------------------------------------
+  ender_pearl:
+    category: 6
+    material: ENDER_PEARL
+    price: 11 gold
+  platform:
+    category: 6
+    material: BLAZE_ROD
+    price: 3 gold
+    special: platform
+    lore: true
+  capsule:
+    category: 6
+    material: TOTEM_OF_UNDYING
+    price: 4 gold
+    special: capsule
+    lore: true
+    classic: false
+  teleporter:
+    category: 6
+    material: GUNPOWDER
+    price: 3 iron
+    special: teleporter
+    lore: true
+  mobile_shop:
+    category: 6
+    material: VILLAGER_SPAWN_EGG
+    price: 8 iron
+    special: mobile_shop
+    lore: true
+  portal:
+    category: 6
+    material: END_PORTAL_FRAME
+    amount: 2
+    price: 4 gold
+    special: portal
+    lore: true
+  freezer:
+    category: 6
+    material: PACKED_ICE
+    price: 6 iron
+    special: freezer
+    lore: true
+  bridge:
+    category: 6
+    material: WHITE_CONCRETE
+    price: 4 iron
+    special: bridge
+    quick: 16
+    lore: true
+  sneaker:
+    category: 6
+    material: LEATHER_BOOTS
+    price: 8 copper
+    special: sneaker
+    lore: true
+  bed_builder:
+    category: 6
+    material: RED_BED
+    price: 16 iron
+    special: bed_builder
+    lore: true
+  cobweb:
+    category: 6
+    material: COBWEB
+    price: 8 copper
+  egg:
+    category: 6
+    material: EGG
+    amount: 2
+    price: 2 iron
+    special: egg_bridge
+    quick: 13
+    lore: true
+  snowball:
+    category: 6
+    material: SNOWBALL
+    amount: 2
+    price: 6 copper
+    lore: true
+  chest:
+    category: 6
+    material: CHEST
+    price: 1 iron
+    quick: 5
+    lore: true
+  # --- Explosives ------------------------------------------------------------------------------------------------
+  tnt:
+    category: 7
+    material: TNT
+    price: 4 gold
+    special: tnt
+  super_tnt:
+    category: 7
+    material: TNT
+    price: 6 gold
+    special: super_tnt
+  c4:
+    category: 7
+    material: TNT
+    price: 1 gold
+    special: c4
+    lore: true
+  vest:
+    category: 7
+    material: LEATHER_CHESTPLATE
+    price: 10 iron
+    special: vest
+    lore: true
+  fireball:
+    category: 7
+    material: FIRE_CHARGE
+    price: 40 copper
+    special: fireball
+    quick: 8
+    lore: true
+  # --- Sonstiges -------------------------------------------------------------------------------------------------
+  cookie:
+    category: 8
+    material: COOKIE
+    amount: 4
+    price: 4 copper
+  golden_apple:
+    category: 8
+    material: GOLDEN_APPLE
+    price: 3 gold
+  beef:
+    category: 8
+    material: COOKED_BEEF
+    amount: 2
+    price: 6 copper

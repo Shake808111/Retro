@@ -172,7 +172,7 @@ final class GameListener implements Listener {
     }
 
     /** Standard-Tod: Kill-Feed und Ausscheiden (Modi mit Respawn fangen den tödlichen Schaden selbst ab). */
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onDeath(PlayerDeathEvent event) {
         event.deathMessage(null);
         Player victim = event.getPlayer();

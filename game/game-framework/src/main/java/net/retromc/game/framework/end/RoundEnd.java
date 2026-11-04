@@ -76,6 +76,7 @@ public final class RoundEnd {
             return;
         }
         finished = true;
+        game.mode().onFinish(result);
         Instant endedAt = Instant.now();
         Map<UUID, Boolean> survived = new LinkedHashMap<>();
         game.players().forEach(player -> survived.put(player.uuid(), player.alive()));
@@ -97,8 +98,8 @@ public final class RoundEnd {
                     game.log().error("Statistik der Runde {} nicht gebucht", game.matchId(), error);
                     return null;
                 });
-        game.mainThread().accept(bounded, "Rundenende", ignored -> {
-            game.mode().onEnd(result);
+        game.mainThread().accept(bounded, "Rundenende", submit -> {
+            game.mode().onEnd(result, submit != null && submit.applied());
             blocks(result, survived);
             restart(RestartPlan.STANDARD, result, endedAt);
             payout(result);
